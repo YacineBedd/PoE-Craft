@@ -1,3 +1,8 @@
+// Cloud layer (accounts, save/sync/share). The app runs fully without these;
+// they are additive — see the integration block at the end of this file.
+import * as auth from './js/auth.js';
+import * as sync from './js/sync.js';
+
 // The mod / currency / base database is served as static JSON and fetched
 // at load. This file is an ES module, so the top-level await below finishes
 // before any of the derived constants run - they still initialise
@@ -1312,8 +1317,8 @@ OMENS.forEach(o => { const k = 'omen:' + o.i; if (!(k in PRICES)) PRICES[k] = OM
 const PRICE_LS = 'poe2planner.prices.v1', RATE_LS = 'poe2planner.rates.v1';
 try { const sv = JSON.parse(localStorage.getItem(PRICE_LS) || 'null');
       if (sv && typeof sv === 'object') Object.assign(PRICES, sv); } catch (e) {}
-function savePrices() { try { localStorage.setItem(PRICE_LS, JSON.stringify(PRICES)); } catch (e) {} }
-function saveRates(ex, c) { try { localStorage.setItem(RATE_LS, JSON.stringify({ ex, c })); } catch (e) {} }
+function savePrices() { try { localStorage.setItem(PRICE_LS, JSON.stringify(PRICES)); } catch (e) {} cloudPushPricesDebounced(); }
+function saveRates(ex, c) { try { localStorage.setItem(RATE_LS, JSON.stringify({ ex, c })); } catch (e) {} cloudPushPricesDebounced(); }
 function loadRates() { try { return JSON.parse(localStorage.getItem(RATE_LS) || 'null'); } catch (e) { return null; } }
 /** Divine-orb value of one use of a cost key. */
 function curDiv(key) {
@@ -5118,3 +5123,171 @@ reset();
 setView('graph');
 drawPrices();
 try { if (!localStorage.getItem(OB_LS)) obOpen(0); } catch (e) {}
+
+/* ===========================================================================
+ * Cloud layer wiring (accounts + save/sync/share). Additive: if Supabase is
+ * unreachable the app keeps working exactly as before. Lives at the end so it
+ * can see every engine binding it touches (plan, state, PRICES, emStartFrom…).
+ * ======================================================================== */
+const DATA_VERSION = (DB && (DB.version || DB.v)) || null;
+
+// --- prices: push to cloud (debounced) after any local price/rate change -----
+let _pricePushT = null;
+function cloudPushPricesDebounced() {
+  if (typeof auth === 'undefined' || !auth.getUser()) return;   // only when signed in
+  clearTimeout(_pricePushT);
+  _pricePushT = setTimeout(() => {
+    sync.pushPrices(PRICES, loadRates() || {}).catch(e => console.warn('price push failed', e));
+  }, 800);
+}
+
+// --- read the Aldur-rune toggles so a saved plan remembers its caps ----------
+function readRuneFlags() {
+  const o = {};
+  document.querySelectorAll('#runepick .chip').forEach(c => {
+    o[c.dataset.rune] = c.getAttribute('aria-pressed') === 'true';
+  });
+  return o;
+}
+
+// --- load a cloud plan's graph back onto the canvas --------------------------
+function loadCloudPlan(p) {
+  const note = document.getElementById('vnote');
+  try {
+    plan = JSON.parse(JSON.stringify(p.graph || []));
+    selStep = null; openPool = new Set(); openTier = new Set(); poolQ = {}; histStash = [];
+    for (const s of plan) if (typeof s.id === 'number' && s.id > planSeq) planSeq = s.id;
+    setView('graph');
+    drawPlan(); stepMenu();
+    if (note) note.textContent = `loaded "${p.title}"` +
+      (p.base_class && state && p.base_class !== state.slug ? ' — built for a different base' : '');
+  } catch (e) {
+    if (note) note.textContent = 'could not load plan: ' + (e.message || e);
+  }
+}
+
+// --- render the "my plans / my snapshots" panel ------------------------------
+async function renderCloud() {
+  const box = document.getElementById('cloudwrap');
+  if (!box) return;
+  if (!auth.getUser()) {
+    box.innerHTML = '<div class="cloudhint">Sign in (top&#8209;right) or hit &#9729; <b>Save to account</b> ' +
+      'to keep plans in the cloud and open them on any device.</div>';
+    return;
+  }
+  box.innerHTML = '<div class="cloudhint">Loading your saved plans&hellip;</div>';
+  let plans, snaps;
+  try { [plans, snaps] = await Promise.all([sync.listPlans(), sync.listSnapshots()]); }
+  catch (e) { box.innerHTML = '<div class="cloudhint">Could not load cloud data: ' +
+      esc(String(e.message || e)) + '</div>'; return; }
+
+  const planHTML = plans.length
+    ? plans.map(p => `<span class="cloudchip">
+        <b>${esc(p.title)}</b>
+        <span class="cloudmeta">${p.base_class ? esc(p.base_class) + ' &middot; ' : ''}${(p.graph || []).length} steps</span>
+        <button class="cloudact" data-load="${p.id}">load</button>
+        <button class="cloudx" data-delplan="${p.id}" title="delete">&times;</button></span>`).join('')
+    : '<span class="mcnote">No saved plans yet.</span>';
+
+  const snapHTML = snaps.length
+    ? `<div class="cloudsub">My snapshots</div>` + snaps.map(s => `<span class="cloudchip">
+        <b>${esc(s.label || 'snapshot')}</b>
+        <span class="cloudmeta">${s.ctx && s.ctx.baseName ? esc(s.ctx.baseName) : ''}</span>
+        <button class="cloudact" data-emu="${s.id}">&#9654; emulate</button>
+        <button class="cloudx" data-delsnap="${s.id}" title="delete">&times;</button></span>`).join('')
+    : '';
+
+  box.innerHTML = `<div class="cloudsub">My plans (cloud)</div><div class="cloudlist">${planHTML}</div>` +
+    (snapHTML ? `<div class="cloudlist">${snapHTML}</div>` : '');
+
+  box.querySelectorAll('[data-load]').forEach(b => b.onclick = () =>
+    loadCloudPlan(plans.find(p => p.id === b.dataset.load)));
+  box.querySelectorAll('[data-delplan]').forEach(b => b.onclick = async () => {
+    try { await sync.deletePlan(b.dataset.delplan); renderCloud(); } catch (e) { console.error(e); } });
+  box.querySelectorAll('[data-emu]').forEach(b => b.onclick = () => {
+    const s = snaps.find(x => x.id === b.dataset.emu);
+    if (s) emStartFrom(s.item, 'saved snapshot', s.ctx); });
+  box.querySelectorAll('[data-delsnap]').forEach(b => b.onclick = async () => {
+    try { await sync.deleteSnapshot(b.dataset.delsnap); renderCloud(); } catch (e) { console.error(e); } });
+}
+
+// --- on sign-in: reconcile prices (cloud wins if present, else seed from local)
+async function hydratePrices() {
+  try {
+    const cp = await sync.pullPrices();
+    if (cp && cp.prices && Object.keys(cp.prices).length) {
+      Object.assign(PRICES, cp.prices);
+      if (cp.rates && cp.rates.ex) {
+        const pr = document.getElementById('pirate'), pc = document.getElementById('piratec');
+        if (pr && cp.rates.ex) pr.value = cp.rates.ex;
+        if (pc && cp.rates.c != null) pc.value = cp.rates.c;
+        try { localStorage.setItem(RATE_LS, JSON.stringify({ ex: cp.rates.ex, c: cp.rates.c })); } catch (e) {}
+      }
+      try { localStorage.setItem(PRICE_LS, JSON.stringify(PRICES)); } catch (e) {}
+      drawPrices();
+    } else {
+      await sync.pushPrices(PRICES, loadRates() || {});   // first sign-in: seed the cloud
+    }
+  } catch (e) { console.warn('price hydrate failed', e); }
+}
+
+// --- buttons -----------------------------------------------------------------
+const _cloudSaveBtn = document.getElementById('cloudsave');
+if (_cloudSaveBtn) _cloudSaveBtn.onclick = async () => {
+  const note = document.getElementById('vnote');
+  if (!plan.length) { if (note) note.textContent = 'Build a plan first.'; return; }
+  const nameInp = document.getElementById('vname');
+  const title = (nameInp && nameInp.value.trim()) ||
+    `${(state && state.base && state.base.n) || 'Plan'} · ${plan.length} steps`;
+  if (note) note.textContent = 'saving…';
+  try {
+    await sync.savePlan({
+      title,
+      graph: JSON.parse(JSON.stringify(plan)),
+      base_class: state && state.slug,
+      base_id: state && state.base && state.base.id,
+      ilvl: state && state.ilvl,
+      rune_flags: readRuneFlags(),
+      data_version: DATA_VERSION,
+    });
+    if (nameInp) nameInp.value = '';
+    if (note) note.textContent = 'saved to your account';
+    renderCloud();
+  } catch (e) { if (note) note.textContent = 'save failed: ' + (e.message || e); }
+};
+
+const _cloudSnapBtn = document.getElementById('emucloudsnap');
+if (_cloudSnapBtn) _cloudSnapBtn.onclick = async () => {
+  if (typeof em === 'undefined' || !em) return;
+  const label0 = _cloudSnapBtn.innerHTML;
+  _cloudSnapBtn.disabled = true;
+  try {
+    await sync.saveSnapshot({
+      label: `${em.corrupted ? 'corrupted ' : ''}${RNAME[em.rarity]} item`,
+      item: emCopyItem(em),
+      ctx: { slug: state.slug, baseName: state.base && state.base.n,
+             ilvl: state.ilvl, exceptional: state.exceptional },
+    });
+    _cloudSnapBtn.innerHTML = '✓ saved';
+    renderCloud();
+    setTimeout(() => { _cloudSnapBtn.innerHTML = label0; _cloudSnapBtn.disabled = false; }, 1500);
+  } catch (e) {
+    console.error(e);
+    _cloudSnapBtn.innerHTML = 'save failed';
+    setTimeout(() => { _cloudSnapBtn.innerHTML = label0; _cloudSnapBtn.disabled = false; }, 1500);
+  }
+};
+
+// --- boot the cloud layer (never blocks the app) -----------------------------
+let _hydratedUser = null;
+function handleAuth(session) {
+  renderCloud();
+  const u = session && session.user;
+  if (u && u.id !== _hydratedUser) { _hydratedUser = u.id; hydratePrices(); }
+  if (!u) _hydratedUser = null;
+}
+try {
+  auth.onAuthChange(handleAuth);
+  auth.initAuth().catch(e => console.warn('auth init failed', e));
+  renderCloud();
+} catch (e) { console.warn('cloud layer disabled:', e); }

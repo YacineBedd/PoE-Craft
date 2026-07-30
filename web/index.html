@@ -4,11 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PoE2 Craft Planner</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23c8992e'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23fff6de' opacity='.7'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="wrap">
   <header>
+    <div id="acct" class="acct"></div>
     <h1>PoE2 Craft Planner</h1>
     <p class="sub">
       Plan a craft as a graph of currency steps, read the exact pool odds at each one, stress-test
@@ -122,11 +124,13 @@
         <input id="vname" placeholder="name this plan\u2026" style="flex:1 1 180px;padding:5px 8px;
           background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:3px">
         <button class="ghost" id="vsave">Save variant</button>
+        <button class="ghost" id="cloudsave" title="Save this plan to your account so it syncs across devices">&#9729; Save to account</button>
         <button class="ghost" id="vgo">Compare all</button>
         <span class="mcnote" id="vnote"></span>
       </div>
       <div class="vlist" id="vlist"></div>
       <div id="cmpout"></div>
+      <div class="cloudwrap" id="cloudwrap"></div>
     </section>
 
   </div>
@@ -182,6 +186,7 @@
           <button class="ghost" id="emugraph">&#9776; View graph &amp; odds</button>
           <button class="ghost" id="emulock" title="Hinekora's Lock: preview the next currency's outcome before committing (very rare, ~hundreds of divines)">&#128274; Lock</button>
           <button class="ghost" id="emusnap" title="Save this exact item so you can branch or re-roll from it">&#128204; Snapshot</button>
+          <button class="ghost" id="emucloudsnap" title="Save this item to your account (syncs across devices)">&#9729; Save to account</button>
           <button class="ghost" id="emureset">New base</button>
           <button class="ghost" id="emuclose">&times; Close</button>
         </div>
@@ -835,6 +840,8 @@
 </div>
 
 <div id="tiptip" class="tiptip" hidden></div>
+  <!-- Supabase client (vendored UMD, no CDN at runtime) — sets window.supabase -->
+  <script src="vendor/supabase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
