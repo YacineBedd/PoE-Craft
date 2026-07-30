@@ -2,6 +2,7 @@
 // they are additive — see the integration block at the end of this file.
 import * as auth from './js/auth.js';
 import * as sync from './js/sync.js';
+import * as router from './js/router.js';
 
 // The mod / currency / base database is served as static JSON and fetched
 // at load. This file is an ES module, so the top-level await below finishes
@@ -5182,10 +5183,12 @@ async function renderCloud() {
       esc(String(e.message || e)) + '</div>'; return; }
 
   const planHTML = plans.length
-    ? plans.map(p => `<span class="cloudchip">
+    ? plans.map(p => `<span class="cloudchip${p.is_public ? ' shared' : ''}">
         <b>${esc(p.title)}</b>
         <span class="cloudmeta">${p.base_class ? esc(p.base_class) + ' &middot; ' : ''}${(p.graph || []).length} steps</span>
         <button class="cloudact" data-load="${p.id}">load</button>
+        <button class="cloudact" data-share="${p.id}">${p.is_public ? '&#128279; copy link' : '&#128279; share'}</button>
+        ${p.is_public ? `<button class="cloudact" data-unshare="${p.id}" title="stop sharing">unshare</button>` : ''}
         <button class="cloudx" data-delplan="${p.id}" title="delete">&times;</button></span>`).join('')
     : '<span class="mcnote">No saved plans yet.</span>';
 
@@ -5209,6 +5212,25 @@ async function renderCloud() {
     if (s) emStartFrom(s.item, 'saved snapshot', s.ctx); });
   box.querySelectorAll('[data-delsnap]').forEach(b => b.onclick = async () => {
     try { await sync.deleteSnapshot(b.dataset.delsnap); renderCloud(); } catch (e) { console.error(e); } });
+  box.querySelectorAll('[data-share]').forEach(b => b.onclick = () => sharePlan(b.dataset.share));
+  box.querySelectorAll('[data-unshare]').forEach(b => b.onclick = async () => {
+    try { await sync.unpublishPlan(b.dataset.unshare); renderCloud(); } catch (e) { console.error(e); } });
+}
+
+// Make a plan public and put its share link on the clipboard.
+async function sharePlan(id) {
+  try {
+    const slug = await sync.makePlanPublic(id);
+    const url = router.shareUrl(slug);
+    let copied = false;
+    try { await navigator.clipboard.writeText(url); copied = true; } catch (e) {}
+    showShareBanner(
+      `<b>Share link ${copied ? 'copied' : 'ready'}:</b> ` +
+      `<a href="${esc(url)}">${esc(url)}</a> — anyone with it can open this plan.`, true);
+    renderCloud();
+  } catch (e) {
+    showShareBanner('Could not create share link: ' + esc(String(e.message || e)), true);
+  }
 }
 
 // --- on sign-in: reconcile prices (cloud wins if present, else seed from local)
@@ -5278,6 +5300,30 @@ if (_cloudSnapBtn) _cloudSnapBtn.onclick = async () => {
   }
 };
 
+// --- sharing: banner + loading a shared plan by slug -------------------------
+function showShareBanner(html, dismissible) {
+  const b = document.getElementById('sharebanner');
+  if (!b) return;
+  b.innerHTML = html + (dismissible ? ' <button class="sharex" id="sharex" title="dismiss">&times;</button>' : '');
+  b.classList.remove('hidden');
+  const x = document.getElementById('sharex');
+  if (x) x.onclick = () => b.classList.add('hidden');
+}
+
+async function loadSharedPlan(slug) {
+  try {
+    const p = await sync.getPublicPlan(slug);
+    if (!p) { showShareBanner('That shared plan could not be found — it may have been unshared.', true); return; }
+    loadCloudPlan(p);
+    showShareBanner(`Viewing shared plan <b>${esc(p.title)}</b>` +
+      (p.base_class ? ` — built for <b>${esc(p.base_class)}</b>${p.ilvl ? ` at ilvl ${p.ilvl}` : ''}` : '') +
+      '. Changes stay on your screen unless you save your own copy.', true);
+  } catch (e) {
+    showShareBanner('Could not load the shared plan: ' + esc(String(e.message || e)), true);
+  }
+}
+function handleRoute(route) { if (route && route.view === 'plan') loadSharedPlan(route.slug); }
+
 // --- boot the cloud layer (never blocks the app) -----------------------------
 let _hydratedUser = null;
 function handleAuth(session) {
@@ -5290,4 +5336,6 @@ try {
   auth.onAuthChange(handleAuth);
   auth.initAuth().catch(e => console.warn('auth init failed', e));
   renderCloud();
+  const runRoute = router.onRoute(handleRoute);
+  runRoute();                       // handle a share link present on first load
 } catch (e) { console.warn('cloud layer disabled:', e); }

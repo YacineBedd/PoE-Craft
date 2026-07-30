@@ -70,6 +70,48 @@ export async function deleteSnapshot(id) {
   if (error) throw error;
 }
 
+// ---- sharing (public plans) ------------------------------------------------
+function genSlug() {
+  const cs = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const a = new Uint8Array(9);
+  crypto.getRandomValues(a);
+  let s = '';
+  for (const x of a) s += cs[x % 36];
+  return s;
+}
+
+/** Make a plan public, allocating a share slug if it has none. Returns the slug. */
+export async function makePlanPublic(id) {
+  const c = getClient();
+  const { data: cur, error: ce } = await c.from('plans').select('slug').eq('id', id).single();
+  if (ce) throw ce;
+  if (cur.slug) {
+    const { error } = await c.from('plans').update({ is_public: true }).eq('id', id);
+    if (error) throw error;
+    return cur.slug;
+  }
+  for (let i = 0; i < 5; i++) {                      // retry on the rare slug clash
+    const slug = genSlug();
+    const { error } = await c.from('plans').update({ is_public: true, slug }).eq('id', id);
+    if (!error) return slug;
+    if (error.code !== '23505') throw error;         // 23505 = unique_violation
+  }
+  throw new Error('could not allocate a share link, try again');
+}
+
+export async function unpublishPlan(id) {
+  const { error } = await getClient().from('plans').update({ is_public: false }).eq('id', id);
+  if (error) throw error;
+}
+
+/** Fetch a public plan by slug — no session required (RLS allows anon reads). */
+export async function getPublicPlan(slug) {
+  const { data, error } = await getClient()
+    .from('plans').select('*').eq('slug', slug).eq('is_public', true).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 // ---- prices ----------------------------------------------------------------
 export async function pushPrices(prices, rates) {
   if (!getUser()) return;

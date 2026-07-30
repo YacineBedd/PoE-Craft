@@ -1036,3 +1036,13 @@
   @media (max-width: 640px) {
     .acct { position: static; max-width: none; justify-content: flex-start; margin-bottom: 12px; }
   }
+  .cloudchip.shared { border-color: var(--accent); }
+  .sharebanner { margin: 0 0 16px; padding: 9px 13px; font-size: 12.5px; line-height: 1.5;
+    background: var(--panel); color: var(--ink);
+    border: 1px solid var(--accent); border-left-width: 3px; border-radius: 5px;
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .sharebanner.hidden { display: none; }
+  .sharebanner a { color: var(--accent); word-break: break-all; }
+  .sharebanner .sharex { margin-left: auto; cursor: pointer; background: none; border: none;
+    color: var(--faint); font-size: 16px; line-height: 1; padding: 0 2px; }
+  .sharebanner .sharex:hover { color: var(--ink); }
