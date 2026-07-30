@@ -1,0 +1,1019 @@
+{
+ "transmute": {
+  "name": "Orb of Transmutation",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeToMagic",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeToMagic.webp",
+  "beforeRarity": [
+   "Normal"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "greater-orb-of-transmutation": {
+  "name": "Greater Orb of Transmutation",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeToMagic2",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeToMagic.webp",
+  "tier": "II",
+  "beforeRarity": [
+   "Normal"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 44,
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "perfect-orb-of-transmutation": {
+  "name": "Perfect Orb of Transmutation",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeToMagic3",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeToMagic.webp",
+  "tier": "III",
+  "beforeRarity": [
+   "Normal"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 70,
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "aug": {
+  "name": "Orb of Augmentation",
+  "code": "Metadata/Items/Currency/CurrencyAddModToMagic",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToMagic.webp",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "greater-orb-of-augmentation": {
+  "name": "Orb of Augmentation",
+  "code": "Metadata/Items/Currency/CurrencyAddModToMagic2",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToMagic.webp",
+  "tier": "II",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 44,
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "perfect-orb-of-augmentation": {
+  "name": "Perfect Orb of Augmentation",
+  "code": "Metadata/Items/Currency/CurrencyAddModToMagic3",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToMagic.webp",
+  "tier": "III",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 70,
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "regal": {
+  "name": "Regal Orb",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeMagicToRare",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeMagicToRare.webp",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterRarity": "Rare",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "greater-regal-orb": {
+  "name": "Greater Regal Orb",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeMagicToRare2",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeMagicToRare.webp",
+  "tier": "II",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 35,
+  "afterRarity": "Rare",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "perfect-regal-orb": {
+  "name": "Perfect Regal Orb",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeMagicToRare3",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeMagicToRare.webp",
+  "tier": "III",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 50,
+  "afterRarity": "Rare",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "alc": {
+  "name": "Orb of Alchemy",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeToRare",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeToRare.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterRarity": "Rare",
+  "afterTrigger": "reroll",
+  "afterQuantity": 4,
+  "type": "Currency"
+ },
+ "chaos": {
+  "name": "Chaos Orb",
+  "code": "Metadata/Items/Currency/CurrencyRerollRare",
+  "icon": "Art/2DItems/Currency/CurrencyRerollRare.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterTrigger": "del_add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "greater-chaos-orb": {
+  "name": "Greater Chaos Orb",
+  "code": "Metadata/Items/Currency/CurrencyRerollRare2",
+  "icon": "Art/2DItems/Currency/CurrencyRerollRare.webp",
+  "tier": "II",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 35,
+  "afterTrigger": "del_add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "perfect-chaos-orb": {
+  "name": "Perfect Chaos Orb",
+  "code": "Metadata/Items/Currency/CurrencyRerollRare3",
+  "icon": "Art/2DItems/Currency/CurrencyRerollRare.webp",
+  "tier": "III",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 50,
+  "afterTrigger": "del_add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "exalted": {
+  "name": "Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyAddModToRare",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToRare.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "greater-exalted-orb": {
+  "name": "Greater Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyAddModToRare2",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToRare.webp",
+  "tier": "II",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 35,
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "perfect-exalted-orb": {
+  "name": "Perfect Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyAddModToRare3",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToRare.webp",
+  "tier": "III",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "beforeMin_mod_lv": 50,
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "annu": {
+  "name": "Orb of Annulment",
+  "code": "Metadata/Items/Currency/CurrencyRemoveMod",
+  "icon": "Art/2DItems/Currency/AnnullOrb.webp",
+  "beforeRarity": [
+   "Magic",
+   "Rare"
+  ],
+  "afterTrigger": "del",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "divine": {
+  "name": "Divine Orb",
+  "code": "Metadata/Items/Currency/CurrencyModValues",
+  "icon": "Art/2DItems/Currency/CurrencyModValues.webp",
+  "beforeRarity": [
+   "Magic",
+   "Rare"
+  ],
+  "afterTrigger": "divine",
+  "type": "Currency"
+ },
+ "fracturing-orb": {
+  "name": "Fracturing Orb",
+  "code": "Metadata/Items/Currency/CurrencyFractureRare",
+  "icon": "Art/2DItems/Currency/FracturingOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "afterTrigger": "fracture",
+  "type": "Currency"
+ },
+ "vaal-orb": {
+  "name": "Perfect Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyCorrupt",
+  "icon": "Art/2DItems/Currency/CurrencyVaal.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "corrupted"
+  ],
+  "afterTrigger": "add_enchant",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "gnawed-collarbone": {
+  "name": "Gnawed Collarbone",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketJewelleryLow",
+  "icon": "Art/2DItems/Currency/Abyss/GnawedClavicle.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforeMax_mod_lv": 64,
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Amulet",
+   "Ring",
+   "Belt"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "preserved-collarbone": {
+  "name": "Preserved Collarbone",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketJewellery",
+  "icon": "Art/2DItems/Currency/Abyss/PreservedCalvicle.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Amulet",
+   "Ring",
+   "Belt"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "ancient-collarbone": {
+  "name": "Ancient Collarbone",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketJewelleryHigh",
+  "icon": "Art/2DItems/Currency/Abyss/AncientClavicle.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforeMin_mod_lv": 40,
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Amulet",
+   "Ring",
+   "Belt"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "gnawed-jawbone": {
+  "name": "Gnawed Jawbone",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketWeaponLow",
+  "icon": "Art/2DItems/Currency/Abyss/GnawedJawbone.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforeMax_mod_lv": 64,
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Claw",
+   "Dagger",
+   "One Hand Sword",
+   "One Hand Axe",
+   "One Hand Mace",
+   "Spear",
+   "Flail",
+   "Warstaff",
+   "Two Hand Sword",
+   "Two Hand Axe",
+   "Two Hand Mace",
+   "Bow",
+   "Crossbow",
+   "Talisman",
+   "Wand",
+   "Sceptre",
+   "Quiver"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "preserved-jawbone": {
+  "name": "Preserved Jawbone",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketWeapon",
+  "icon": "Art/2DItems/Currency/Abyss/PreservedJawbone.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Claw",
+   "Dagger",
+   "One Hand Sword",
+   "One Hand Axe",
+   "One Hand Mace",
+   "Spear",
+   "Flail",
+   "Warstaff",
+   "Two Hand Sword",
+   "Two Hand Axe",
+   "Two Hand Mace",
+   "Bow",
+   "Crossbow",
+   "Talisman",
+   "Wand",
+   "Sceptre",
+   "Quiver"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "ancient-jawbone": {
+  "name": "Ancient Jawbone",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketWeaponHigh",
+  "icon": "Art/2DItems/Currency/Abyss/AncientJawbone.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforeMin_mod_lv": 40,
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Claw",
+   "Dagger",
+   "One Hand Sword",
+   "One Hand Axe",
+   "One Hand Mace",
+   "Spear",
+   "Flail",
+   "Warstaff",
+   "Two Hand Sword",
+   "Two Hand Axe",
+   "Two Hand Mace",
+   "Bow",
+   "Crossbow",
+   "Talisman",
+   "Wand",
+   "Sceptre",
+   "Quiver"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "gnawed-rib": {
+  "name": "Gnawed Rib",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketArmourLow",
+  "icon": "Art/2DItems/Currency/Abyss/GnawedRibs.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforeMax_mod_lv": 64,
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Gloves",
+   "Boots",
+   "Body Armour",
+   "Helmet",
+   "Shield",
+   "Buckler",
+   "Focus"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "ancient-rib": {
+  "name": "Ancient Rib",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketArmour",
+  "icon": "Art/2DItems/Currency/Abyss/AncientRibs.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Gloves",
+   "Boots",
+   "Body Armour",
+   "Helmet",
+   "Shield",
+   "Buckler",
+   "Focus"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "preserved-rib": {
+  "name": "Preserved Rib",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketArmourHigh",
+  "icon": "Art/2DItems/Currency/Abyss/PreservedRibs.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforeMin_mod_lv": 40,
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Gloves",
+   "Boots",
+   "Body Armour",
+   "Helmet",
+   "Shield",
+   "Buckler",
+   "Focus"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "preserved-cranium": {
+  "name": "Preserved Cranium",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketJewel",
+  "icon": "Art/2DItems/Currency/Abyss/PreservedCranium.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Jewel"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "preserved-vertebrae": {
+  "name": "Preserved Vertebrae",
+  "code": "Metadata/Items/Currency/AbyssalBenchTicketWaystone",
+  "icon": "Art/2DItems/Currency/Abyss/PreservedSpine.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "desecrated"
+  ],
+  "beforeClassIds": [
+   "Map"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "omen-of-sinistral-alchemy": {
+  "name": "Omen of Sinistral Alchemy",
+  "code": "Metadata/Items/Currency/OmenOnAlchemyMaximumPrefixes",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens1Green.webp",
+  "reqids": [
+   "alc"
+  ],
+  "exclusives": [
+   "omen-of-dextral-alchemy"
+  ],
+  "gentype_only": 1,
+  "type": "Omen"
+ },
+ "omen-of-dextral-alchemy": {
+  "name": "Omen of Dextral Alchemy",
+  "code": "Metadata/Items/Currency/OmenOnAlchemyMaximumSuffixes",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens2Green.webp",
+  "reqids": [
+   "alc"
+  ],
+  "exclusives": [
+   "omen-of-sinistral-alchemy"
+  ],
+  "gentype_only": 2,
+  "type": "Omen"
+ },
+ "omen-of-sinistral-coronation": {
+  "name": "Omen of Sinistral Coronation",
+  "code": "Metadata/Items/Currency/OmenOnRegalPrefix",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens1Red.webp",
+  "reqids": [
+   "regal",
+   "greater-regal-orb",
+   "perfect-regal-orb"
+  ],
+  "exclusives": [
+   "omen-of-dextral-coronation"
+  ],
+  "gentype_only": 1,
+  "type": "Omen"
+ },
+ "omen-of-dextral-coronation": {
+  "name": "Omen of Dextral Coronation",
+  "code": "Metadata/Items/Currency/OmenOnRegalSuffix",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens2Red.webp",
+  "reqids": [
+   "regal",
+   "greater-regal-orb",
+   "perfect-regal-orb"
+  ],
+  "exclusives": [
+   "omen-of-sinistral-coronation"
+  ],
+  "gentype_only": 2,
+  "type": "Omen"
+ },
+ "omen-of-homogenising-coronation": {
+  "name": "Omen of Homogenising Coronation",
+  "code": "Metadata/Items/Currency/OmenOnRegalAddExistingModType",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnRegalAddExistingModType.webp",
+  "reqids": [
+   "regal",
+   "greater-regal-orb",
+   "perfect-regal-orb"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-greater-exaltation": {
+  "name": "Omen of Greater Exaltation",
+  "code": "Metadata/Items/Currency/OmenOnExaltAddTwoMods",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens1Yellow.webp",
+  "reqids": [
+   "exalted",
+   "greater-exalted-orb",
+   "perfect-exalted-orb"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-sinistral-exaltation": {
+  "name": "Omen of Sinistral Exaltation",
+  "code": "Metadata/Items/Currency/OmenOnExaltAddPrefixes",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens2Yellow.webp",
+  "reqids": [
+   "exalted",
+   "greater-exalted-orb",
+   "perfect-exalted-orb"
+  ],
+  "exclusives": [
+   "omen-of-dextral-exaltation"
+  ],
+  "gentype_only": 1,
+  "type": "Omen"
+ },
+ "omen-of-dextral-exaltation": {
+  "name": "Omen of Dextral Exaltation",
+  "code": "Metadata/Items/Currency/OmenOnExaltAddSuffixes",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens3Yellow.webp",
+  "reqids": [
+   "exalted",
+   "greater-exalted-orb",
+   "perfect-exalted-orb"
+  ],
+  "exclusives": [
+   "omen-of-sinistral-exaltation"
+  ],
+  "gentype_only": 2,
+  "type": "Omen"
+ },
+ "omen-of-homogenising-exaltation": {
+  "name": "Omen of Homogenising Exaltation",
+  "code": "Metadata/Items/Currency/OmenOnExaltAddExistingModType",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnExaltAddExistingModType.webp",
+  "reqids": [
+   "exalted",
+   "greater-exalted-orb",
+   "perfect-exalted-orb"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-catalysing-exaltation": {
+  "name": "Omen of Catalysing Exaltation",
+  "code": "Metadata/Items/Currency/OmenOnExaltConsumeQuality",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnExaltConsumeQuality.webp",
+  "reqids": [
+   "exalted",
+   "greater-exalted-orb",
+   "perfect-exalted-orb"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-greater-annulment": {
+  "name": "Omen of Greater Annulment",
+  "code": "Metadata/Items/Currency/OmenOnAnnulRemoveTwoMods",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens1Purple.webp",
+  "reqids": [
+   "annu"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-sinistral-annulment": {
+  "name": "Omen of Sinistral Annulment",
+  "code": "Metadata/Items/Currency/OmenOnAnnulRemovePrefixes",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens2Purple.webp",
+  "reqids": [
+   "annu"
+  ],
+  "exclusives": [
+   "omen-of-dextral-annulment"
+  ],
+  "gentype_only": 1,
+  "type": "Omen"
+ },
+ "omen-of-dextral-annulment": {
+  "name": "Omen of Dextral Annulment",
+  "code": "Metadata/Items/Currency/OmenOnAnnulRemoveSuffixes",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens3Purple.webp",
+  "reqids": [
+   "annu"
+  ],
+  "exclusives": [
+   "omen-of-sinistral-annulment"
+  ],
+  "gentype_only": 2,
+  "type": "Omen"
+ },
+ "omen-of-light": {
+  "name": "Omen of Light",
+  "code": "Metadata/Items/Currency/OmenOnAnnulRemoveAbyssMod",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAnnulRemoveAbyssMod.webp",
+  "reqids": [
+   "annu"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-whittling": {
+  "name": "Omen of Whittling",
+  "code": "Metadata/Items/Currency/OmenOnChaosLowestLevelMod",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens1Dark.webp",
+  "reqids": [
+   "chaos",
+   "greater-chaos-orb",
+   "perfect-chaos-orb"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-sinistral-erasure": {
+  "name": "Omen of Sinistral Erasure",
+  "code": "Metadata/Items/Currency/OmenOnChaosPrefix",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens2Dark.webp",
+  "reqids": [
+   "chaos",
+   "greater-chaos-orb",
+   "perfect-chaos-orb"
+  ],
+  "exclusives": [
+   "omen-of-dextral-erasure"
+  ],
+  "gentype_only": 1,
+  "type": "Omen"
+ },
+ "omen-of-dextral-erasure": {
+  "name": "Omen of Dextral Erasure",
+  "code": "Metadata/Items/Currency/OmenOnChaosSuffix",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens3Dark.webp",
+  "reqids": [
+   "chaos",
+   "greater-chaos-orb",
+   "perfect-chaos-orb"
+  ],
+  "exclusives": [
+   "omen-of-sinistral-erasure"
+  ],
+  "gentype_only": 2,
+  "type": "Omen"
+ },
+ "omen-of-abyssal-echoes": {
+  "name": "Omen of Abyssal Echoes",
+  "code": "Metadata/Items/Currency/OmenOnAbyssRerollOptions",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssRerollOptions.webp",
+  "reqpool": "desecrated",
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-the-sovereign": {
+  "name": "Omen of the Sovereign",
+  "code": "Metadata/Items/Currency/OmenOnAbyssGuarenteeLichTypeMod1",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssGuarenteedLichTypeMod1.webp",
+  "reqpool": "desecrated",
+  "exclusives": [
+   "omen-of-the-liege",
+   "omen-of-the-blackblooded"
+  ],
+  "harvest_only": [
+   "ulaman_mod"
+  ],
+  "beforeClassIds": [
+   "Claw",
+   "Dagger",
+   "One Hand Sword",
+   "One Hand Axe",
+   "One Hand Mace",
+   "Spear",
+   "Flail",
+   "Warstaff",
+   "Two Hand Sword",
+   "Two Hand Axe",
+   "Two Hand Mace",
+   "Bow",
+   "Crossbow",
+   "Talisman",
+   "Wand",
+   "Sceptre",
+   "Ring",
+   "Amulet",
+   "Belt"
+  ],
+  "type": "Omen"
+ },
+ "omen-of-the-liege": {
+  "name": "Omen of the Liege",
+  "code": "Metadata/Items/Currency/OmenOnAbyssGuarenteeLichTypeMod2",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssGuarenteedLichTypeMod1.webp",
+  "reqpool": "desecrated",
+  "exclusives": [
+   "omen-of-the-sovereign",
+   "omen-of-the-blackblooded"
+  ],
+  "harvest_only": [
+   "amanamu_mod"
+  ],
+  "beforeClassIds": [
+   "Claw",
+   "Dagger",
+   "One Hand Sword",
+   "One Hand Axe",
+   "One Hand Mace",
+   "Spear",
+   "Flail",
+   "Warstaff",
+   "Two Hand Sword",
+   "Two Hand Axe",
+   "Two Hand Mace",
+   "Bow",
+   "Crossbow",
+   "Talisman",
+   "Wand",
+   "Sceptre",
+   "Ring",
+   "Amulet",
+   "Belt"
+  ],
+  "type": "Omen"
+ },
+ "omen-of-the-blackblooded": {
+  "name": "Omen of the Blackblooded",
+  "code": "Metadata/Items/Currency/OmenOnAbyssGuarenteeLichTypeMod3",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssGuarenteedLichTypeMod3.webp",
+  "reqpool": "desecrated",
+  "exclusives": [
+   "omen-of-the-sovereign",
+   "omen-of-the-liege"
+  ],
+  "harvest_only": [
+   "kurgal_mod"
+  ],
+  "beforeClassIds": [
+   "Claw",
+   "Dagger",
+   "One Hand Sword",
+   "One Hand Axe",
+   "One Hand Mace",
+   "Spear",
+   "Flail",
+   "Warstaff",
+   "Two Hand Sword",
+   "Two Hand Axe",
+   "Two Hand Mace",
+   "Bow",
+   "Crossbow",
+   "Talisman",
+   "Wand",
+   "Sceptre",
+   "Ring",
+   "Amulet",
+   "Belt"
+  ],
+  "type": "Omen"
+ },
+ "omen-of-the-putrefaction": {
+  "name": "Omen of the Putrefaction",
+  "code": "Metadata/Items/Currency/OmenOnAbyssVeilAllAndCorrupt",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssVeilAllAndCorrupt.webp",
+  "reqpool": "desecrated",
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-sinistral-necromancy": {
+  "name": "Omen of Sinistral Necromancy",
+  "code": "Metadata/Items/Currency/OmenOnAbyssAddPrefixes",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssAddPrefixes.webp",
+  "reqpool": "desecrated",
+  "exclusives": [
+   "omen-of-dextral-necromancy"
+  ],
+  "gentype_only": 1,
+  "type": "Omen"
+ },
+ "omen-of-dextral-necromancy": {
+  "name": "Omen of Dextral Necromancy",
+  "code": "Metadata/Items/Currency/OmenOnAbyssAddSuffixes",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnAbyssAddSuffixes.webp",
+  "reqpool": "desecrated",
+  "exclusives": [
+   "omen-of-sinistral-necromancy"
+  ],
+  "gentype_only": 2,
+  "type": "Omen"
+ },
+ "omen-of-corruption": {
+  "name": "Omen of Corruption",
+  "code": "Metadata/Items/Currency/OmenOnVaalRemoveDoNothingOutcome",
+  "icon": "Art/2DItems/Currency/Omens/VoodooOmens3Red.webp",
+  "reqids": [
+   "vaal-orb"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-the-blessed": {
+  "name": "Omen of the Blessed",
+  "code": "Metadata/Items/Currency/OmenOnDivineRerollImplicits",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnDivineRerollImplicits.webp",
+  "reqids": [
+   "divine"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-sanctification": {
+  "name": "Omen of Sanctification",
+  "code": "Metadata/Items/Currency/OmenOnDivineSanctify",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnDivineSanctify.webp",
+  "reqids": [
+   "divine"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "greater-essences": {
+  "name": "Greater Essences",
+  "icon": "Art/2DItems/Currency/Essence/GreaterAttributeEssence.webp",
+  "beforeRarity": [
+   "Magic"
+  ],
+  "beforePools": [
+   "essence"
+  ],
+  "type": "Group"
+ },
+ "perfect-essences": {
+  "name": "Perfect Essences",
+  "icon": "Art/2DItems/Currency/Essence/AttributeEssencePerfect.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "perfect_essence"
+  ],
+  "type": "Group"
+ },
+ "omen-of-dextral-crystallisation": {
+  "name": "Omen of Dextral Crystallisation",
+  "code": "Metadata/Items/Currency/OmenOnPerfectEssenceSuffix",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnPerfectEssenceSuffix.webp",
+  "reqids": [
+   "perfect-essences"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ },
+ "omen-of-sinistral-crystallisation": {
+  "name": "Omen of Sinistral Crystallisation",
+  "code": "Metadata/Items/Currency/OmenOnPerfectEssencePrefix",
+  "icon": "Art/2DItems/Currency/Omens/OmenOnPerfectEssencePrefix.webp",
+  "reqids": [
+   "perfect-essences"
+  ],
+  "class": "disabled",
+  "type": "Omen"
+ }
+}

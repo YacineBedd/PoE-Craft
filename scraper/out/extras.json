@@ -1,0 +1,5014 @@
+{
+ "essences": [
+  {
+   "name": "Lesser Essence of Abrasion",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "PhysicalDamage",
+   "text": "Adds {0} to {1} Physical Damage",
+   "v": [
+    [
+     4,
+     8
+    ],
+    [
+     7,
+     15
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_abrasion_adds_#_to_#_physical_damage"
+  },
+  {
+   "name": "Lesser Essence of Alacrity",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "IncreasedCastSpeed",
+   "text": "{0}% increased Cast Speed",
+   "v": [
+    [
+     13,
+     25
+    ]
+   ],
+   "modLevel": 15,
+   "reqLevel": 12,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "lesser_essence_of_alacrity_#_increased_cast_speed"
+  },
+  {
+   "name": "Lesser Essence of Battle",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedAccuracy",
+   "text": "+{0} to Accuracy Rating",
+   "v": [
+    [
+     61,
+     84
+    ]
+   ],
+   "modLevel": 18,
+   "reqLevel": 14,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_battle_#_to_accuracy_rating"
+  },
+  {
+   "name": "Lesser Essence of Command",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "AllDamage",
+   "text": "Allies in your Presence deal {0}% increased Damage",
+   "v": [
+    [
+     35,
+     44
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "lesser_essence_of_command_allies_in_your_presence_deal_#_inc"
+  },
+  {
+   "name": "Lesser Essence of Electricity",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "LightningDamage",
+   "text": "Adds 1 to {0} Lightning Damage",
+   "v": [
+    [
+     13,
+     19
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Bows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Spears"
+   ],
+   "id": "lesser_essence_of_electricity_adds_1_to_#_lightning_damage"
+  },
+  {
+   "name": "Lesser Essence of Electricity",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "LightningDamage",
+   "text": "Adds {0} to {1} Lightning Damage",
+   "v": [
+    [
+     1,
+     2
+    ],
+    [
+     19,
+     27
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Crossbows",
+    "Quarterstaves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_electricity_adds_#_to_#_lightning_damage"
+  },
+  {
+   "name": "Lesser Essence of Enhancement",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "DefencesPercent",
+   "text": "{0}% increased Armour, Evasion and Energy Shield",
+   "v": [
+    [
+     27,
+     42
+    ]
+   ],
+   "modLevel": 16,
+   "reqLevel": 12,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "lesser_essence_of_enhancement_#_increased_armour_evasion_and"
+  },
+  {
+   "name": "Lesser Essence of Flames",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "FireDamage",
+   "text": "Adds {0} to {1} Fire Damage",
+   "v": [
+    [
+     4,
+     9
+    ],
+    [
+     7,
+     16
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_flames_adds_#_to_#_fire_damage"
+  },
+  {
+   "name": "Lesser Essence of Grounding",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "LightningResistance",
+   "text": "+{0}% to Lightning Resistance",
+   "v": [
+    [
+     11,
+     15
+    ]
+   ],
+   "modLevel": 13,
+   "reqLevel": 10,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "lesser_essence_of_grounding_#_to_lightning_resistance"
+  },
+  {
+   "name": "Lesser Essence of Haste",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "IncreasedAttackSpeed",
+   "text": "{0}% increased Attack Speed",
+   "v": [
+    [
+     8,
+     13
+    ]
+   ],
+   "modLevel": 11,
+   "reqLevel": 8,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_haste_#_increased_attack_speed"
+  },
+  {
+   "name": "Lesser Essence of Ice",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "ColdDamage",
+   "text": "Adds {0} to {1} Cold Damage",
+   "v": [
+    [
+     3,
+     8
+    ],
+    [
+     6,
+     14
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_ice_adds_#_to_#_cold_damage"
+  },
+  {
+   "name": "Lesser Essence of Insulation",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "FireResistance",
+   "text": "+{0}% to Fire Resistance",
+   "v": [
+    [
+     11,
+     15
+    ]
+   ],
+   "modLevel": 12,
+   "reqLevel": 9,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "lesser_essence_of_insulation_#_to_fire_resistance"
+  },
+  {
+   "name": "Lesser Essence of Opulence",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ItemFoundRarityIncrease",
+   "text": "{0}% increased Rarity of Items found",
+   "v": [
+    [
+     6,
+     10
+    ]
+   ],
+   "modLevel": 3,
+   "reqLevel": 2,
+   "classes": [
+    "Amulets",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings"
+   ],
+   "id": "lesser_essence_of_opulence_#_increased_rarity_of_items_found"
+  },
+  {
+   "name": "Lesser Essence of Ruin",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ChaosResistance",
+   "text": "+{0}% to Chaos Resistance",
+   "v": [
+    [
+     4,
+     7
+    ]
+   ],
+   "modLevel": 16,
+   "reqLevel": 12,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "lesser_essence_of_ruin_#_to_chaos_resistance"
+  },
+  {
+   "name": "Lesser Essence of Seeking",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "CriticalStrikeChanceIncrease",
+   "text": "+{0}% to Critical Hit Chance",
+   "v": [
+    [
+     1.51,
+     2.1
+    ]
+   ],
+   "modLevel": 20,
+   "reqLevel": 16,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "lesser_essence_of_seeking_#_to_critical_hit_chance"
+  },
+  {
+   "name": "Lesser Essence of Seeking",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "SpellCriticalStrikeChanceIncrease",
+   "text": "{0}% increased Critical Hit Chance for Spells",
+   "v": [
+    [
+     34,
+     59
+    ]
+   ],
+   "modLevel": 21,
+   "reqLevel": 16,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "lesser_essence_of_seeking_#_increased_critical_hit_chance_fo"
+  },
+  {
+   "name": "Lesser Essence of Sorcery",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "WeaponCasterDamagePrefix",
+   "text": "{0}% increased Spell Damage",
+   "v": [
+    [
+     35,
+     88
+    ]
+   ],
+   "modLevel": 8,
+   "reqLevel": 6,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "lesser_essence_of_sorcery_#_increased_spell_damage"
+  },
+  {
+   "name": "Lesser Essence of Thawing",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ColdResistance",
+   "text": "+{0}% to Cold Resistance",
+   "v": [
+    [
+     11,
+     15
+    ]
+   ],
+   "modLevel": 14,
+   "reqLevel": 11,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "lesser_essence_of_thawing_#_to_cold_resistance"
+  },
+  {
+   "name": "Lesser Essence of the Body",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedLife",
+   "text": "+{0} to maximum Life",
+   "v": [
+    [
+     20,
+     39
+    ]
+   ],
+   "modLevel": 6,
+   "reqLevel": 4,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "lesser_essence_of_the_body_#_to_maximum_life"
+  },
+  {
+   "name": "Lesser Essence of the Infinite",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "Strength",
+   "text": "+{0} to Strength, Dexterity or Intelligence",
+   "v": [
+    [
+     9,
+     12
+    ]
+   ],
+   "modLevel": 11,
+   "reqLevel": 8,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bows",
+    "Bucklers",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Rings",
+    "Sceptres",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "lesser_essence_of_the_infinite_#_to_strength_dexterity_or_in"
+  },
+  {
+   "name": "Lesser Essence of the Mind",
+   "tier": "lesser",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedMana",
+   "text": "+{0} to maximum Mana",
+   "v": [
+    [
+     25,
+     34
+    ]
+   ],
+   "modLevel": 16,
+   "reqLevel": 12,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings"
+   ],
+   "id": "lesser_essence_of_the_mind_#_to_maximum_mana"
+  },
+  {
+   "name": "Essence of Abrasion",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "PhysicalDamage",
+   "text": "Adds {0} to {1} Physical Damage",
+   "v": [
+    [
+     10,
+     21
+    ],
+    [
+     18,
+     37
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_abrasion_adds_#_to_#_physical_damage"
+  },
+  {
+   "name": "Essence of Alacrity",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "IncreasedCastSpeed",
+   "text": "{0}% increased Cast Speed",
+   "v": [
+    [
+     17,
+     31
+    ]
+   ],
+   "modLevel": 30,
+   "reqLevel": 24,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "essence_of_alacrity_#_increased_cast_speed"
+  },
+  {
+   "name": "Essence of Battle",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedAccuracy",
+   "text": "+{0} to Accuracy Rating",
+   "v": [
+    [
+     124,
+     167
+    ]
+   ],
+   "modLevel": 36,
+   "reqLevel": 28,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_battle_#_to_accuracy_rating"
+  },
+  {
+   "name": "Essence of Command",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "AllDamage",
+   "text": "Allies in your Presence deal {0}% increased Damage",
+   "v": [
+    [
+     55,
+     64
+    ]
+   ],
+   "modLevel": 33,
+   "reqLevel": 26,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "essence_of_command_allies_in_your_presence_deal_#_increased_"
+  },
+  {
+   "name": "Essence of Electricity",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "LightningDamage",
+   "text": "Adds {0} to {1} Lightning Damage",
+   "v": [
+    [
+     1,
+     4
+    ],
+    [
+     55,
+     88
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_electricity_adds_#_to_#_lightning_damage"
+  },
+  {
+   "name": "Essence of Enhancement",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "DefencesPercent",
+   "text": "{0}% increased Armour, Evasion and Energy Shield",
+   "v": [
+    [
+     56,
+     67
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_enhancement_#_increased_armour_evasion_and_energy"
+  },
+  {
+   "name": "Essence of Flames",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "FireDamage",
+   "text": "Adds {0} to {1} Fire Damage",
+   "v": [
+    [
+     20,
+     37
+    ],
+    [
+     32,
+     56
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_flames_adds_#_to_#_fire_damage"
+  },
+  {
+   "name": "Essence of Grounding",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "LightningResistance",
+   "text": "+{0}% to Lightning Resistance",
+   "v": [
+    [
+     21,
+     25
+    ]
+   ],
+   "modLevel": 37,
+   "reqLevel": 29,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_grounding_#_to_lightning_resistance"
+  },
+  {
+   "name": "Essence of Haste",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "IncreasedAttackSpeed",
+   "text": "{0}% increased Attack Speed",
+   "v": [
+    [
+     11,
+     19
+    ]
+   ],
+   "modLevel": 22,
+   "reqLevel": 17,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_haste_#_increased_attack_speed"
+  },
+  {
+   "name": "Essence of Ice",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "ColdDamage",
+   "text": "Adds {0} to {1} Cold Damage",
+   "v": [
+    [
+     17,
+     30
+    ],
+    [
+     26,
+     46
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_ice_adds_#_to_#_cold_damage"
+  },
+  {
+   "name": "Essence of Insulation",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "FireResistance",
+   "text": "+{0}% to Fire Resistance",
+   "v": [
+    [
+     21,
+     25
+    ]
+   ],
+   "modLevel": 36,
+   "reqLevel": 28,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_insulation_#_to_fire_resistance"
+  },
+  {
+   "name": "Essence of Opulence",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ItemFoundRarityIncrease",
+   "text": "{0}% increased Rarity of Items found",
+   "v": [
+    [
+     11,
+     14
+    ]
+   ],
+   "modLevel": 24,
+   "reqLevel": 19,
+   "classes": [
+    "Amulets",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings"
+   ],
+   "id": "essence_of_opulence_#_increased_rarity_of_items_found"
+  },
+  {
+   "name": "Essence of Ruin",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ChaosResistance",
+   "text": "+{0}% to Chaos Resistance",
+   "v": [
+    [
+     8,
+     11
+    ]
+   ],
+   "modLevel": 30,
+   "reqLevel": 24,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_ruin_#_to_chaos_resistance"
+  },
+  {
+   "name": "Essence of Seeking",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "CriticalStrikeChanceIncrease",
+   "text": "+{0}% to Critical Hit Chance",
+   "v": [
+    [
+     2.11,
+     2.7
+    ]
+   ],
+   "modLevel": 30,
+   "reqLevel": 24,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "essence_of_seeking_#_to_critical_hit_chance"
+  },
+  {
+   "name": "Essence of Seeking",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "SpellCriticalStrikeChanceIncrease",
+   "text": "{0}% increased Critical Hit Chance for Spells",
+   "v": [
+    [
+     40,
+     69
+    ]
+   ],
+   "modLevel": 28,
+   "reqLevel": 22,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "essence_of_seeking_#_increased_critical_hit_chance_for_spell"
+  },
+  {
+   "name": "Essence of Sorcery",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "WeaponCasterDamagePrefix",
+   "text": "{0}% increased Spell Damage",
+   "v": [
+    [
+     55,
+     128
+    ]
+   ],
+   "modLevel": 33,
+   "reqLevel": 26,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "essence_of_sorcery_#_increased_spell_damage"
+  },
+  {
+   "name": "Essence of Thawing",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ColdResistance",
+   "text": "+{0}% to Cold Resistance",
+   "v": [
+    [
+     21,
+     25
+    ]
+   ],
+   "modLevel": 38,
+   "reqLevel": 30,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_thawing_#_to_cold_resistance"
+  },
+  {
+   "name": "Essence of the Body",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedLife",
+   "text": "+{0} to maximum Life",
+   "v": [
+    [
+     70,
+     99
+    ]
+   ],
+   "modLevel": 38,
+   "reqLevel": 30,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_the_body_#_to_maximum_life"
+  },
+  {
+   "name": "Essence of the Infinite",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "Strength",
+   "text": "+{0} to Strength, Dexterity or Intelligence",
+   "v": [
+    [
+     17,
+     20
+    ]
+   ],
+   "modLevel": 33,
+   "reqLevel": 26,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bows",
+    "Bucklers",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Rings",
+    "Sceptres",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "essence_of_the_infinite_#_to_strength_dexterity_or_intellige"
+  },
+  {
+   "name": "Essence of the Mind",
+   "tier": "normal",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedMana",
+   "text": "+{0} to maximum Mana",
+   "v": [
+    [
+     65,
+     89
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings"
+   ],
+   "id": "essence_of_the_mind_#_to_maximum_mana"
+  },
+  {
+   "name": "Greater Essence of Abrasion",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "PhysicalDamage",
+   "text": "Adds {0} to {1} Physical Damage",
+   "v": [
+    [
+     16,
+     35
+    ],
+    [
+     28,
+     59
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_abrasion_adds_#_to_#_physical_damage"
+  },
+  {
+   "name": "Greater Essence of Alacrity",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "IncreasedCastSpeed",
+   "text": "{0}% increased Cast Speed",
+   "v": [
+    [
+     25,
+     43
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "greater_essence_of_alacrity_#_increased_cast_speed"
+  },
+  {
+   "name": "Greater Essence of Battle",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedAccuracy",
+   "text": "+{0} to Accuracy Rating",
+   "v": [
+    [
+     237,
+     346
+    ]
+   ],
+   "modLevel": 58,
+   "reqLevel": 46,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_battle_#_to_accuracy_rating"
+  },
+  {
+   "name": "Greater Essence of Command",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "AllDamage",
+   "text": "Allies in your Presence deal {0}% increased Damage",
+   "v": [
+    [
+     75,
+     89
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "greater_essence_of_command_allies_in_your_presence_deal_#_in"
+  },
+  {
+   "name": "Greater Essence of Electricity",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "LightningDamage",
+   "text": "Adds {0} to {1} Lightning Damage",
+   "v": [
+    [
+     1,
+     8
+    ],
+    [
+     85,
+     162
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_electricity_adds_#_to_#_lightning_damage"
+  },
+  {
+   "name": "Greater Essence of Enhancement",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "DefencesPercent",
+   "text": "{0}% increased Armour, Evasion and Energy Shield",
+   "v": [
+    [
+     68,
+     79
+    ]
+   ],
+   "modLevel": 54,
+   "reqLevel": 43,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "greater_essence_of_enhancement_#_increased_armour_evasion_an"
+  },
+  {
+   "name": "Greater Essence of Flames",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "FireDamage",
+   "text": "Adds {0} to {1} Fire Damage",
+   "v": [
+    [
+     35,
+     70
+    ],
+    [
+     56,
+     107
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_flames_adds_#_to_#_fire_damage"
+  },
+  {
+   "name": "Greater Essence of Grounding",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "LightningResistance",
+   "text": "+{0}% to Lightning Resistance",
+   "v": [
+    [
+     31,
+     35
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "greater_essence_of_grounding_#_to_lightning_resistance"
+  },
+  {
+   "name": "Greater Essence of Haste",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "IncreasedAttackSpeed",
+   "text": "{0}% increased Attack Speed",
+   "v": [
+    [
+     14,
+     25
+    ]
+   ],
+   "modLevel": 30,
+   "reqLevel": 24,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_haste_#_increased_attack_speed"
+  },
+  {
+   "name": "Greater Essence of Ice",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "ColdDamage",
+   "text": "Adds {0} to {1} Cold Damage",
+   "v": [
+    [
+     31,
+     57
+    ],
+    [
+     47,
+     88
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_ice_adds_#_to_#_cold_damage"
+  },
+  {
+   "name": "Greater Essence of Insulation",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "FireResistance",
+   "text": "+{0}% to Fire Resistance",
+   "v": [
+    [
+     31,
+     35
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "greater_essence_of_insulation_#_to_fire_resistance"
+  },
+  {
+   "name": "Greater Essence of Opulence",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ItemFoundRarityIncrease",
+   "text": "{0}% increased Rarity of Items found",
+   "v": [
+    [
+     15,
+     18
+    ]
+   ],
+   "modLevel": 40,
+   "reqLevel": 32,
+   "classes": [
+    "Amulets",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings"
+   ],
+   "id": "greater_essence_of_opulence_#_increased_rarity_of_items_foun"
+  },
+  {
+   "name": "Greater Essence of Ruin",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ChaosResistance",
+   "text": "+{0}% to Chaos Resistance",
+   "v": [
+    [
+     16,
+     19
+    ]
+   ],
+   "modLevel": 56,
+   "reqLevel": 44,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "greater_essence_of_ruin_#_to_chaos_resistance"
+  },
+  {
+   "name": "Greater Essence of Seeking",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "CriticalStrikeChanceIncrease",
+   "text": "+{0}% to Critical Hit Chance",
+   "v": [
+    [
+     3.11,
+     3.8
+    ]
+   ],
+   "modLevel": 44,
+   "reqLevel": 35,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "greater_essence_of_seeking_#_to_critical_hit_chance"
+  },
+  {
+   "name": "Greater Essence of Seeking",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "SpellCriticalStrikeChanceIncrease",
+   "text": "{0}% increased Critical Hit Chance for Spells",
+   "v": [
+    [
+     47,
+     79
+    ]
+   ],
+   "modLevel": 41,
+   "reqLevel": 32,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "greater_essence_of_seeking_#_increased_critical_hit_chance_f"
+  },
+  {
+   "name": "Greater Essence of Sorcery",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "WeaponCasterDamagePrefix",
+   "text": "{0}% increased Spell Damage",
+   "v": [
+    [
+     75,
+     188
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "greater_essence_of_sorcery_#_increased_spell_damage"
+  },
+  {
+   "name": "Greater Essence of Thawing",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "ColdResistance",
+   "text": "+{0}% to Cold Resistance",
+   "v": [
+    [
+     31,
+     35
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "greater_essence_of_thawing_#_to_cold_resistance"
+  },
+  {
+   "name": "Greater Essence of the Body",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedLife",
+   "text": "+{0} to maximum Life",
+   "v": [
+    [
+     85,
+     119
+    ]
+   ],
+   "modLevel": 46,
+   "reqLevel": 36,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "greater_essence_of_the_body_#_to_maximum_life"
+  },
+  {
+   "name": "Greater Essence of the Infinite",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "suffix",
+   "group": "Strength",
+   "text": "+{0} to Strength, Dexterity or Intelligence",
+   "v": [
+    [
+     25,
+     27
+    ]
+   ],
+   "modLevel": 55,
+   "reqLevel": 44,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bows",
+    "Bucklers",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Rings",
+    "Sceptres",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "greater_essence_of_the_infinite_#_to_strength_dexterity_or_i"
+  },
+  {
+   "name": "Greater Essence of the Mind",
+   "tier": "greater",
+   "pool": "essence",
+   "affix": "prefix",
+   "group": "IncreasedMana",
+   "text": "+{0} to maximum Mana",
+   "v": [
+    [
+     80,
+     104
+    ]
+   ],
+   "modLevel": 54,
+   "reqLevel": 43,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Rings"
+   ],
+   "id": "greater_essence_of_the_mind_#_to_maximum_mana"
+  },
+  {
+   "name": "Perfect Essence of Abrasion",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MartialWeaponGainedDamage",
+   "text": "Gain {0}% of Damage as Extra Physical Damage",
+   "v": [
+    [
+     15,
+     33
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "perfect_essence_of_abrasion_gain_#_of_damage_as_extra_physic"
+  },
+  {
+   "name": "Perfect Essence of Alacrity",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ManaCostEfficiency",
+   "text": "{0}% increased Mana Cost Efficiency",
+   "v": [
+    [
+     18,
+     32
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "perfect_essence_of_alacrity_#_increased_mana_cost_efficiency"
+  },
+  {
+   "name": "Perfect Essence of Battle",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreaseSocketedGemLevel",
+   "text": "+{0} to Level of all Attack Skills",
+   "v": [
+    [
+     2,
+     3
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "perfect_essence_of_battle_#_to_level_of_all_attack_skills"
+  },
+  {
+   "name": "Perfect Essence of Command",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "AuraEffect",
+   "text": "Aura Skills have {0}% increased Magnitudes",
+   "v": [
+    [
+     15,
+     20
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "perfect_essence_of_command_aura_skills_have_#_increased_magn"
+  },
+  {
+   "name": "Perfect Essence of Electricity",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MartialWeaponGainedDamage",
+   "text": "Gain {0}% of Damage as Extra Lightning Damage",
+   "v": [
+    [
+     15,
+     33
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "perfect_essence_of_electricity_gain_#_of_damage_as_extra_lig"
+  },
+  {
+   "name": "Perfect Essence of Enhancement",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "AllDefences",
+   "text": "{0}% increased Global Armour, Evasion and Energy Shield",
+   "v": [
+    [
+     20,
+     30
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Amulets"
+   ],
+   "id": "perfect_essence_of_enhancement_#_increased_global_armour_eva"
+  },
+  {
+   "name": "Perfect Essence of Flames",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MartialWeaponGainedDamage",
+   "text": "Gain {0}% of Damage as Extra Fire Damage",
+   "v": [
+    [
+     15,
+     33
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "perfect_essence_of_flames_gain_#_of_damage_as_extra_fire_dam"
+  },
+  {
+   "name": "Perfect Essence of Grounding",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "LightningDamageTakenRecoupedAsLife",
+   "text": "{0}% of Lightning Damage taken Recouped as Life",
+   "v": [
+    [
+     26,
+     30
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "perfect_essence_of_grounding_#_of_lightning_damage_taken_rec"
+  },
+  {
+   "name": "Perfect Essence of Haste",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "Onslaught",
+   "text": "{0}% chance to gain Onslaught on Killing Hits with this Weapon",
+   "v": [
+    [
+     20,
+     25
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "perfect_essence_of_haste_#_chance_to_gain_onslaught_on_killi"
+  },
+  {
+   "name": "Perfect Essence of Ice",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MartialWeaponGainedDamage",
+   "text": "Gain {0}% of Damage as Extra Cold Damage",
+   "v": [
+    [
+     15,
+     33
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "perfect_essence_of_ice_gain_#_of_damage_as_extra_cold_damage"
+  },
+  {
+   "name": "Perfect Essence of Insulation",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "FireDamageTakenRecoupedAsLife",
+   "text": "{0}% of Fire Damage taken Recouped as Life",
+   "v": [
+    [
+     26,
+     30
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Belts"
+   ],
+   "id": "perfect_essence_of_insulation_#_of_fire_damage_taken_recoupe"
+  },
+  {
+   "name": "Perfect Essence of Opulence",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "EssenceGoldDropped",
+   "text": "{0}% increased Quantity of Gold Dropped by Slain Enemies",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "perfect_essence_of_opulence_#_increased_quantity_of_gold_dro"
+  },
+  {
+   "name": "Perfect Essence of Ruin",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "PhysicalDamageTakenAsChaos",
+   "text": "{0}% of Physical Damage from Hits taken as Chaos Damage",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "perfect_essence_of_ruin_#_of_physical_damage_from_hits_taken"
+  },
+  {
+   "name": "Perfect Essence of Seeking",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ReducedCriticalStrikeDamageTaken",
+   "text": "Hits against you have {0}% reduced Critical Damage Bonus",
+   "v": [
+    [
+     40,
+     50
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "perfect_essence_of_seeking_hits_against_you_have_#_reduced_c"
+  },
+  {
+   "name": "Perfect Essence of Sorcery",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreaseSocketedGemLevel",
+   "text": "+{0} to Level of all Spell Skills",
+   "v": [
+    [
+     3,
+     5
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Staves",
+    "Wands"
+   ],
+   "id": "perfect_essence_of_sorcery_#_to_level_of_all_spell_skills"
+  },
+  {
+   "name": "Perfect Essence of Thawing",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ColdDamageTakenRecoupedAsLife",
+   "text": "{0}% of Cold Damage taken Recouped as Life",
+   "v": [
+    [
+     26,
+     30
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int"
+   ],
+   "id": "perfect_essence_of_thawing_#_of_cold_damage_taken_recouped_a"
+  },
+  {
+   "name": "Perfect Essence of the Body",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MaximumLifeIncreasePercent",
+   "text": "{0}% increased maximum Life",
+   "v": [
+    [
+     8,
+     10
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "perfect_essence_of_the_body_#_increased_maximum_life"
+  },
+  {
+   "name": "Perfect Essence of the Infinite",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "PercentageStrength",
+   "text": "{0}% increased Strength, Dexterity or Intelligence",
+   "v": [
+    [
+     7,
+     10
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Amulets"
+   ],
+   "id": "perfect_essence_of_the_infinite_#_increased_strength_dexteri"
+  },
+  {
+   "name": "Perfect Essence of the Mind",
+   "tier": "perfect",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MaximumManaIncreasePercent",
+   "text": "{0}% increased maximum Mana",
+   "v": [
+    [
+     4,
+     6
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Rings"
+   ],
+   "id": "perfect_essence_of_the_mind_#_increased_maximum_mana"
+  },
+  {
+   "name": "Adaptive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MinionGainPuppetMasterOnCommand",
+   "text": "{0}% Surpassing Chance to gain a Puppet Master stack whenever you use a Command Skill",
+   "v": [
+    [
+     30,
+     50
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "adaptive_alloy_#_surpassing_chance_to_gain_a_puppet_master_s"
+  },
+  {
+   "name": "Adaptive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "FireDamage",
+   "text": "Gain {0}% of Damage as Extra Fire Damage while you are missing Runic Ward",
+   "v": [
+    [
+     21,
+     52
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Staves",
+    "Wands"
+   ],
+   "id": "adaptive_alloy_gain_#_of_damage_as_extra_fire_damage_while_y"
+  },
+  {
+   "name": "Adaptive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreasedAttackSpeed",
+   "text": "{0}% increased Attack Speed while missing Runic Ward",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "adaptive_alloy_#_increased_attack_speed_while_missing_runic_"
+  },
+  {
+   "name": "Celestial Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "IncreasedAccuracy",
+   "text": "+{0} to Accuracy Rating\n{1}% increased Attack Speed",
+   "v": [
+    [
+     327,
+     427
+    ],
+    [
+     5,
+     8
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "celestial_alloy_#_to_accuracy_rating_#_increased_attack_spee"
+  },
+  {
+   "name": "Celestial Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "IncreasedMana",
+   "text": "+{0} to maximum Mana\n+1 to Level of all Spell Skills",
+   "v": [
+    [
+     142,
+     188
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Staves",
+    "Wands"
+   ],
+   "id": "celestial_alloy_#_to_maximum_mana_1_to_level_of_all_spell_sk"
+  },
+  {
+   "name": "Cyclonic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "SlowPotency",
+   "text": "{0}% reduced Slowing Potency of Debuffs on You",
+   "v": [
+    [
+     15,
+     30
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "cyclonic_alloy_#_reduced_slowing_potency_of_debuffs_on_you"
+  },
+  {
+   "name": "Cyclonic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "SkillEffectDuration",
+   "text": "{0}% increased Skill Effect Duration",
+   "v": [
+    [
+     15,
+     19
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int"
+   ],
+   "id": "cyclonic_alloy_#_increased_skill_effect_duration"
+  },
+  {
+   "name": "Cyclonic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "DamagingAilmentDuration",
+   "text": "{0}% increased Duration of Damaging Ailments on Enemies",
+   "v": [
+    [
+     20,
+     25
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "cyclonic_alloy_#_increased_duration_of_damaging_ailments_on_"
+  },
+  {
+   "name": "Cyclonic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ArchonDuration",
+   "text": "{0}% increased Archon Buff duration",
+   "v": [
+    [
+     35,
+     42
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int"
+   ],
+   "id": "cyclonic_alloy_#_increased_archon_buff_duration"
+  },
+  {
+   "name": "Essence of Delirium",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "EssenceGrantedPassive",
+   "text": "Allocates a random Notable Passive Skill",
+   "v": [],
+   "modLevel": 1,
+   "reqLevel": 0,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "essence_of_delirium_allocates_a_random_notable_passive_skill"
+  },
+  {
+   "name": "Essence of Horror",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "SoulCore",
+   "text": "{0}% increased effect of Socketed Augment Items",
+   "v": [
+    [
+     60,
+     60
+    ]
+   ],
+   "modLevel": 1,
+   "reqLevel": 0,
+   "classes": [
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "essence_of_horror_#_increased_effect_of_socketed_augment_ite"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "Thorns",
+   "text": "{0} to {1} Physical Thorns damage",
+   "v": [
+    [
+     64,
+     97
+    ],
+    [
+     98,
+     145
+    ]
+   ],
+   "modLevel": 63,
+   "reqLevel": 50,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "essence_of_hysteria_#_to_#_physical_thorns_damage"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "MovementVelocity",
+   "text": "{0}% increased Movement Speed",
+   "v": [
+    [
+     30,
+     30
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int"
+   ],
+   "id": "essence_of_hysteria_#_increased_movement_speed"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "IncreasedShieldBlockPercentage",
+   "text": "{0}% increased Block chance",
+   "v": [
+    [
+     20,
+     24
+    ]
+   ],
+   "modLevel": 33,
+   "reqLevel": 26,
+   "classes": [
+    "Bucklers",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "essence_of_hysteria_#_increased_block_chance"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "DamageWithWeaponTypeSkill",
+   "text": "{0}% increased Damage with Bow Skills",
+   "v": [
+    [
+     43,
+     50
+    ]
+   ],
+   "modLevel": 60,
+   "reqLevel": 48,
+   "classes": [
+    "Quivers"
+   ],
+   "id": "essence_of_hysteria_#_increased_damage_with_bow_skills"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "DamageTakenGainedAsLife",
+   "text": "{0}% of Damage taken Recouped as Life",
+   "v": [
+    [
+     19,
+     21
+    ]
+   ],
+   "modLevel": 68,
+   "reqLevel": 54,
+   "classes": [
+    "Amulets"
+   ],
+   "id": "essence_of_hysteria_#_of_damage_taken_recouped_as_life"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "StunThreshold",
+   "text": "+{0} to Stun Threshold",
+   "v": [
+    [
+     254,
+     304
+    ]
+   ],
+   "modLevel": 72,
+   "reqLevel": 57,
+   "classes": [
+    "Belts"
+   ],
+   "id": "essence_of_hysteria_#_to_stun_threshold"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "EnergyShieldRegeneration",
+   "text": "{0}% increased Energy Shield Recharge Rate",
+   "v": [
+    [
+     20,
+     23
+    ]
+   ],
+   "modLevel": 66,
+   "reqLevel": 52,
+   "classes": [
+    "Foci"
+   ],
+   "id": "essence_of_hysteria_#_increased_energy_shield_recharge_rate"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "CriticalStrikeMultiplier",
+   "text": "{0}% increased Critical Damage Bonus",
+   "v": [
+    [
+     25,
+     29
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "essence_of_hysteria_#_increased_critical_damage_bonus"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreaseSocketedGemLevel",
+   "text": "+{0} to Level of all Minion Skills",
+   "v": [
+    [
+     1,
+     1
+    ]
+   ],
+   "modLevel": 5,
+   "reqLevel": 4,
+   "classes": [
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int"
+   ],
+   "id": "essence_of_hysteria_#_to_level_of_all_minion_skills"
+  },
+  {
+   "name": "Essence of Hysteria",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ManaRegeneration",
+   "text": "{0}% increased Mana Regeneration Rate",
+   "v": [
+    [
+     50,
+     59
+    ]
+   ],
+   "modLevel": 55,
+   "reqLevel": 44,
+   "classes": [
+    "Rings"
+   ],
+   "id": "essence_of_hysteria_#_increased_mana_regeneration_rate"
+  },
+  {
+   "name": "Essence of Insanity",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "CorruptionIntertactions",
+   "text": "On Corruption, Item gains two Enchantments",
+   "v": [],
+   "modLevel": 1,
+   "reqLevel": 0,
+   "classes": [
+    "Belts"
+   ],
+   "id": "essence_of_insanity_on_corruption_item_gains_two_enchantment"
+  },
+  {
+   "name": "Essence of the Abyss",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "EssenceAbyss",
+   "text": "Mark of the Abyssal Lord",
+   "v": [],
+   "modLevel": 1,
+   "reqLevel": 0,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bows",
+    "Bucklers",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Rings",
+    "Sceptres",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "essence_of_the_abyss_mark_of_the_abyssal_lord"
+  },
+  {
+   "name": "Essence of the Abyss",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "EssenceAbyss",
+   "text": "Mark of the Abyssal Lord",
+   "v": [],
+   "modLevel": 1,
+   "reqLevel": 0,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bows",
+    "Bucklers",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Rings",
+    "Sceptres",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "essence_of_the_abyss_mark_of_the_abyssal_lord~2"
+  },
+  {
+   "name": "Essence of the Breach",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "LocalMaximumQuality",
+   "text": "+{0}% to Maximum Quality",
+   "v": [
+    [
+     20,
+     20
+    ]
+   ],
+   "modLevel": 1,
+   "reqLevel": 0,
+   "classes": [
+    "Amulets",
+    "Rings"
+   ],
+   "id": "essence_of_the_breach_#_to_maximum_quality"
+  },
+  {
+   "name": "Expansive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "ManaCostEfficiency",
+   "text": "{0}% increased Mana Cost Efficiency",
+   "v": [
+    [
+     18,
+     29
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int"
+   ],
+   "id": "expansive_alloy_#_increased_mana_cost_efficiency"
+  },
+  {
+   "name": "Expansive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "PresenceRadius",
+   "text": "{0}% increased Presence Area of Effect",
+   "v": [
+    [
+     35,
+     50
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int"
+   ],
+   "id": "expansive_alloy_#_increased_presence_area_of_effect"
+  },
+  {
+   "name": "Expansive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "TemporaryMinionLimit",
+   "text": "Temporary Minion Skills have +{0} to Limit of Minions summoned",
+   "v": [
+    [
+     1,
+     2
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int"
+   ],
+   "id": "expansive_alloy_temporary_minion_skills_have_#_to_limit_of_m"
+  },
+  {
+   "name": "Expansive Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "RemnantPickupRadius",
+   "text": "Remnants can be collected from {0}% further away",
+   "v": [
+    [
+     35,
+     50
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "expansive_alloy_remnants_can_be_collected_from_#_further_awa"
+  },
+  {
+   "name": "Mystic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "BaseSpirit",
+   "text": "+{0} to Spirit",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int"
+   ],
+   "id": "mystic_alloy_#_to_spirit"
+  },
+  {
+   "name": "Mystic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreasedAttackAreaOfEffect",
+   "text": "{0}% increased Area of Effect for Attacks",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "mystic_alloy_#_increased_area_of_effect_for_attacks"
+  },
+  {
+   "name": "Mystic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "SpellAreaOfEffect",
+   "text": "Spell Skills have {0}% increased Area of Effect",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int"
+   ],
+   "id": "mystic_alloy_spell_skills_have_#_increased_area_of_effect"
+  },
+  {
+   "name": "Mystic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "Chain",
+   "text": "{0}% chance to Chain an additional time",
+   "v": [
+    [
+     25,
+     35
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Quivers"
+   ],
+   "id": "mystic_alloy_#_chance_to_chain_an_additional_time"
+  },
+  {
+   "name": "Mystic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ElementalInfusion",
+   "text": "+{0} to maximum number of Elemental Infusions",
+   "v": [
+    [
+     1,
+     1
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Sceptres",
+    "Staves",
+    "Wands"
+   ],
+   "id": "mystic_alloy_#_to_maximum_number_of_elemental_infusions"
+  },
+  {
+   "name": "Prismatic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "ElementalPenetration",
+   "text": "Damage Penetrates {0}% Elemental Resistances",
+   "v": [
+    [
+     9,
+     15
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "prismatic_alloy_damage_penetrates_#_elemental_resistances"
+  },
+  {
+   "name": "Prismatic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "AilmentEffect",
+   "text": "{0}% increased Magnitude of Ailments you inflict",
+   "v": [
+    [
+     20,
+     30
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "prismatic_alloy_#_increased_magnitude_of_ailments_you_inflic"
+  },
+  {
+   "name": "Prismatic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ExposureEffect",
+   "text": "{0}% increased Exposure Effect",
+   "v": [
+    [
+     40,
+     50
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "prismatic_alloy_#_increased_exposure_effect"
+  },
+  {
+   "name": "Prismatic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "MinionDamagingAilments",
+   "text": "Minions have {0}% increased Magnitude of Damaging Ailments",
+   "v": [
+    [
+     40,
+     49
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "prismatic_alloy_minions_have_#_increased_magnitude_of_damagi"
+  },
+  {
+   "name": "Protective Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "RecoverRunicWardOnCharmUse",
+   "text": "Recover {0} Runic Ward when a Charm is used",
+   "v": [
+    [
+     32,
+     45
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Belts"
+   ],
+   "id": "protective_alloy_recover_#_runic_ward_when_a_charm_is_used"
+  },
+  {
+   "name": "Protective Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "BaseRunicWard",
+   "text": "+{0} to maximum Runic Ward",
+   "v": [
+    [
+     51,
+     74
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Sceptres",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "protective_alloy_#_to_maximum_runic_ward"
+  },
+  {
+   "name": "Protective Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "GainFlatLifeOnBlock",
+   "text": "Recover {0} Runic Ward when you Block",
+   "v": [
+    [
+     10,
+     15
+    ]
+   ],
+   "modLevel": 13,
+   "reqLevel": 10,
+   "classes": [
+    "Bucklers",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "protective_alloy_recover_#_runic_ward_when_you_block"
+  },
+  {
+   "name": "Runic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "RunicWardPercent",
+   "text": "{0}% increased maximum Runic Ward",
+   "v": [
+    [
+     6,
+     10
+    ]
+   ],
+   "modLevel": 13,
+   "reqLevel": 10,
+   "classes": [
+    "Amulets"
+   ],
+   "id": "runic_alloy_#_increased_maximum_runic_ward"
+  },
+  {
+   "name": "Runic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "WardRegenerationRate",
+   "text": "{0}% increased Runic Ward Regeneration Rate",
+   "v": [
+    [
+     15,
+     20
+    ]
+   ],
+   "modLevel": 13,
+   "reqLevel": 10,
+   "classes": [
+    "Belts"
+   ],
+   "id": "runic_alloy_#_increased_runic_ward_regeneration_rate"
+  },
+  {
+   "name": "Runic Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "BaseRunicWard",
+   "text": "+{0} to maximum Runic Ward",
+   "v": [
+    [
+     37,
+     49
+    ]
+   ],
+   "modLevel": 13,
+   "reqLevel": 10,
+   "classes": [
+    "Rings"
+   ],
+   "id": "runic_alloy_#_to_maximum_runic_ward"
+  },
+  {
+   "name": "Sovereign Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "EnchantmentHeistArmour",
+   "text": "{0}% increased Explicit Resistance Modifier magnitudes",
+   "v": [
+    [
+     20,
+     30
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Rings"
+   ],
+   "id": "sovereign_alloy_#_increased_explicit_resistance_modifier_mag"
+  },
+  {
+   "name": "Sovereign Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "prefix",
+   "group": "LocalRunicWardPercent",
+   "text": "{0}% increased Runic Ward",
+   "v": [
+    [
+     24,
+     30
+    ]
+   ],
+   "modLevel": 25,
+   "reqLevel": 20,
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "sovereign_alloy_#_increased_runic_ward"
+  },
+  {
+   "name": "Sovereign Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "SoulCore",
+   "text": "{0}% increased effect of Socketed Augment Items",
+   "v": [
+    [
+     20,
+     30
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Sceptres",
+    "Spears",
+    "Staves",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ],
+   "id": "sovereign_alloy_#_increased_effect_of_socketed_augment_items"
+  },
+  {
+   "name": "Swift Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "FlaskChargeGeneration",
+   "text": "Flasks gain {0} charges per Second",
+   "v": [
+    [
+     0.75,
+     1
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Belts"
+   ],
+   "id": "swift_alloy_flasks_gain_#_charges_per_second"
+  },
+  {
+   "name": "Swift Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "SummonTotemCastSpeed",
+   "text": "{0}% increased Totem Placement speed",
+   "v": [
+    [
+     30,
+     49
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Bucklers",
+    "Foci",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ],
+   "id": "swift_alloy_#_increased_totem_placement_speed"
+  },
+  {
+   "name": "Swift Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreasedCastSpeed",
+   "text": "{0}% increased Cast Speed",
+   "v": [
+    [
+     9,
+     12
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int"
+   ],
+   "id": "swift_alloy_#_increased_cast_speed"
+  },
+  {
+   "name": "Swift Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreasedCastSpeed",
+   "text": "{0}% increased Attack Speed",
+   "v": [
+    [
+     7,
+     9
+    ]
+   ],
+   "modLevel": 45,
+   "reqLevel": 36,
+   "classes": [
+    "Rings"
+   ],
+   "id": "swift_alloy_#_increased_attack_speed"
+  },
+  {
+   "name": "The Runebinder's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "CurseEffectiveness",
+   "text": "{0}% increased Effect of your Mark Skills",
+   "v": [
+    [
+     40,
+     50
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Bows"
+   ],
+   "id": "the_runebinder_s_alloy_#_increased_effect_of_your_mark_skill"
+  },
+  {
+   "name": "The Runebinder's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "AdditionalBallistaTotem",
+   "text": "+{0} to maximum number of Summoned Ballista Totems",
+   "v": [
+    [
+     2,
+     2
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Crossbows"
+   ],
+   "id": "the_runebinder_s_alloy_#_to_maximum_number_of_summoned_balli"
+  },
+  {
+   "name": "The Runebinder's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "MaximumPuppeteerStacks",
+   "text": "+{0} maximum stacks of Puppet Master",
+   "v": [
+    [
+     4,
+     5
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Sceptres"
+   ],
+   "id": "the_runebinder_s_alloy_#_maximum_stacks_of_puppet_master"
+  },
+  {
+   "name": "The Runebinder's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ChanceToGainNaturesArchon",
+   "text": "{0}% chance to gain Nature's Archon when your Plants Overgrow",
+   "v": [
+    [
+     25,
+     50
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Staves"
+   ],
+   "id": "the_runebinder_s_alloy_#_chance_to_gain_nature_s_archon_when"
+  },
+  {
+   "name": "The Runebinder's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "ElementalSkillLimit",
+   "text": "+{0} to Limit for Elemental Skills",
+   "v": [
+    [
+     1,
+     1
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Wands"
+   ],
+   "id": "the_runebinder_s_alloy_#_to_limit_for_elemental_skills"
+  },
+  {
+   "name": "The Runefather's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "GloryChanceToNotConsume",
+   "text": "{0}% chance for Skills to retain 40% of Glory on use",
+   "v": [
+    [
+     60,
+     75
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "One_Hand_Maces",
+    "Two_Hand_Maces"
+   ],
+   "id": "the_runefather_s_alloy_#_chance_for_skills_to_retain_40_of_g"
+  },
+  {
+   "name": "The Runefather's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "BellHitLimit",
+   "text": "Tempest Bells are destroyed after an additional {0} Hits",
+   "v": [
+    [
+     4,
+     5
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Quarterstaves"
+   ],
+   "id": "the_runefather_s_alloy_tempest_bells_are_destroyed_after_an_"
+  },
+  {
+   "name": "The Runefather's Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "MeleeWeaponAndUnarmedRange",
+   "text": "+{0} to Weapon Range",
+   "v": [
+    [
+     8,
+     10
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Spears"
+   ],
+   "id": "the_runefather_s_alloy_#_to_weapon_range"
+  },
+  {
+   "name": "Transcendent Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "Strength",
+   "text": "{0}% increased Physical Damage\n+{1} to all Attributes",
+   "v": [
+    [
+     15,
+     20
+    ],
+    [
+     7,
+     10
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Bows",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords"
+   ],
+   "id": "transcendent_alloy_#_increased_physical_damage_#_to_all_attr"
+  },
+  {
+   "name": "Transcendent Alloy",
+   "tier": "special",
+   "pool": "perfect_essence",
+   "affix": "suffix",
+   "group": "IncreasedCastSpeed",
+   "text": "{0}% increased Cast Speed\nGain {1}% of Elemental Damage as Extra Cold Damage",
+   "v": [
+    [
+     26,
+     47
+    ],
+    [
+     7,
+     16
+    ]
+   ],
+   "modLevel": 65,
+   "reqLevel": 52,
+   "classes": [
+    "Foci",
+    "Staves",
+    "Wands"
+   ],
+   "id": "transcendent_alloy_#_increased_cast_speed_gain_#_of_elementa"
+  }
+ ],
+ "omens": [
+  {
+   "id": "omen-of-dextral-alchemy",
+   "name": "Omen of Dextral Alchemy",
+   "code": "OmenOnAlchemyMaximumSuffixes",
+   "forces": "suffix",
+   "reqids": [
+    "alc"
+   ],
+   "exclusives": [
+    "omen-of-sinistral-alchemy"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-dextral-annulment",
+   "name": "Omen of Dextral Annulment",
+   "code": "OmenOnAnnulRemoveSuffixes",
+   "forces": "suffix",
+   "reqids": [
+    "annu"
+   ],
+   "exclusives": [
+    "omen-of-sinistral-annulment"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-dextral-coronation",
+   "name": "Omen of Dextral Coronation",
+   "code": "OmenOnRegalSuffix",
+   "forces": "suffix",
+   "reqids": [
+    "regal",
+    "greater-regal-orb",
+    "perfect-regal-orb"
+   ],
+   "exclusives": [
+    "omen-of-sinistral-coronation"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-dextral-erasure",
+   "name": "Omen of Dextral Erasure",
+   "code": "OmenOnChaosSuffix",
+   "forces": "suffix",
+   "reqids": [
+    "chaos",
+    "greater-chaos-orb",
+    "perfect-chaos-orb"
+   ],
+   "exclusives": [
+    "omen-of-sinistral-erasure"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-dextral-exaltation",
+   "name": "Omen of Dextral Exaltation",
+   "code": "OmenOnExaltAddSuffixes",
+   "forces": "suffix",
+   "reqids": [
+    "exalted",
+    "greater-exalted-orb",
+    "perfect-exalted-orb"
+   ],
+   "exclusives": [
+    "omen-of-sinistral-exaltation"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-dextral-necromancy",
+   "name": "Omen of Dextral Necromancy",
+   "code": "OmenOnAbyssAddSuffixes",
+   "forces": "suffix",
+   "reqids": [],
+   "exclusives": [
+    "omen-of-sinistral-necromancy"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-sinistral-alchemy",
+   "name": "Omen of Sinistral Alchemy",
+   "code": "OmenOnAlchemyMaximumPrefixes",
+   "forces": "prefix",
+   "reqids": [
+    "alc"
+   ],
+   "exclusives": [
+    "omen-of-dextral-alchemy"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-sinistral-annulment",
+   "name": "Omen of Sinistral Annulment",
+   "code": "OmenOnAnnulRemovePrefixes",
+   "forces": "prefix",
+   "reqids": [
+    "annu"
+   ],
+   "exclusives": [
+    "omen-of-dextral-annulment"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-sinistral-coronation",
+   "name": "Omen of Sinistral Coronation",
+   "code": "OmenOnRegalPrefix",
+   "forces": "prefix",
+   "reqids": [
+    "regal",
+    "greater-regal-orb",
+    "perfect-regal-orb"
+   ],
+   "exclusives": [
+    "omen-of-dextral-coronation"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-sinistral-erasure",
+   "name": "Omen of Sinistral Erasure",
+   "code": "OmenOnChaosPrefix",
+   "forces": "prefix",
+   "reqids": [
+    "chaos",
+    "greater-chaos-orb",
+    "perfect-chaos-orb"
+   ],
+   "exclusives": [
+    "omen-of-dextral-erasure"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-sinistral-exaltation",
+   "name": "Omen of Sinistral Exaltation",
+   "code": "OmenOnExaltAddPrefixes",
+   "forces": "prefix",
+   "reqids": [
+    "exalted",
+    "greater-exalted-orb",
+    "perfect-exalted-orb"
+   ],
+   "exclusives": [
+    "omen-of-dextral-exaltation"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-sinistral-necromancy",
+   "name": "Omen of Sinistral Necromancy",
+   "code": "OmenOnAbyssAddPrefixes",
+   "forces": "prefix",
+   "reqids": [],
+   "exclusives": [
+    "omen-of-dextral-necromancy"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-abyssal-echoes",
+   "name": "Omen of Abyssal Echoes",
+   "code": "OmenOnAbyssRerollOptions",
+   "forces": null,
+   "reqids": [],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-catalysing-exaltation",
+   "name": "Omen of Catalysing Exaltation",
+   "code": "OmenOnExaltConsumeQuality",
+   "forces": null,
+   "reqids": [
+    "exalted",
+    "greater-exalted-orb",
+    "perfect-exalted-orb"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-corruption",
+   "name": "Omen of Corruption",
+   "code": "OmenOnVaalRemoveDoNothingOutcome",
+   "forces": null,
+   "reqids": [
+    "vaal-orb"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-dextral-crystallisation",
+   "name": "Omen of Dextral Crystallisation",
+   "code": "OmenOnPerfectEssenceSuffix",
+   "forces": null,
+   "reqids": [
+    "perfect-essences"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-greater-annulment",
+   "name": "Omen of Greater Annulment",
+   "code": "OmenOnAnnulRemoveTwoMods",
+   "forces": null,
+   "reqids": [
+    "annu"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-greater-exaltation",
+   "name": "Omen of Greater Exaltation",
+   "code": "OmenOnExaltAddTwoMods",
+   "forces": null,
+   "reqids": [
+    "exalted",
+    "greater-exalted-orb",
+    "perfect-exalted-orb"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-homogenising-coronation",
+   "name": "Omen of Homogenising Coronation",
+   "code": "OmenOnRegalAddExistingModType",
+   "forces": null,
+   "reqids": [
+    "regal",
+    "greater-regal-orb",
+    "perfect-regal-orb"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-homogenising-exaltation",
+   "name": "Omen of Homogenising Exaltation",
+   "code": "OmenOnExaltAddExistingModType",
+   "forces": null,
+   "reqids": [
+    "exalted",
+    "greater-exalted-orb",
+    "perfect-exalted-orb"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-light",
+   "name": "Omen of Light",
+   "code": "OmenOnAnnulRemoveAbyssMod",
+   "forces": null,
+   "reqids": [
+    "annu"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-sanctification",
+   "name": "Omen of Sanctification",
+   "code": "OmenOnDivineSanctify",
+   "forces": null,
+   "reqids": [
+    "divine"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-sinistral-crystallisation",
+   "name": "Omen of Sinistral Crystallisation",
+   "code": "OmenOnPerfectEssencePrefix",
+   "forces": null,
+   "reqids": [
+    "perfect-essences"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-whittling",
+   "name": "Omen of Whittling",
+   "code": "OmenOnChaosLowestLevelMod",
+   "forces": null,
+   "reqids": [
+    "chaos",
+    "greater-chaos-orb",
+    "perfect-chaos-orb"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-the-blackblooded",
+   "name": "Omen of the Blackblooded",
+   "code": "OmenOnAbyssGuarenteeLichTypeMod3",
+   "forces": null,
+   "reqids": [],
+   "exclusives": [
+    "omen-of-the-sovereign",
+    "omen-of-the-liege"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-the-blessed",
+   "name": "Omen of the Blessed",
+   "code": "OmenOnDivineRerollImplicits",
+   "forces": null,
+   "reqids": [
+    "divine"
+   ],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-the-liege",
+   "name": "Omen of the Liege",
+   "code": "OmenOnAbyssGuarenteeLichTypeMod2",
+   "forces": null,
+   "reqids": [],
+   "exclusives": [
+    "omen-of-the-sovereign",
+    "omen-of-the-blackblooded"
+   ],
+   "poe2dbDisabled": false
+  },
+  {
+   "id": "omen-of-the-putrefaction",
+   "name": "Omen of the Putrefaction",
+   "code": "OmenOnAbyssVeilAllAndCorrupt",
+   "forces": null,
+   "reqids": [],
+   "exclusives": [],
+   "poe2dbDisabled": true
+  },
+  {
+   "id": "omen-of-the-sovereign",
+   "name": "Omen of the Sovereign",
+   "code": "OmenOnAbyssGuarenteeLichTypeMod1",
+   "forces": null,
+   "reqids": [],
+   "exclusives": [
+    "omen-of-the-liege",
+    "omen-of-the-blackblooded"
+   ],
+   "poe2dbDisabled": false
+  }
+ ],
+ "bones": [
+  {
+   "id": "ancient-collarbone",
+   "name": "Ancient Collarbone",
+   "min": 40,
+   "max": null,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Rings"
+   ]
+  },
+  {
+   "id": "ancient-jawbone",
+   "name": "Ancient Jawbone",
+   "min": 40,
+   "max": null,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Bows",
+    "Claws",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Sceptres",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ]
+  },
+  {
+   "id": "ancient-rib",
+   "name": "Ancient Rib",
+   "min": 0,
+   "max": null,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ]
+  },
+  {
+   "id": "gnawed-collarbone",
+   "name": "Gnawed Collarbone",
+   "min": 0,
+   "max": 64,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Rings"
+   ]
+  },
+  {
+   "id": "gnawed-jawbone",
+   "name": "Gnawed Jawbone",
+   "min": 0,
+   "max": 64,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Bows",
+    "Claws",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Sceptres",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ]
+  },
+  {
+   "id": "gnawed-rib",
+   "name": "Gnawed Rib",
+   "min": 0,
+   "max": 64,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ]
+  },
+  {
+   "id": "preserved-collarbone",
+   "name": "Preserved Collarbone",
+   "min": 0,
+   "max": null,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Amulets",
+    "Belts",
+    "Rings"
+   ]
+  },
+  {
+   "id": "preserved-jawbone",
+   "name": "Preserved Jawbone",
+   "min": 0,
+   "max": null,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Bows",
+    "Claws",
+    "Crossbows",
+    "Daggers",
+    "Flails",
+    "One_Hand_Axes",
+    "One_Hand_Maces",
+    "One_Hand_Swords",
+    "Quarterstaves",
+    "Quivers",
+    "Sceptres",
+    "Spears",
+    "Two_Hand_Axes",
+    "Two_Hand_Maces",
+    "Two_Hand_Swords",
+    "Wands"
+   ]
+  },
+  {
+   "id": "preserved-rib",
+   "name": "Preserved Rib",
+   "min": 40,
+   "max": null,
+   "pools": [
+    "normal",
+    "desecrated"
+   ],
+   "rarity": [
+    "Rare"
+   ],
+   "classes": [
+    "Body_Armours_dex",
+    "Body_Armours_dex_int",
+    "Body_Armours_int",
+    "Body_Armours_str",
+    "Body_Armours_str_dex",
+    "Body_Armours_str_dex_int",
+    "Body_Armours_str_int",
+    "Boots_dex",
+    "Boots_dex_int",
+    "Boots_int",
+    "Boots_str",
+    "Boots_str_dex",
+    "Boots_str_int",
+    "Bucklers",
+    "Foci",
+    "Gloves_dex",
+    "Gloves_dex_int",
+    "Gloves_int",
+    "Gloves_str",
+    "Gloves_str_dex",
+    "Gloves_str_int",
+    "Helmets_dex",
+    "Helmets_dex_int",
+    "Helmets_int",
+    "Helmets_str",
+    "Helmets_str_dex",
+    "Helmets_str_int",
+    "Shields_str",
+    "Shields_str_dex",
+    "Shields_str_int"
+   ]
+  }
+ ]
+}

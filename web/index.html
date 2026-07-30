@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PoE2 Craft Planner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>PoE2 Craft Planner</h1>
+    <p class="sub">
+      Plan a craft as a graph of currency steps, read the exact pool odds at each one, stress-test
+      the route with a Monte Carlo run, then roll one real item in the emulator. Weights, tier
+      ladders and currency rules are scraped from poe2db; probabilities are computed exactly from
+      the pool, not estimated.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="field">
+      <label for="cls">Item class</label>
+      <select id="cls"></select>
+    </div>
+    <div class="field">
+      <label for="base">Base</label>
+      <select id="base"></select>
+    </div>
+    <div class="field">
+      <label for="ilvl">Item level</label>
+      <input type="number" id="ilvl" min="1" max="100" value="82">
+    </div>
+    <button class="ghost" id="reset">Reset item</button>
+    <button class="ghost" id="obopen" title="How this tool works &mdash; open the getting-started guide">&#63; Guide</button>
+    <div class="field">
+      <label>Aldur runes (Rare caps)</label>
+      <span class="chips" id="runepick">
+        <button class="chip" data-rune="suffix"  aria-pressed="false" title="A Rare item may hold a 4th suffix">+1 suffix</button>
+        <button class="chip" data-rune="crafted" aria-pressed="false" title="A Rare item may hold a 2nd crafted (essence) modifier">+1 crafted</button>
+      </span>
+    </div>
+    <div class="field">
+      <label>Exceptional base</label>
+      <span class="chips" id="excpick">
+        <button class="chip" data-exc=""        aria-pressed="true">Normal</button>
+        <button class="chip" data-exc="socket"  aria-pressed="false" title="A rare exceptional drop with one extra socket">+1 socket</button>
+        <button class="chip" data-exc="quality" aria-pressed="false" title="A rare exceptional drop with quality over the 20% cap">+quality</button>
+      </span>
+    </div>
+    <span style="flex:1"></span>
+    <div class="field">
+      <label>View</label>
+      <span class="chips" id="viewpick">
+        <button class="chip" data-v="graph" aria-pressed="true">Craft graph</button>
+        <button class="chip" data-v="prices" aria-pressed="false">Currency</button>
+      </span>
+    </div>
+  </div>
+
+  <!-- ============================ graph view ============================ -->
+  <div id="graphview">
+    <section class="panel">
+      <h2>Craft plan
+        <span class="note">two-column zig-zag &middot; ctrl+scroll to zoom &middot; every number is solved from the pool, not simulated</span>
+        <button class="emubtn" id="emuopen" title="Emulate crafting one real item, roll by roll">
+          &#9654; Emulate a craft</button>
+      </h2>
+      <div class="planbar">
+        <span class="glabel">Add step</span>
+        <select id="stepadd" aria-label="Add a crafting step"></select>
+        <button class="ghost" id="planclear">Clear plan</button>
+        <button class="ghost" id="plantidy">Tidy</button>
+        <span class="zoombar">
+          <button id="zoomout" title="zoom out" aria-label="zoom out">&minus;</button>
+          <span class="zoomlvl" id="zoomlvl">100%</span>
+          <button id="zoomin" title="zoom in" aria-label="zoom in">+</button>
+          <button id="zoomfit" title="fit all nodes" aria-label="fit">&#9744;</button>
+        </span>
+        <button class="chip" id="strictbtn" aria-pressed="false"
+          title="Model Annul and Chaos removing a random modifier, which can undo earlier steps"
+          >Strict item state</button>
+      </div>
+      <div class="graphrow">
+        <div class="canvas" id="canvas">
+          <div id="zoomwrap"><div id="stage">
+            <svg id="wires"></svg>
+            <div id="cards"></div>
+          </div></div>
+        </div>
+        <aside class="histpanel">
+          <div class="histhead">
+            <span>History</span>
+            <button class="ghost tiny" id="histundo" hidden>Undo revert</button>
+          </div>
+          <div id="histlist"></div>
+          <div class="histfoot">click any snapshot to rewind the plan to that point</div>
+        </aside>
+      </div>
+      <div class="pathbar" id="pathbar"></div>
+    </section>
+
+    <section class="panel" style="margin-top:22px">
+      <h2>Monte Carlo
+        <span class="note">plays the plan out with real rolls &mdash; shows the spread the averages hide</span>
+      </h2>
+      <div class="mcbar">
+        <label for="mctrials">Trials</label>
+        <select id="mctrials">
+          <option>1000</option><option selected>5000</option>
+          <option>20000</option><option>50000</option>
+        </select>
+        <button class="ghost" id="mcgo">Run simulation</button>
+        <span class="mcnote" id="mcnote"></span>
+      </div>
+      <div id="mcout"></div>
+    </section>
+
+    <section class="panel" style="margin-top:22px">
+      <h2>Compare plans <span class="note">ranked by median &mdash; the typical attempt, not the average</span></h2>
+      <div class="mcbar">
+        <input id="vname" placeholder="name this plan\u2026" style="flex:1 1 180px;padding:5px 8px;
+          background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:3px">
+        <button class="ghost" id="vsave">Save variant</button>
+        <button class="ghost" id="vgo">Compare all</button>
+        <span class="mcnote" id="vnote"></span>
+      </div>
+      <div class="vlist" id="vlist"></div>
+      <div id="cmpout"></div>
+    </section>
+
+  </div>
+
+  <!-- ============================ currency view ============================ -->
+  <div id="pricesview" class="hidden">
+    <section class="panel">
+      <h2>Currency values
+        <span class="note">divine-orb cost of every crafting item. Prices drift daily and reset each league &mdash; refresh with Bulk import (poe.ninja). Every cost readout uses these.</span>
+      </h2>
+      <div class="priceimport">
+        <div class="pihead">Bulk import
+          <span class="note">one item per line as &ldquo;name&nbsp;value&rdquo; &mdash; names fuzzy-match currencies, omens, bones and essence tiers</span></div>
+        <div class="pibar">
+          <label class="pilab">Values in
+            <select id="piunit"><option value="div">Divine</option><option value="ex" selected>Exalted</option><option value="c">Chaos</option></select>
+          </label>
+          <label class="pilab">1 Divine =
+            <input type="number" id="pirate" value="448" min="0.0001" step="1"><span>Exalted</span></label>
+          <label class="pilab">=
+            <input type="number" id="piratec" value="8" min="0.0001" step="0.5"><span>Chaos</span></label>
+          <button class="ghost" id="pigo">Import</button>
+          <button class="ghost" id="piclear">Clear box</button>
+          <button class="ghost" id="picopy">Copy current prices</button>
+          <span class="mcnote" id="pimsg"></span>
+        </div>
+        <textarea id="pitext" rows="5" spellcheck="false"
+          placeholder="Omen of Whittling  10&#10;Omen of Light  13&#10;Perfect Chaos Orb  3&#10;Ancient Rib  2.5"></textarea>
+      </div>
+      <div id="pricebody"></div>
+    </section>
+  </div>
+
+  <!-- ===================== simulation fix-it popup ===================== -->
+  <div id="mcfix" class="mcfix hidden" role="dialog" aria-modal="true" aria-label="Fix the simulation">
+    <div class="mcfixbox">
+      <div class="mcfixhead"><span id="mcfixtitle">This plan can&rsquo;t be simulated yet</span>
+        <button class="ghost" id="mcfixclose">&times;</button></div>
+      <div class="mcfixbody" id="mcfixbody"></div>
+    </div>
+  </div>
+
+  <!-- ===================== emulation popup ===================== -->
+  <div id="emu" class="emu hidden" role="dialog" aria-modal="true" aria-label="Craft emulator">
+    <div class="emubox">
+      <div class="emuhead">
+        <div>
+          <div class="emutitle">Craft emulator</div>
+          <div class="emusub">one real item, rolled the way the game would &mdash; nothing here is an average</div>
+        </div>
+        <div class="emuactions">
+          <button class="ghost" id="emututor" title="How the crafting emulator works">&#9873; Tutorial</button>
+          <button class="ghost" id="emugraph">&#9776; View graph &amp; odds</button>
+          <button class="ghost" id="emulock" title="Hinekora's Lock: preview the next currency's outcome before committing (very rare, ~hundreds of divines)">&#128274; Lock</button>
+          <button class="ghost" id="emusnap" title="Save this exact item so you can branch or re-roll from it">&#128204; Snapshot</button>
+          <button class="ghost" id="emureset">New base</button>
+          <button class="ghost" id="emuclose">&times; Close</button>
+        </div>
+      </div>
+      <div class="emusnaps" id="emusnaps"></div>
+      <div class="emubody">
+        <div class="emuitem">
+          <div class="emuitemhead" id="emuname"></div>
+          <div class="emumods" id="emumods"></div>
+          <div id="emucap"></div>
+          <div class="emurunes" id="emurunes"></div>
+          <div class="emupick" id="emupick"></div>
+          <div class="emustats" id="emustats"></div>
+        </div>
+        <div class="emuside">
+          <div class="emurailwrap">
+            <div class="emurailk">apply currency</div>
+            <div class="emurail" id="emurail"></div>
+            <div class="emuomen" id="emuomen"></div>
+            <div class="emusim" id="emusim"></div>
+          </div>
+          <div class="emulog" id="emulog"></div>
+          <div class="emutally" id="emutally"></div>
+          <div class="emufoot" id="emufoot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid hidden" id="benchview">
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <section class="panel">
+        <h2>Item</h2>
+        <div class="tip" id="tip"></div>
+        <div class="slots" id="slots"></div>
+        <div class="tierrow">
+          <span class="glabel">Currency tier</span>
+          <span class="chips" id="ctier"></span>
+        </div>
+        <div class="tierrow">
+          <span class="glabel">Omen</span>
+          <select id="omensel" aria-label="Omen to apply with the next currency"></select>
+        </div>
+        <div class="omennote" id="omennote"></div>
+        <div class="curr" id="curr"></div>
+        <div class="log" id="log"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Essences <span class="note">guaranteed modifier</span></h2>
+        <div class="tierrow">
+          <span class="chips" id="etier"></span>
+        </div>
+        <div class="essrow">
+          <select id="esssel" aria-label="Essence to apply"></select>
+          <button class="ghost" id="essgo">Apply</button>
+        </div>
+        <div class="essnote" id="essnote"></div>
+      </section>
+
+      <section class="panel" id="bonepanel">
+        <h2>Abyssal bones <span class="note">desecration</span></h2>
+        <div class="tierrow" style="border-top:none">
+          <span class="glabel">Source</span>
+          <span class="chips" id="bonesrc"></span>
+        </div>
+        <div class="curr" id="bones"></div>
+        <div class="essnote" id="bonenote"></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Next affix — exact odds <span class="note" id="poolnote"></span></h2>
+      <div class="gatebar" id="gatebar"></div>
+      <div class="stats" id="stats"></div>
+      <div class="filters">
+        <span class="glabel" style="align-self:center">Pool</span>
+        <span class="chips" id="poolpick"></span>
+        <span style="flex:1"></span>
+        <button class="chip" id="f-all"  aria-pressed="true">Both</button>
+        <button class="chip" id="f-pre"  aria-pressed="false">Prefixes</button>
+        <button class="chip" id="f-suf"  aria-pressed="false">Suffixes</button>
+      </div>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Modifier</th>
+              <th class="num">Best tier</th>
+              <th class="num">Weight</th>
+              <th class="num">Chance</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <b>Two-column zig-zag.</b> The plan lays itself out automatically. The base, every currency
+    step and the result flow across two columns in order &mdash; base on the left, the first step
+    on the right, the next back on the left &mdash; and each column stacks by measured height. A
+    six-step chain that ran off the bottom of the screen as one tall column is roughly half as
+    tall this way, so far more of the plan is visible at once, and the wires zig-zag between the
+    columns to show the real order. The cost summary sits in its own column to the right. Nothing
+    needs to be dragged; zoom with the &minus;&#8202;/&#8202;+ buttons, ctrl (or &#8984;) and the
+    scroll wheel, or the fit button, and plain scrolling pans.
+    <br><br>
+    <b>Targets and tiers.</b> Open <i>choose modifiers</i> on a card and every modifier that step
+    could roll is listed with its share of the step's weight. The chevron beside a modifier opens
+    its tier ladder &mdash; each tier with the range it actually rolls, the item level it needs and
+    its own share &mdash; and clicking a tier makes it the requirement, so a step can be asked for
+    T1 Life rather than merely Life. The <i>any tier</i> chip on a target row cycles the same
+    requirement, and clicking an already-selected tier clears it back to any.
+    <br><br>
+    <b>Untargeted steps still cost a slot.</b> An Orb of Augmentation writes a modifier whether or
+    not you named one. A step with no target therefore shows a <i>random modifier</i> occupying the
+    side with more room, and it counts against capacity like any other. That is what stops a Magic
+    item from accepting an endless chain of Augmentations. A Chaos Orb is the exception: it takes
+    one modifier away before writing another, so it leaves the count unchanged and stays available
+    on an item that is already full.
+    <br><br>
+    <b>Rarity and capacity.</b> A Normal item is the bare base and carries no explicit
+    modifiers. A Magic item holds at most <b>two</b> &mdash; one prefix and one suffix. A Rare item
+    holds at most <b>six</b>, three of each side. Every card shows the occupancy of the item
+    entering it as filled pips, so you can see at a glance which side is the constraint; a side
+    that is full is what usually kills a step, not the item as a whole.
+    <br><br>
+    Those ceilings decide what each card offers next. A full Magic item stops offering
+    Augmentation but still offers Regal, because a Regal converts to Rare and adds on top. A full
+    Rare item stops offering Exalted, essences and Abyssal bones &mdash; all of which add a
+    modifier &mdash; but keeps offering a Chaos Orb, which removes one before adding another, and a
+    Fracturing Orb, which adds nothing at all and only locks what is already there.
+    <br><br>
+    <b>Essences and bones.</b> A lesser or greater essence is used on a <b>Magic</b> item: it turns
+    it Rare and grants its fixed modifier outright, with no roll. That works even when the Magic
+    item is already full at two modifiers, because the upgrade to Rare opens six slots before the
+    modifier is written &mdash; the tool models the upgrade first and the placement second, which
+    is the order the game uses. Perfect essences act on a Rare item instead. Abyssal bones add a
+    desecrated modifier to a <b>Rare</b> item and are refused outright once it holds six.
+    <br><br>
+    <b>Building a chain.</b> Every card carries a <i>next</i> rail along its bottom edge showing
+    the currency icons that are legal from the state that card leaves behind &mdash; a Normal item
+    offers only Transmutation, a Magic one offers Augmentation and Regal, a Rare one offers
+    Exalted, Chaos, Abyssal bones and, once four modifiers are present, a Fracturing Orb. Click an
+    icon to append that step; click one on a card in the middle of a chain to insert there and the
+    rest shifts along. The dropdown at the top still exists for finding an essence or a bone by
+    name, but nothing requires it.
+    <br><br>
+    <b>Choosing modifiers.</b> <i>Choose modifiers</i> opens the step's own pool inside the card:
+    every modifier that step could actually roll, sorted by weight, with its best reachable tier
+    and its share of that step's total weight. The share is live &mdash; it is computed against the
+    pool the step really rolls, so it moves when you change the orb tier, the item level, or which
+    modifiers earlier steps have already placed. Click a row to make it a target, click again to
+    drop it, and type in the filter box to narrow a long pool. Pools with no published weights,
+    such as the desecrated modifiers a bone rolls, show a dash instead of a fabricated percentage.
+    <br><br>
+    <b>Annulment, and why the bone comes first.</b> An Orb of Annulment strips one modifier at
+    random from a Magic or Rare item, and it is the one currency that leaves rarity alone. A
+    fractured modifier is immune to it. Choose on the step which modifier you are hoping to remove
+    and the odds are one over the removable count; leave it unchosen and it simply takes something.
+    <br><br>
+    A desecrated modifier added by an Abyssal bone arrives <i>unrevealed</i>, and an unrevealed
+    modifier cannot be chosen by a Fracturing Orb. That is the quiet engine behind the meta-craft:
+    on a four-modifier Rare where one came from a bone, the fracture rolls over three candidates
+    rather than four, so the chance of locking the modifier you actually want is
+    <b>1 in 3 instead of 1 in 4</b>. The tool computes it from the item state rather than assuming
+    it, and the fracture picker greys out the unrevealed modifier and says why. A Fracturing Orb
+    still needs a Rare item with at least four modifiers; on a six-modifier item the same lock is
+    one in six, which is why nobody fractures a finished item on purpose.
+    <br><br>
+    The whole line is expressible as one plan: Perfect Transmutation, Perfect Augmentation onto the
+    open side, a Greater Essence or Perfect Regal to go Rare, a bone for the fourth and unrevealed
+    modifier, a fracture at one in three to lock the modifier worth keeping, two Annulments that
+    cannot touch it, and then a Chaos Orb cycling the single modifier left. Because the item is Rare
+    rather than Magic at that point, the cycling is not confined to one prefix and one suffix.
+    <br><br>
+    <b>Forcing the side a bone writes on.</b> Two Abyss omens decide which side an Abyssal bone
+    places its desecrated modifier on: <i>Omen of Sinistral Necromancy</i> forces a prefix,
+    <i>Omen of Dextral Necromancy</i> forces a suffix. Arm one on the bone step and the whole
+    opposite side leaves the denominator, which is worth a great deal on a pool this narrow &mdash;
+    on an amulet, a wanted prefix went from a 3.7% roll to 14.3%, close to four times better,
+    purely because nineteen suffixes stopped competing for the slot.
+    <br><br>
+    Forcing a side is also what lets you decide <i>where</i> the unrevealed modifier sits, which
+    matters when the plan later needs a particular side free for an Exalt or an essence. The
+    simulator honours the omen as strictly as the odds do; a target on the wrong side simply cannot
+    land while the omen is armed.
+    <br><br>
+    One caveat the tool will tell you about rather than hide: not every base has desecrated
+    modifiers on both sides. Intelligence body armour, for instance, has eleven desecrated
+    modifiers and every one of them is a suffix, so Sinistral Necromancy has nothing to place and
+    the step says exactly that &mdash; <i>the omen forces a prefix, and none can spawn here</i>.
+    Amulets, maces, bows and belts are among the bases that do carry desecrated prefixes.
+    <br><br>
+    <b>The three Lich omens.</b> Sovereign, Liege and Blackblooded each guarantee that an Abyssal
+    bone draws from a single lich's set &mdash; Ulaman, Amanamu or Kurgal &mdash; rather than the
+    whole desecrated pool. Every desecrated modifier is tagged with its lich, split roughly evenly,
+    so arming one narrows the bone's pool to about a third of its usual size and lifts the odds of a
+    modifier in that set to match. A target from a different lich becomes impossible while the omen
+    is armed, and the tool says which lich is blocking it. The mechanic is exact; the mapping of the
+    three omen names to the three liches is a best guess and easily corrected in one line if a name
+    is off.
+    <br><br>
+    <b>Tiers are windows, not numbers.</b> A tier is a numeric range rather than a single value:
+    T1 increased Energy Shield is 101&ndash;110%, T2 is 92&ndash;100%, and so on down the ladder.
+    The emulator rolls inside that window, so a crafted item reads
+    <i>42% increased Energy Shield, +47 to maximum Life</i> rather than a row of placeholders, and
+    two T1 rolls of the same modifier are not the same item. The reveal deals its three candidates
+    already rolled, because that is how you would be choosing between them.
+    <br><br>
+    This changes nothing about the odds. The tier decides both the window and the weight; the roll
+    only decides where inside the window you land, so every probability in the graph and every
+    figure in the Monte Carlo is untouched. What it does add is a currency that was previously
+    pointless: a <b>Divine Orb</b> rerolls the numbers inside each modifier's existing tier and
+    never touches the tiers themselves.
+    <br><br>
+    One detail is worth spelling out because it caused a real bug. Several defence families share a
+    group across item classes &mdash; the Armour and the Energy Shield versions of a hybrid are the
+    same family &mdash; so resolving a modifier by its family alone can silently return the wrong
+    variant. Divining an intelligence body armour turned <i>increased Energy Shield</i> into
+    <i>increased Armour</i> until every placed modifier started carrying its own unique id and every
+    reroll started matching on that instead.
+    <br><br>
+    <b>Asking for a number, not just a tier.</b> A target can carry a minimum rolled value as well
+    as a tier, so a step can be asked for <i>T1 maximum Life, and at least 207</i>. Because a tier
+    is a uniform window, that is the tier's own weight multiplied by the share of its window at or
+    above the threshold, and the tier ladder shows that share per tier as you set it. Demanding 207
+    from a T1 window of 200&ndash;214 halved a step from 0.82% to 0.44%, and sixty thousand
+    simulated rolls came back at 0.42%. The threshold is checked on the first rolled value, which is
+    the number people actually gate on; a hybrid's second number rides along with it.
+    <br><br>
+    <b>Sockets.</b> Runes go in sockets, and the count is fixed by item type: body armour and
+    two-handed weapons have two, one-handers and the smaller armour pieces have one, and jewellery
+    and charms have none &mdash; so a rune cannot be socketed on an amulet at all. The emulated
+    item shows its sockets as diamonds in the header. Two things push a socket over the type
+    maximum: an <b>exceptional base</b> &mdash; a rare white drop that comes with either +1 socket
+    or quality above the usual 20% cap, chosen with the toggle in the header &mdash; and
+    <b>corruption</b>, since one of a Vaal Orb's outcomes is +1 socket. They stack, so an
+    exceptional three-socket body armour that then rolls the socket outcome on a Vaal ends up with
+    four, which the tool reaches and displays. Quality from an exceptional base flows into the
+    defence totals: a 28% base reads its Energy Shield and Armour higher accordingly.
+    <br><br>
+    A successful Architect's Orb never adds a socket or repeats a Vaal outcome, because it only ever
+    adds a corruption enchantment (see below). The +1 socket outcome belongs to the <i>Vaal Orb</i>,
+    and only for item types that have sockets in the first place &mdash; an amulet never gains one.
+    The one figure here I could not source is the Vaal's probability split once +1 socket joins its
+    four modifier outcomes &mdash; it is modelled as an equal fifth, and that share is a guess rather
+    than a scraped fact.
+    <br><br>
+    <b>Aldur runes lift the Rare caps.</b> Two cap-runes exist: <b>+1 suffix</b>, which lets a Rare
+    hold a fourth suffix and takes it to seven modifiers at most (three prefixes, four suffixes),
+    and <b>+1 crafted</b>, which lets it hold a second crafted (essence) modifier without changing
+    the affix total. You may socket <b>one of each</b> but never two of the same &mdash; there is no
+    stacking two +1 suffix runes into +2. Each rune occupies a socket, so how many you can run is
+    bound by the item's socket count: a two-socket body armour fits both, a one-socket helmet fits
+    only one, and switching to a smaller base drops the rune that no longer fits. There is no +1
+    prefix or +1 desecrated rune, so the prefix cap stays three and the desecrated cap stays one.
+    Magic and Normal limits never move; runes are a Rare-crafting tool. Ordinary <b>stat runes</b>
+    (Iron, Body, Desert, and the rest) carry no such limit &mdash; socket the same rune in several
+    sockets to stack its armour, energy shield or elemental bonus; only the two Aldur cap-runes are
+    unique.
+    <br><br>
+    <b>Perfect essences replace, they do not add.</b> A perfect essence used on a Rare removes one
+    existing modifier and writes its guaranteed one in place, so the count does not change &mdash;
+    which is what lets you force a modifier onto an item that is already full. The removal is bound
+    only by capacity: if the essence's own side is at its cap the removed modifier must come from
+    that side, so a suffix essence on a six-modifier item can only eat a suffix and never touches a
+    prefix. When the essence's side still has room the removed modifier is drawn from either side at
+    random, which is the case on a five-modifier item. A fractured modifier is never the one taken.
+    Across four hundred trials a suffix essence on a full item removed a prefix zero times, and on a
+    five-modifier item with a free suffix slot it split its removals across both sides.
+    <br><br>
+    <b>Twice Corrupted adds an enchantment.</b> A successful Architect's Orb is far more predictable
+    than a raw Vaal: it does <i>not</i> run the Vaal outcomes. It never randomises affixes, changes
+    sockets, rerolls values or does nothing &mdash; it adds a single <b>corruption enchantment</b>, a
+    corrupted implicit line, every time it succeeds. It also cannot roll an enchantment from a
+    <b>mod group already on the item</b>, so a success is never wasted on a duplicate of what is
+    already there. That implicit cannot be removed by an Orb of Annulment or any later removal. The
+    other half of the Architect destroys the item, and that is counted as a brick.
+    <br><br>
+    <b>What the item actually gives you.</b> Under the emulated item is a running total of what
+    its modifiers add up to on this base. Local defences are combined the way the game applies
+    them &mdash; flat first, then the increases, so (base + flat) &times; (1 + increased) &mdash;
+    and the working is printed beneath each number, because a total you cannot check is a total you
+    cannot trust. An intelligence body armour with a 153 base, +121 flat and 41% increased reads
+    <b>386</b> and shows <i>(153 + 121) &times; 1.41</i> to say why.
+    <br><br>
+    Resistances, attributes, life, mana, spirit and stun threshold are summed alongside, with
+    hybrid lines split to both halves: a Cold and Chaos roll credits each separately, as does a
+    Strength and Dexterity roll. An unrevealed desecrated line contributes nothing until it is
+    resolved, which is correct &mdash; you do not yet know what it is.
+    <br><br>
+    Anything the parser does not recognise is listed verbatim under <i>not summed</i> rather than
+    quietly discarded. Life regeneration and ailment-duration modifiers land there today. That
+    visible gap is deliberate: a stat sheet that silently drops what it cannot read is worse than
+    one that admits it, because the first looks complete and is not.
+    <br><br>
+    <b>What a reveal can turn up.</b> The unrevealed line already owns a prefix or suffix slot, so
+    every candidate has to match that side. Beyond that it depends on whether an Abyss omen was
+    spent on the bone. Spend one and the reveal is confined to the desecrated pool, and to a single
+    lich's set if it was a faction omen. Spend none and the reveal can also surface an <b>ordinary
+    modifier</b> &mdash; which is the point of an un-omened bone: it is a way to fish for a normal
+    prefix on an item that is already full, and it is how a triple Energy Shield prefix gets made.
+    Force the side with a Necromancy omen, leave the faction alone, and the slot can still resolve
+    into the normal pool.
+    <br><br>
+    The two pools are published on different scales: desecrated modifiers carry no spawn weights at
+    all while ordinary ones run into the thousands, so laying them side by side untouched would let
+    the normal pool swamp the desecrated one completely. They are balanced to contribute equally
+    instead. That fifty-fifty is an assumption rather than something the data states, and it is one
+    number to change if the real split is known.
+    <br><br>
+    <b>What a Divine cannot touch.</b> A fractured modifier is locked in every sense, so its numbers
+    do not move either &mdash; a Divine Orb rerolls every unlocked modifier and steps over the
+    fractured one. A corrupted item cannot be divined at all, and once every remaining modifier is
+    fractured the orb stops being offered.
+    <br><br>
+    <b>Whittling ranks by modifier level, not tier number.</b> Its internal name is
+    <i>lowest level mod</i>, and the level is the item level a tier starts spawning at &mdash; not
+    the T-number. Two T1 modifiers routinely sit at different levels, so tier alone cannot separate
+    them: on an intelligence body armour, T1 Physical Thorns is level 74 while the T1 Energy Shield
+    and Life hybrid is level 78, which makes Thorns the one Whittling takes even though both read
+    T1. Ranking on the tier number picked the wrong one and the highlight pointed at the wrong line.
+    Now the level decides it, ties break on the worse tier, and across four hundred Whittling-armed
+    Chaos Orbs the hybrid and the fractured modifier were never touched once.
+    <br><br>
+    <b>An omen does what it highlights.</b> The highlight and the effect are driven by the same
+    rule, so what lights up is what moves. Whittling strips the lowest tier on the item, Sinistral
+    and Dextral confine a removal to one side, and Omen of Light takes the desecrated modifier and
+    nothing else. Three hundred Whittling-armed Chaos Orbs removed the highlighted modifier three
+    hundred times; the same item without the omen spread its removals across all four.
+    <br><br>
+    <b>Crystallisation.</b> Sinistral and Dextral Crystallisation pair with a <b>perfect</b> essence
+    and confine it to one side of the item &mdash; arm one and the essence picker narrows to that
+    side, six prefix essences or four suffix ones on an intelligence body armour, and the omen is
+    consumed with the essence. The source data gives these two omens no side of their own, so the
+    side is read from their internal code; treating them as a filter on which perfect essence you
+    may use is an interpretation rather than something the data states, and it is a one-line change
+    if the real behaviour turns out to target the removal instead.
+    <br><br>
+    <b>Reading the emulated item.</b> Modifiers are listed in a fixed order &mdash; prefixes,
+    then suffixes, then any corrupted line &mdash; and a Chaos Orb writes its new modifier into the
+    slot it just emptied. Both details matter more than they sound: a Chaos changes exactly one
+    modifier, but if the list resequenced underneath it the whole item appeared to have been
+    rewritten. Whatever the last action touched flashes once, a fracture reports which modifier it
+    locked rather than reporting nothing, and an armed omen highlights the modifiers it is aiming at
+    <i>before</i> you spend the currency &mdash; a Whittling lights up the lowest tier on the item so
+    you can decide whether you still want to press it.
+    <br><br>
+    <b>Emulate a craft.</b> Everything above answers <i>how likely</i>. The emulator, opened from
+    the button on the Craft plan header, answers <i>what happened</i>: it crafts one real item, roll
+    by roll, drawing from the same weighted pools the odds are computed from &mdash; so a run here is
+    one genuine sample of exactly the distribution the graph scores, not an average of it. Apply a
+    currency and the item changes the way it would in game: a Chaos Orb swaps a random modifier, an
+    Annulment takes one, a bone leaves an unrevealed line, and a reveal deals you three options to
+    keep one of. Fractures lock at random, Vaal corrupts down its four outcomes, and an Architect's
+    Orb is the real coin flip &mdash; half the time Twice Corrupted, half the time the base is gone
+    and you are handed a fresh one. Every step is logged, an armed omen carries into the next
+    matching currency, and Undo walks the whole thing back a step at a time. <i>View graph &amp;
+    odds</i> drops you back to the node view to study the probabilities, and reopening the emulator
+    resumes the exact item you were crafting.
+    <br><br>
+    <b>Vaal Orb: sealing the item.</b> A Vaal Orb has four equally likely outcomes &mdash; nothing
+    happens, a modifier is lost, a corrupted line is gained, or the numeric values are rerolled
+    &mdash; and it seals the item whichever one lands. Afterwards the rail goes empty and any step
+    placed later is refused with <i>the item is corrupted; no further currency can be used</i>,
+    which is why it belongs at the end of a plan rather than inside one.
+    <br><br>
+    Only one outcome in four writes a line, and the odds say so: asking for a particular corrupted
+    modifier is a <b>quarter</b> of that modifier's share of the pool, not the share itself. On an
+    intelligence body armour that worked out at 2.8% for a modifier holding an eleventh of the
+    pool. Forty thousand simulated Vaals sealed the item every single time and lost a modifier on
+    24.7% of them, against the 25% the model claims. A fractured modifier is safe from the losing
+    outcome, as it is from every other removal. Rerolled values stay inside their tier, so against
+    a tier-based target that outcome is indistinguishable from nothing happening.
+    <br><br>
+    The corrupted line sits <b>outside</b> the prefix and suffix budget, so a Rare already carrying
+    its full six modifiers still takes one; the tool models it as a seventh line rather than
+    competing for a slot. The corrupted pool is published without spawn weights, so every entry in
+    it is treated as equally likely. An untargeted Vaal is drawn sealed but unchanged rather than
+    promising a line it only delivers a quarter of the time.
+    <br><br>
+    <b>Architect's Orb: the double-or-nothing.</b> The one currency that acts on an already
+    corrupted item, and the only thing the rail still offers once corruption lands. It may be used
+    <b>once per item</b>, whichever way the flip goes. Half the time the item gains the fixed
+    <b>Twice Corrupted</b> line; the other half it is <b>destroyed</b>.
+    <br><br>
+    There is nothing to aim at here, so the step offers no modifier list: the reward is a single
+    fixed line rather than a roll against the corrupted pool, and the odds are a flat coin flip
+    rather than a share of anything. Destruction is not a recoverable failure, so the step is
+    created with brick-on-failure already set and cannot be talked out of it &mdash; every
+    destroyed item is counted as a brick in both the cost model and the simulation, which is what
+    makes the wasted-on-bricks figure meaningful here. Twenty thousand simulated uses destroyed the
+    item 50.1% of the time and gave every survivor exactly one Twice Corrupted line; across a full
+    plan that works out at almost exactly one brick per finished item, which is the honest price of
+    a fifty-fifty on something you have already finished paying for.
+    <br><br>
+    <b>Omen of Abyssal Echoes.</b> Armed on a reveal, it rerolls the candidates once, so a miss
+    gets a second independent set of three. That turns a 49% reveal into <b>74%</b> &mdash;
+    1&nbsp;&minus;&nbsp;(1&nbsp;&minus;&nbsp;p)&sup2; &mdash; and thirty thousand simulated reveals
+    came back at 73.8% against the 74.1% the formula predicts.
+    <br><br>
+    <b>Omen of Light.</b> Armed on an Annulment, it removes <i>only</i> the desecrated modifier.
+    That converts the most dangerous currency in the game into a precision tool: on a four-modifier
+    item an ordinary Annulment is a one-in-four gamble over everything unlocked, while Light makes
+    the removal <b>certain</b> and leaves the other three untouched. It is the clean way to undo a
+    desecrated modifier you did not want without risking the ones you did. If the item carries no
+    desecrated modifier the step refuses outright and says so, rather than quietly removing
+    something else.
+    <br><br>
+    The same machinery drives the other Annulment omens: Sinistral and Dextral Annulment restrict
+    the removal to one side, and the picker greys out everything the armed omen protects, so the
+    odds on the card always describe the set the Annulment can actually reach.
+    <br><br>
+    <b>Revealing a desecrated modifier.</b> A modifier a bone leaves behind arrives unrevealed and
+    has to be resolved, and the resolution offers three candidates from the desecrated pool for you
+    to keep one of. The step lands when the modifier you were after turns up among those three, so
+    it is worth far more than a single roll: against a ten-modifier desecrated pool a candidate
+    holding an eighteenth of the weight came out at <b>49%</b> rather than the 18% a single draw
+    would give &mdash; roughly two and a half times better. Revealing consumes the slot the
+    unrevealed modifier already occupied, so the modifier count does not change.
+    <br><br>
+    The odds here are computed by enumerating the pool exactly rather than by treating the three
+    candidates as independent rolls, because they are distinct: the same modifier cannot fill two
+    of the three slots. That distinction is not academic on a pool this narrow. Assuming
+    independence understated the true chance by about eight percent, which the simulator caught
+    immediately; enumerated properly, the analytic answer and forty thousand simulated reveals now
+    agree to within a tenth of a percent.
+    <br><br>
+    The ordering matters, and the tool will prove it to you. Revealing clears the unrevealed flag,
+    which makes the modifier a legal fracture target again and puts it back into the pool the
+    fracture rolls over. Fracture first and the lock is <b>1 in 3</b>; reveal first and the same
+    lock is <b>1 in 4</b>. Doing the cheap, free step first costs you a third of your fracture odds,
+    which is exactly the sort of thing that is invisible until something computes it.
+    <br><br>
+    <b>Comparing plans.</b> Save a plan, change something, save it again, and the comparison runs
+    each variant and ranks them. It ranks on the <b>median</b>, because the mean is pulled around by
+    the tail, but only among plans that finish at least nine runs in ten. A plan that almost never
+    finishes will show a flattering median &mdash; that number is measured over the handful of runs
+    that survived, not over what you would really spend &mdash; so it is marked
+    <i>rarely finishes</i> and ranked last however cheap it looks. That guard is not hypothetical:
+    a two-step plan with blind Annulment recovery reported a median of 56 against the winner's 55
+    while completing only 1.2% of its runs.
+    <br><br>
+    It also settles arguments that intuition gets wrong. Asking for a modifier at <i>any</i> tier,
+    Perfect tiers came out a wash against ordinary ones. Demanding the same modifiers at
+    <b>T1</b>, Perfect tiers won at a median of 55 against 200 &mdash; nearly four times cheaper
+    &mdash; because the tier gate is only worth paying for when the tier is what you are after.
+    <br><br>
+    <b>Monte Carlo.</b> The solver above returns exact expectations, but an average hides the
+    shape of the thing: most attempts are cheap and a long tail is ruinous, and the mean sits
+    between them describing neither. The simulator plays the plan out with real weighted rolls and
+    reports the distribution &mdash; the median is what a typical attempt costs, the p90 is what an
+    unlucky one in ten pays, and the final bar of the histogram collects everything past the 99th
+    percentile so the tail is visible rather than averaged away. On a worked three-step plan the
+    mean came to 34.6 currency against a median of 29, with the unluckiest tenth paying 67 or more
+    and the worst hundredth over 100.
+    <br><br>
+    It agrees with the closed form where the closed form is exact: on a plan of plain retries the
+    simulated mean landed within 0.2% of the analytic answer over twenty thousand trials, and each
+    currency's usage matched its own 1/p. Where it goes further is the sequencing the analytic model
+    can only approximate &mdash; a Chaos Orb removing before it adds, an Annulment stripping a
+    modifier you wanted, and the pool narrowing as the item fills.
+    <br><br>
+    One modelling choice is worth stating plainly. A step set to <i>retry</i> with no recovery
+    rewinds the item to the state it entered with and pays for a fresh base, because you cannot
+    re-Transmute something that is already Magic; that is what makes an independent retry mean 1/p.
+    A step set to retry <i>after an Annul</i> instead strips a random unlocked modifier, which is
+    where progress can genuinely be lost. Runs that cannot finish at all are counted and reported
+    rather than quietly dropped.
+    <br><br>
+    <b>Omens: focusing the pool.</b> Any step whose currency has omens shows them as chips. Arming
+    one narrows the roll before the odds are computed, which is how players fight the flat weights.
+    A <i>Sinistral</i> omen forces the roll onto a prefix and a <i>Dextral</i> one onto a suffix, so
+    the entire opposite side leaves the denominator &mdash; on a worked example a suffix target went
+    from 7.4% to 13.5% under Dextral, and to zero under Sinistral. A <i>Homogenising</i> omen is
+    stronger still: it restricts the roll to modifiers sharing a crafting tag with something already
+    on the item, so an item already carrying fire and cold resistance narrowed a fifteen-modifier
+    pool to three and took a lightning resistance target from 7.6% to 66.7%. The modifier list on the
+    card narrows in step with the odds, so what you see is what is being divided. Omens that act on
+    two modifiers at once, or target the lowest-level modifier, are offered and labelled but are not
+    yet reflected in the numbers.
+    <br><br>
+    <b>History and rewinding.</b> The panel beside the canvas snapshots the item after every step:
+    its rarity, how many prefixes and suffixes it carries, how many modifiers are fractured, and the
+    omen that was armed. Clicking any snapshot rewinds the plan to that point, so from step twelve
+    you can drop back to step three in one click and explore a different continuation. The rewound
+    tail is stashed rather than destroyed &mdash; <i>Undo revert</i> puts it back if the detour was
+    not worth it.
+    <br><br>
+    <b>Reading the cost card.</b> Every step can fail and be retried, so landing a whole plan
+    once costs more than one orb. Each currency line is the <b>expected number</b> of that item
+    you will consume to finish the plan a single time &mdash; solved exactly, not simulated: a step
+    that succeeds with chance p needs 1/p uses on average, and the numbers compound down the chain,
+    which is why a late, low-chance step can run into the hundreds. The large percentage is the
+    share of that spend lost to items you had to <b>throw away</b> because a step bricked them;
+    0.0% means no step in the plan can brick, so every failure is a recoverable retry. The footer
+    line reports expected dead items per finished craft and the chance one fresh item survives the
+    whole plan with no failures at all.
+    <br><br>
+    <b>Fracturing.</b> A Fracturing Orb locks one modifier already on the item. Open the step and
+    choose which one; it turns gold with a lock, and from then on no Chaos Orb, Orb of Annulment or
+    other currency can remove or reroll it. Because the lock is applied to a random modifier, the
+    chance it lands on the one you picked is one in the number of unlocked modifiers. The strategic
+    payoff is in the numbers: a locked modifier drops out of the removable pool, so on a four-mod
+    item a single fracture turns an Annulment from a one-in-four gamble into one-in-three over the
+    remaining mods &mdash; the tool now counts removals only against the unlocked modifiers.
+    <br><br>
+    <b>One desecrated, one crafted.</b> An item may carry at most one <i>desecrated</i> modifier
+    (added by an Abyssal bone) and at most one <i>crafted</i> modifier (added by an essence). Once
+    one is present the corresponding currency stops being offered and is refused with the reason,
+    so a second bone or a second essence can no longer slip onto the same item. (The 0.5 runes that
+    lift these caps, and the +1 prefix / +1 suffix runes, are not modelled yet.)
+    <br><br>
+    <b>Currency tiers on the node.</b> Tiered orbs appear on each node at every tier they can be
+    used at &mdash; Normal, Greater and Perfect, badged with their numeral &mdash; so the higher
+    tiers are one click away. A tier whose minimum modifier level sits above the item's level is
+    hidden rather than offered uselessly.
+    <br><br>
+    <b>Strict item state.</b> By default a failed step costs only the orb. Turn on
+    <i>Strict item state</i> and removals are modelled properly: an Orb of Annulment, and the
+    removal half of a Chaos Orb, take a <b>random</b> modifier, which may be one you already
+    landed. A step then becomes a biased walk — it gains a target at rate p and loses one at
+    rate (1&minus;p)&middot;r, where r is the share of the item's modifiers that are ones you
+    want — and the expected number of applications is 1/(p&minus;(1&minus;p)r). Earlier steps
+    are never re-run: if the Annul backing an Exalt strips a modifier a Regal placed, the item
+    is still Rare, so you keep Exalting rather than Regalling again.
+    <br><br>
+    The blunt consequence is worth stating. Once a couple of targets are on the item, r is
+    large, and blind Annul recovery <i>loses ground faster than it gains it</i> — the plan has
+    no finite cost at all, and the tool says so rather than quoting a big number. That is a real
+    property of the mechanic, not a modelling artifact: it is why you do not blind-annul a
+    nearly-finished item. Land fragile modifiers while the item is still mostly empty.
+    <br><br>
+    <b>Step kinds.</b> A plan mixes four things. <b>Orbs</b> roll the normal pool and are the
+    only steps with a currency tier. <b>Essences</b> grant their modifier outright, so they are
+    certain — one item, no roll, and the chain shows them as always succeeding. <b>Abyssal
+    bones</b> roll the desecrated pool through their own level window, which is why a Gnawed
+    bone contributes nothing there: every desecrated modifier sits at level 65 and its window
+    ends at 64. <b>A Fracturing Orb</b> adds no modifier at all — it locks one already on the
+    item, chosen at random, so the chance of protecting the one you care about is one over the
+    number of modifiers present, and the step refuses outright below four. Each is billed as its
+    own line in the cost table, with orb tiers kept separate because a Perfect orb is a
+    different item from its base version.
+    <br><br>
+    <b>Targets on a step.</b> A step can accept several target modifiers. <b>ANY one</b> means
+    the step succeeds the moment it lands whichever of them it hits first. <b>Need ALL</b> means
+    you keep spending that currency until every listed modifier is on the item — and because an
+    adding currency writes a modifier whatever it rolls, a miss permanently burns an affix slot.
+    That makes it drawing without replacement, not a free retry: the run ends either with every
+    target landed or with the slots exhausted, so an ALL step reports a real success chance
+    alongside its expected uses. One caveat on that chance — the model does not track which
+    modifier family each junk roll consumed, so it slightly understates how easy later targets
+    are. Measured against simulation it is about four points low on success and under one
+    percent off on expected uses, and it errs conservative in both cases.
+    <br><br>
+    <b>Craft graph.</b> Pick up to six target modifiers and the graph plans routes to them.
+    Each node is an item state — rarity, prefix and suffix counts, which targets have landed —
+    and each edge is one currency step that lands a chosen target. The edge probability is the
+    exact share of pool weight that step would roll, computed at the rarity the currency leaves
+    the item at, so a Regal is measured against the Rare pool it creates. For every target the
+    graph searches all three tiers of every applicable orb and shows the best one, which is why
+    a Perfect orb appears on one branch and a Greater on another: a gate that helps a top-tier
+    target can hurt a low-level one by shrinking the pool around it. Essences appear as
+    <i>certain</i> edges — they cost one item and always land, so the interesting question they
+    pose is which target is worth spending certainty on. Cumulative chance is the product along
+    the path and describes one clean pass with no failures; expected currency sums 1/p per step,
+    which is the average number of orbs if you simply retry a failed step.
+    <br><br>
+    <b>Reading the table.</b> Rows are mod families — one family can occupy an item only once,
+    so a family already on the item drops out of the pool. Expand a row to see its tier ladder;
+    every tier is an independent entry competing on its own weight, which is why families with
+    long ladders are likelier overall. Chance is that family's share of total pool weight for
+    the next affix added.
+    <br><br>
+    <b>Currency tiers.</b> Greater and Perfect orbs refuse to roll modifiers below a minimum
+    level, so low tiers leave the pool entirely and their weight is redistributed across the
+    survivors — the reason a Perfect orb hits top tiers more often even though no individual
+    weight changed. Transmutation and Augmentation gate at <b>44</b> (Greater) and <b>70</b>
+    (Perfect); Regal, Exalted and Chaos gate at <b>35</b> and <b>50</b>. Expand any family to
+    see which tiers a gate removes, struck through and marked <i>cut</i>.
+    <br><br>
+    <b>Omens.</b> An omen is armed before an orb and consumed by it; only omens whose paired
+    currency this item can actually take are listed, and arming one highlights the orbs it
+    pairs with. Sinistral forces the roll to a prefix, Dextral to a suffix — that comes from
+    poe2db's <code>gentype_only</code> flag. Greater Exaltation and Greater Annulment act on
+    two modifiers, Whittling targets the lowest-level one, and Homogenising rolls within a
+    family already on the item. Omens marked <i>listed only</i> exist in the data but carry no
+    behaviour there, so they are shown without being simulated.
+    <br><br>
+    <b>Essences.</b> An essence grants its modifier outright rather than rolling — no weight,
+    no competition. Lesser, Normal and Greater apply to a <b>Magic</b> item and upgrade it to
+    Rare; Perfect and the special corrupted essences apply to a <b>Rare</b> one. Only essences
+    that target the selected base at or below its item level are offered. Group exclusivity
+    still applies: an essence whose family is already present is refused.
+    <br><br>
+    <b>Mod pools.</b> The table browses three pools. <b>Normal</b> is the weighted pool every
+    orb rolls. <b>Desecrated</b> is what Abyssal bones add, and <b>Corrupted</b> is what a Vaal
+    Orb can graft on as an implicit, outside the prefix/suffix budget. poe2db publishes spawn
+    weights only for the normal pool — the other two come back unweighted, so shares there
+    assume a uniform roll and are labelled as such. Every desecrated modifier sits at level
+    <b>65</b> exactly, which is why a Gnawed bone, whose window ends at 64, can never reach one.
+    <br><br>
+    <b>Abyssal bones.</b> Desecration rolls from the normal <i>and</i> desecrated pools, with
+    a per-bone modifier-level window, and is restricted by item class — ribs for armour,
+    jawbones for weapons and quivers, collarbones for rings, amulets and belts. Note the data
+    is not symmetric: on ribs it is <i>Preserved</i> that carries the level-40 floor, while on
+    collarbones and jawbones that floor sits on <i>Ancient</i>. That asymmetry is reproduced
+    here as poe2db states it rather than smoothed over.
+    <br><br>
+    <b>Provenance.</b> Mod text, tier ilvl gates, spawn weights, currency level gates, omen
+    flags, essence tables and bone windows all come from poe2db. Affix caps (1/1 magic, 3/3
+    rare) are game rules. Chaos is modelled as remove-one-add-one, per poe2db's
+    <code>del_add</code>. The Vaal outcome split, marked <b>*</b>, is <i>not</i> sourced from
+    data — treat that one as illustrative only.
+  </footer>
+</div>
+
+<div id="onboard" class="onboard hidden" role="dialog" aria-modal="true" aria-label="Getting started">
+  <div class="obbox">
+    <button class="obx" id="obclose" title="Close">&times;</button>
+    <div class="obstage" id="obstage"></div>
+    <div class="obnav">
+      <button class="ghost obprev" id="obprev">&larr; Back</button>
+      <div class="obdots" id="obdots"></div>
+      <button class="ghost obnext" id="obnext">Next &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<div id="emututorial" class="emututorial hidden" role="dialog" aria-modal="true" aria-label="Emulator tutorial">
+  <div class="tutbox">
+    <div class="tuthead"><span>How to use the Craft Emulator</span>
+      <button class="ghost" id="tutclose">&times; Close</button></div>
+    <div class="tutsub">One real item, rolled the way the game would &mdash; every number comes from the live poe2db pool, nothing is an average.</div>
+    <div class="tutbody">
+      <div class="tutstep"><b>1 &middot; Set up the base</b><p>Up top pick the <i>item class</i>, <i>base</i> and <i>item level</i>. In the emulator set the <b>Base item cost</b> (divines), the <b>Normal / Exceptional</b> dropdown (+1 socket or +quality), and the <b>Quality&nbsp;%</b>.</p></div>
+      <div class="tutstep"><b>2 &middot; Apply currency</b><p>Click any orb under <b>Apply Currency</b>. Each rolls the real mod pool for this base &mdash; Transmute &rarr; Aug &rarr; Regal &rarr; Exalt, plus Chaos, Annul, Divine, Vaal, Fracture and bones. Hover an orb for what it does.</p></div>
+      <div class="tutstep"><b>3 &middot; Focus with omens</b><p>Arm an omen (it glows red) and the currency it pairs with lights up. Whittling targets the lowest mod, Crystallisation forces the essence side, Necromancy forces the bone side, and so on.</p></div>
+      <div class="tutstep"><b>4 &middot; Reveal &amp; essences</b><p>A desecration bone adds an <i>unrevealed</i> modifier; <b>Reveal</b> shows three candidates &mdash; keep one. Essences guarantee a modifier; the Essence of the Abyss writes a <i>Mark</i> a later bone turns desecrated.</p></div>
+      <div class="tutstep"><b>5 &middot; Runes &amp; quality</b><p>Socket runes for stats (they list under the item and feed the DPS / defences). Raise <b>Quality</b> with Whetstone / Scrap / Etcher, and push past 20&percnt; toward 30&percnt; with a <b>Vaal Infuser</b> &mdash; which can corrupt the item.</p></div>
+      <div class="tutstep"><b>6 &middot; Hinekora&rsquo;s Lock</b><p>Arm the <b>Lock</b>, then click a currency to <i>preview</i> its outcome without spending it. <b>Commit</b> keeps that exact roll (and consumes the Lock); <b>Cancel</b> keeps both the item and the Lock so you can preview another.</p></div>
+      <div class="tutstep"><b>7 &middot; Undo &amp; New base</b><p><b>Undo</b> rewinds a step but banks its cost as a real retry. <b>New base &middot; keep cost</b> buys a fresh base and carries the running total &mdash; the true fracture-strat loop.</p></div>
+      <div class="tutstep"><b>8 &middot; Cost &amp; odds</b><p>The tally shows the <b>true cost in divines</b> (set prices in the <i>Currency</i> tab). <b>Simulate &times;1000</b> rolls the next step a thousand times; <b>Compare vs simulation</b> drops your run into the Monte&nbsp;Carlo cost distribution to see if you got lucky.</p></div>
+      <div class="tutstep"><b>9 &middot; Snapshots</b><p><b>Snapshot</b> saves an exact item so you can branch, re-roll, or come back to it &mdash; and the weapon DPS delta compares against your last snapshot.</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="tiptip" class="tiptip" hidden></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

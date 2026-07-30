@@ -1,0 +1,308 @@
+{
+ "Amulets": {
+  "slug": "Amulets",
+  "itemClass": "Amulet",
+  "href": "Amulets",
+  "attrTags": null
+ },
+ "Belts": {
+  "slug": "Belts",
+  "itemClass": "Belt",
+  "href": "Belts",
+  "attrTags": null
+ },
+ "Body_Armours_dex": {
+  "slug": "Body_Armours_dex",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "Dex"
+ },
+ "Body_Armours_dex_int": {
+  "slug": "Body_Armours_dex_int",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "DexInt"
+ },
+ "Body_Armours_int": {
+  "slug": "Body_Armours_int",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "Int"
+ },
+ "Body_Armours_str": {
+  "slug": "Body_Armours_str",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "Str"
+ },
+ "Body_Armours_str_dex": {
+  "slug": "Body_Armours_str_dex",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "StrDex"
+ },
+ "Body_Armours_str_dex_int": {
+  "slug": "Body_Armours_str_dex_int",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "StrDexInt"
+ },
+ "Body_Armours_str_int": {
+  "slug": "Body_Armours_str_int",
+  "itemClass": "Body Armour",
+  "href": "Body_Armours",
+  "attrTags": "StrInt"
+ },
+ "Boots_dex": {
+  "slug": "Boots_dex",
+  "itemClass": "Boots",
+  "href": "Boots",
+  "attrTags": "Dex"
+ },
+ "Boots_dex_int": {
+  "slug": "Boots_dex_int",
+  "itemClass": "Boots",
+  "href": "Boots",
+  "attrTags": "DexInt"
+ },
+ "Boots_int": {
+  "slug": "Boots_int",
+  "itemClass": "Boots",
+  "href": "Boots",
+  "attrTags": "Int"
+ },
+ "Boots_str": {
+  "slug": "Boots_str",
+  "itemClass": "Boots",
+  "href": "Boots",
+  "attrTags": "Str"
+ },
+ "Boots_str_dex": {
+  "slug": "Boots_str_dex",
+  "itemClass": "Boots",
+  "href": "Boots",
+  "attrTags": "StrDex"
+ },
+ "Boots_str_int": {
+  "slug": "Boots_str_int",
+  "itemClass": "Boots",
+  "href": "Boots",
+  "attrTags": "StrInt"
+ },
+ "Bows": {
+  "slug": "Bows",
+  "itemClass": "Bow",
+  "href": "Bows",
+  "attrTags": null
+ },
+ "Bucklers": {
+  "slug": "Bucklers",
+  "itemClass": "Buckler",
+  "href": "Bucklers",
+  "attrTags": null
+ },
+ "Charms": {
+  "slug": "Charms",
+  "itemClass": null,
+  "href": null,
+  "attrTags": null
+ },
+ "Claws": {
+  "slug": "Claws",
+  "itemClass": "Claw",
+  "href": "Claws",
+  "attrTags": null
+ },
+ "Crossbows": {
+  "slug": "Crossbows",
+  "itemClass": "Crossbow",
+  "href": "Crossbows",
+  "attrTags": null
+ },
+ "Daggers": {
+  "slug": "Daggers",
+  "itemClass": "Dagger",
+  "href": "Daggers",
+  "attrTags": null
+ },
+ "Flails": {
+  "slug": "Flails",
+  "itemClass": "Flail",
+  "href": "Flails",
+  "attrTags": null
+ },
+ "Foci": {
+  "slug": "Foci",
+  "itemClass": "Focus",
+  "href": "Foci",
+  "attrTags": null
+ },
+ "Gloves_dex": {
+  "slug": "Gloves_dex",
+  "itemClass": "Gloves",
+  "href": "Gloves",
+  "attrTags": "Dex"
+ },
+ "Gloves_dex_int": {
+  "slug": "Gloves_dex_int",
+  "itemClass": "Gloves",
+  "href": "Gloves",
+  "attrTags": "DexInt"
+ },
+ "Gloves_int": {
+  "slug": "Gloves_int",
+  "itemClass": "Gloves",
+  "href": "Gloves",
+  "attrTags": "Int"
+ },
+ "Gloves_str": {
+  "slug": "Gloves_str",
+  "itemClass": "Gloves",
+  "href": "Gloves",
+  "attrTags": "Str"
+ },
+ "Gloves_str_dex": {
+  "slug": "Gloves_str_dex",
+  "itemClass": "Gloves",
+  "href": "Gloves",
+  "attrTags": "StrDex"
+ },
+ "Gloves_str_int": {
+  "slug": "Gloves_str_int",
+  "itemClass": "Gloves",
+  "href": "Gloves",
+  "attrTags": "StrInt"
+ },
+ "Helmets_dex": {
+  "slug": "Helmets_dex",
+  "itemClass": "Helmet",
+  "href": "Helmets",
+  "attrTags": "Dex"
+ },
+ "Helmets_dex_int": {
+  "slug": "Helmets_dex_int",
+  "itemClass": "Helmet",
+  "href": "Helmets",
+  "attrTags": "DexInt"
+ },
+ "Helmets_int": {
+  "slug": "Helmets_int",
+  "itemClass": "Helmet",
+  "href": "Helmets",
+  "attrTags": "Int"
+ },
+ "Helmets_str": {
+  "slug": "Helmets_str",
+  "itemClass": "Helmet",
+  "href": "Helmets",
+  "attrTags": "Str"
+ },
+ "Helmets_str_dex": {
+  "slug": "Helmets_str_dex",
+  "itemClass": "Helmet",
+  "href": "Helmets",
+  "attrTags": "StrDex"
+ },
+ "Helmets_str_int": {
+  "slug": "Helmets_str_int",
+  "itemClass": "Helmet",
+  "href": "Helmets",
+  "attrTags": "StrInt"
+ },
+ "One_Hand_Axes": {
+  "slug": "One_Hand_Axes",
+  "itemClass": "One Hand Axe",
+  "href": "One_Hand_Axes",
+  "attrTags": null
+ },
+ "One_Hand_Maces": {
+  "slug": "One_Hand_Maces",
+  "itemClass": "One Hand Mace",
+  "href": "One_Hand_Maces",
+  "attrTags": null
+ },
+ "One_Hand_Swords": {
+  "slug": "One_Hand_Swords",
+  "itemClass": "One Hand Sword",
+  "href": "One_Hand_Swords",
+  "attrTags": null
+ },
+ "Quarterstaves": {
+  "slug": "Quarterstaves",
+  "itemClass": "Warstaff",
+  "href": "Quarterstaves",
+  "attrTags": null
+ },
+ "Quivers": {
+  "slug": "Quivers",
+  "itemClass": "Quiver",
+  "href": "Quivers",
+  "attrTags": null
+ },
+ "Rings": {
+  "slug": "Rings",
+  "itemClass": "Ring",
+  "href": "Rings",
+  "attrTags": null
+ },
+ "Sceptres": {
+  "slug": "Sceptres",
+  "itemClass": "Sceptre",
+  "href": "Sceptres",
+  "attrTags": null
+ },
+ "Shields_str": {
+  "slug": "Shields_str",
+  "itemClass": "Shield",
+  "href": "Shields",
+  "attrTags": "Str"
+ },
+ "Shields_str_dex": {
+  "slug": "Shields_str_dex",
+  "itemClass": "Shield",
+  "href": "Shields",
+  "attrTags": "StrDex"
+ },
+ "Shields_str_int": {
+  "slug": "Shields_str_int",
+  "itemClass": "Shield",
+  "href": "Shields",
+  "attrTags": "StrInt"
+ },
+ "Spears": {
+  "slug": "Spears",
+  "itemClass": "Spear",
+  "href": "Spears",
+  "attrTags": null
+ },
+ "Staves": {
+  "slug": "Staves",
+  "itemClass": "Staff",
+  "href": "Staves",
+  "attrTags": null
+ },
+ "Two_Hand_Axes": {
+  "slug": "Two_Hand_Axes",
+  "itemClass": "Two Hand Axe",
+  "href": "Two_Hand_Axes",
+  "attrTags": null
+ },
+ "Two_Hand_Maces": {
+  "slug": "Two_Hand_Maces",
+  "itemClass": "Two Hand Mace",
+  "href": "Two_Hand_Maces",
+  "attrTags": null
+ },
+ "Two_Hand_Swords": {
+  "slug": "Two_Hand_Swords",
+  "itemClass": "Two Hand Sword",
+  "href": "Two_Hand_Swords",
+  "attrTags": null
+ },
+ "Wands": {
+  "slug": "Wands",
+  "itemClass": "Wand",
+  "href": "Wands",
+  "attrTags": null
+ }
+}

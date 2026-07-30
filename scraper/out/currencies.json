@@ -1,0 +1,306 @@
+{
+ "transmute": {
+  "name": "Orb of Transmutation",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeToMagic",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeToMagic.webp",
+  "beforeRarity": [
+   "Normal"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterRarity": "Magic",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "aug": {
+  "name": "Orb of Augmentation",
+  "code": "Metadata/Items/Currency/CurrencyAddModToMagic",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToMagic.webp",
+  "beforePools": [
+   "normal"
+  ],
+  "beforeRarity": [
+   "Magic"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "regal": {
+  "name": "Regal Orb",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeMagicToRare",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeMagicToRare.webp",
+  "beforePools": [
+   "normal"
+  ],
+  "beforeRarity": [
+   "Magic"
+  ],
+  "afterRarity": "Rare",
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "alc": {
+  "name": "Orb of Alchemy",
+  "code": "Metadata/Items/Currency/CurrencyUpgradeToRare",
+  "icon": "Art/2DItems/Currency/CurrencyUpgradeToRare.webp",
+  "beforeRarity": [
+   "Normal"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterRarity": "Rare",
+  "afterTrigger": "reroll",
+  "afterQuantity": 4,
+  "type": "Currency"
+ },
+ "chaos": {
+  "name": "Chaos Orb",
+  "code": "Metadata/Items/Currency/CurrencyRerollRare",
+  "icon": "Art/2DItems/Currency/CurrencyRerollRare.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterTrigger": "reroll",
+  "afterQuantity": 4,
+  "type": "Currency"
+ },
+ "exalted": {
+  "name": "Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyAddModToRare",
+  "icon": "Art/2DItems/Currency/CurrencyAddModToRare.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "normal"
+  ],
+  "afterTrigger": "add",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "annu": {
+  "name": "Orb of Annulment",
+  "code": "Metadata/Items/Currency/CurrencyRemoveMod",
+  "icon": "Art/2DItems/Currency/AnnullOrb.webp",
+  "beforeRarity": [
+   "Magic",
+   "Rare"
+  ],
+  "afterTrigger": "del",
+  "afterQuantity": 1,
+  "type": "Currency"
+ },
+ "divine": {
+  "name": "Divine Orb",
+  "code": "Metadata/Items/Currency/CurrencyModValues",
+  "icon": "Art/2DItems/Currency/CurrencyModValues.webp",
+  "beforeRarity": [
+   "Magic",
+   "Rare"
+  ],
+  "afterTrigger": "divine",
+  "type": "Currency"
+ },
+ "fracturing-orb": {
+  "name": "Fracturing Orb",
+  "code": "Metadata/Items/Currency/CurrencyFractureRare",
+  "icon": "Art/2DItems/Currency/FracturingOrbCombined.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "afterTrigger": "fracture",
+  "type": "Currency"
+ },
+ "vaal-orb": {
+  "name": "Vaal Orb",
+  "code": "Metadata/Items/Currency/CurrencyCorrupt",
+  "icon": "Art/2DItems/Currency/CurrencyVaal.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "corrupted"
+  ],
+  "type": "Currency"
+ },
+ "veiled-exalted-orb": {
+  "name": "Veiled Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyRerollRareVeiled",
+  "icon": "Art/2DItems/Currency/VeiledExaltedOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "veiled"
+  ],
+  "type": "Currency"
+ },
+ "shapers-exalted-orb": {
+  "name": "Shaper's Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyAddModToRareShaper",
+  "icon": "Art/2DItems/Currency/SecretsoftheAtlas/ShaperExaltedOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "shaper"
+  ],
+  "type": "Currency"
+ },
+ "elders-exalted-orb": {
+  "name": "Elder's Exalted Orb",
+  "code": "Metadata/Items/Currency/CurrencyAddModToRareElder",
+  "icon": "Art/2DItems/Currency/SecretsoftheAtlas/ElderExaltedOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "elder"
+  ],
+  "type": "Currency"
+ },
+ "crusaderers-exalted-orb": {
+  "name": "Crusader's Exalted Orb",
+  "code": "Metadata/Items/AtlasExiles/AddModToRareCrusader",
+  "icon": "Art/2DItems/Currency/Influence Exalts/CrusaderOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "crusader"
+  ],
+  "type": "Currency"
+ },
+ "hunterers-exalted-orb": {
+  "name": "Hunter's Exalted Orb",
+  "code": "Metadata/Items/AtlasExiles/AddModToRareHunter",
+  "icon": "Art/2DItems/Currency/Influence Exalts/BasiliskOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "hunter"
+  ],
+  "type": "Currency"
+ },
+ "redeemerers-exalted-orb": {
+  "name": "Redeemer's Exalted Orb",
+  "code": "Metadata/Items/AtlasExiles/AddModToRareRedeemer",
+  "icon": "Art/2DItems/Currency/Influence Exalts/EyrieOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "redeemer"
+  ],
+  "type": "Currency"
+ },
+ "warlorders-exalted-orb": {
+  "name": "Warlord's Exalted Orb",
+  "code": "Metadata/Items/AtlasExiles/AddModToRareWarlord",
+  "icon": "Art/2DItems/Currency/Influence Exalts/ConquerorOrb.webp",
+  "beforeRarity": [
+   "Rare"
+  ],
+  "beforePools": [
+   "warlord"
+  ],
+  "type": "Currency"
+ },
+ "essences": {
+  "name": "Essences",
+  "icon": "Art/2DArt/minimap/player/Essence.webp",
+  "beforeRarity": [
+   "Normal"
+  ],
+  "beforePools": [
+   "essence"
+  ],
+  "afterRarity": "Rare",
+  "type": "Group"
+ },
+ "fossils": {
+  "name": "Fossils",
+  "icon": "Art/2DItems/Currency/Delve/AbberantFossil.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "delve",
+   "shaper",
+   "elder",
+   "crusader",
+   "redeemer",
+   "hunter",
+   "warlord"
+  ],
+  "afterRarity": "Rare",
+  "type": "Group"
+ },
+ "masters": {
+  "name": "Crafting Bench",
+  "icon": "Art/2DArt/minimap/player/CraftingUnlockObject.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "master"
+  ],
+  "type": "Group"
+ },
+ "haunteds": {
+  "name": "Haunted",
+  "icon": "Art/2DArt/minimap/player/NecropolisCorpse.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "normal",
+   "haunted"
+  ],
+  "type": "Group"
+ },
+ "searings": {
+  "name": "Eldritch Embers",
+  "icon": "Art/2DItems/Currency/CleansingFireOrbRank1.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "searing"
+  ],
+  "type": "Group"
+ },
+ "eldriths": {
+  "name": "Eldritch Ichors",
+  "icon": "Art/2DItems/Currency/TangleOrbRank1.webp",
+  "beforeRarity": [
+   "Normal",
+   "Magic",
+   "Rare"
+  ],
+  "beforePools": [
+   "eater"
+  ],
+  "type": "Group"
+ }
+}
