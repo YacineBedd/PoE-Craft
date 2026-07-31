@@ -449,6 +449,17 @@ function drawItem() {
     t.push(`<div class="prop"><span>Requires</span><span>${esc(reqs.join(', '))}</span></div>`);
   }
 
+  // base implicit modifiers sit between the properties and the explicit block;
+  // the graph plans a base, so show the implicit's roll RANGE, not one roll.
+  const imp = (it.base && it.base.imp) || [];
+  if (imp.length) {
+    t.push('<div class="rule"></div>');
+    for (const im of imp) {
+      const text = render(im.x, (im.v || []).map(r => r[0] === r[1] ? String(r[0]) : r[0] + '–' + r[1]));
+      t.push(`<div class="mline impl">${esc(text)}<span class="tg">implicit</span></div>`);
+    }
+  }
+
   // corrupted implicits render above the explicit block, as the game shows them
   const corr = it.affixes.filter(a => a.a === 'c');
   if (corr.length) {

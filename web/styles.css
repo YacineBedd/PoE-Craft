@@ -1052,6 +1052,7 @@
   .m.impl::before { content: 'imp'; font-size: 9px; letter-spacing: .05em; text-transform: uppercase;
     color: var(--faint); margin-right: 7px; vertical-align: 1px; }
   .implrule { border-top: 1px solid var(--line); margin: 4px 0 6px; }
+  .mline.impl { color: var(--dim); }
   .basepick { display: inline-flex; align-items: center; gap: 6px; }
   .basethumb { height: 30px; width: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
 
