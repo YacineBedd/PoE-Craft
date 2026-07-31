@@ -2984,8 +2984,10 @@ function drawEmu() {
         <span class="tag ${e.a}">${e.a === 'p' ? 'P' : 'S'}</span>
         <span>${esc(e.n)}</span>
         <span class="emuoptt">${esc(renderRange(e.x, e.v))}</span>
-      </button>`).join('') : '<div class="m ghost">no essence applies to this item</div>');
+      </button>`).join('') : '<div class="m ghost">no essence applies to this item</div>') +
+      `<div class="emupbtns"><button class="emuopt cancel" data-esscancel>&times; Cancel &mdash; do something else</button></div>`;
     pick.querySelectorAll('[data-ess]').forEach(b => b.onclick = () => emTakeEssence(b.dataset.ess));
+    pick.querySelector('[data-esscancel]').onclick = () => { emPend = null; drawEmu(); };
   } else if (emPend && emPend.kind === 'preview') {
     pick.innerHTML = `<div class="emupickhead">Hinekora's Lock &mdash; foresight</div>
       <div class="emupreview"><b>${esc(emPend.label)}</b> would give:<br>
@@ -3039,6 +3041,9 @@ function drawEmu() {
       avail.map(o => omenChip(o, emOmen === o.i, esc(o.i))).join('')
     : '';
   omBox.querySelectorAll('[data-omen]').forEach(b => b.onclick = () => {
+    // toggling an omen also exits a stranded essence picker (e.g. a Crystallisation
+    // omen opened it and you'd rather do something else)
+    if (emPend && emPend.kind === 'essence') emPend = null;
     emOmen = emOmen === b.dataset.omen ? '' : b.dataset.omen; drawEmu();
   });
   if (emOmen && anyLink) {
