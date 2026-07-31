@@ -1037,6 +1037,8 @@
     .acct { position: static; max-width: none; justify-content: flex-start; margin-bottom: 12px; }
   }
   .emuphint { font-size: 11.5px; color: var(--faint); margin: 6px 0 2px; line-height: 1.4; }
+  .baseart { height: 38px; width: auto; vertical-align: middle; margin-right: 8px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
 
   /* --- "emulate from your item" editor --- */
   .startbox { max-width: 640px; }

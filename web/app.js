@@ -2892,7 +2892,8 @@ function drawEmu() {
     ? `<span class="emusock" title="${sk} socket${sk === 1 ? '' : 's'}">${
         '\u25c8'.repeat(sk)}</span>` : '';
   document.getElementById('emuname').innerHTML =
-    `<span style="color:${rc}">${esc(BASES[state.slug].ic || state.slug)}</span>
+    `${state.base && state.base.img ? `<img class="baseart" src="${esc(state.base.img)}" alt="" loading="lazy">` : ''}
+     <span style="color:${rc}">${esc((state.base && state.base.n) || BASES[state.slug].ic || state.slug)}</span>
      <span class="emurar">${em.sanctified ? 'Sanctified ' : em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
        &middot; ilvl ${state.ilvl}</span> ${sockets}`;
 
