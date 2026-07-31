@@ -1028,6 +1028,7 @@ function mcRemoveRandom(it, s, wantIndex) {
 
 /** Apply one use of a step's currency. Returns 'ok' or 'dead' (cannot proceed). */
 function mcApply(it, s, D) {
+  if (s.kind === 'hinekora') return 'ok';   // foresight only: no change to the item
   if (s.kind === 'architect') {
     if (!it.corrupted || it.affixes.some(a => a.twice)) return 'dead';
     // half the time the item is gone; the other half is a second corruption
@@ -1316,7 +1317,7 @@ let PRICES = {
   transmute: 0.0033, aug: 0.0055, alch: 0.0027, regal: 0.0172, exalted: 0.0022, chaos: 0.114,
   'transmute@II': 0.0032, 'aug@II': 0.003, 'regal@II': 0.0096, 'exalted@II': 0.0149, 'chaos@II': 0.345,
   'transmute@III': 0.0192, 'aug@III': 0.104, 'regal@III': 0.077, 'exalted@III': 2.6, 'chaos@III': 6.2,
-  annul: 0.5, vaal: 0.0094, fracture: 8.8, architect: 4.9, reveal: 0, hinekora: 1100,
+  annul: 0.5, vaal: 0.0094, fracture: 8.8, architect: 4.9, reveal: 0, hinekora: 1200,
   'q-weapon': 0.021, 'q-armour': 0.0065, 'q-caster': 0.0096,
   'vinfuse-weapon': 3.3, 'vinfuse-armour': 8.2, 'vinfuse-caster': 2.1,
   'bone:gnawed': 0.05, 'bone:preserved': 0.4, 'bone:ancient': 2,
@@ -2240,30 +2241,58 @@ const emDeepCopy = it => ({ rarity: it.rarity, corrupted: it.corrupted, sanctifi
 
 /* Hinekora's Lock: roll the next currency on a COPY and show what it WOULD do.
    Commit to keep that exact outcome (and spend the Lock), or Cancel to keep it. */
+// A small seeded PRNG so Hinekora's Lock foresight is deterministic per item
+// quality: the same quality always shows the same outcome, and changing quality
+// (an infuser) re-seeds it - exactly the in-game "quality is the seed" behaviour.
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function hashStr(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+// Seed = quality + which currency + the item itself. Same three => same foresight.
+function hinekoraSeed(opt) {
+  const q = em.quality != null ? em.quality : 20;
+  const sig = em.affixes.map(a => a.g + ':' + a.tier + ':' + ((a.v || []).join(','))).join('|');
+  return hashStr(q + '#' + (opt.cur || opt.kind) + '#' + em.rarity + '#' + sig);
+}
+
 function emPreview(opt) {
   const s = emStep(opt), D = stepDef(s);
   const copy = emDeepCopy(em);
   const before = em.affixes.map(a => ({ ...a }));
   const lockedBefore = new Set(em.affixes.filter(a => a.fx).map(a => a.g + '|' + a.a));
   let res = 'ok', detail, cur;
-  if (opt.kind === 'quality') { const b = copy.quality != null ? copy.quality : qCap(copy);
-    copy.quality = qCap(copy); detail = `quality ${b}% \u2192 ${copy.quality}%`; cur = opt.cur; }
-  else if (opt.kind === 'vaalinfuse') { const b = copy.quality != null ? copy.quality : 20;
-    copy.quality = Math.min(30, b + (Math.random() < 0.5 ? 1 : 2));
-    detail = `quality ${b}% \u2192 ${copy.quality}%`; cur = opt.cur;
-    if (Math.random() < 0.20) { copy.corrupted = true; res = 'corrupt'; detail += ' \u2014 WOULD CORRUPT the item'; } }
-  else if (!D) return;
-  else {
-    res = mcApply(copy, s, D); cur = costKey(s);
-    if (res === 'destroyed') detail = 'the item would be DESTROYED';
-    else if (opt.kind === 'fracture') { const h = copy.affixes.find(a => a.fx && !lockedBefore.has(a.g + '|' + a.a));
-      detail = h ? 'would lock ' + (h.name || h.g) : 'nothing could be locked'; }
-    else { const d = emDescribe(before, copy.affixes, ''); detail = d.detail;
-      if (opt.kind === 'vaal' || opt.kind === 'architect') { const o = copy.lastCorrupt, tw = opt.kind === 'architect';
-        if (o === 'none' || o === 'socket' || o === 'reroll') detail = (tw ? '+ Twice Corrupted \u2014 ' : '') + corruptOutcomeNote(o);
-        else if (tw) detail += ' (corruption enchant)'; } }
-  }
-  emPend = { kind: 'preview', copy, cur, res, omen: s.omen,
+  // Freeze the roll to the quality seed for the length of this foresight.
+  const rnd0 = Math.random;
+  Math.random = mulberry32(hinekoraSeed(opt));
+  try {
+    if (opt.kind === 'quality') { const b = copy.quality != null ? copy.quality : qCap(copy);
+      copy.quality = qCap(copy); detail = `quality ${b}% \u2192 ${copy.quality}%`; cur = opt.cur; }
+    else if (opt.kind === 'vaalinfuse') { const b = copy.quality != null ? copy.quality : 20;
+      copy.quality = Math.min(30, b + (Math.random() < 0.5 ? 1 : 2));
+      detail = `quality ${b}% \u2192 ${copy.quality}%`; cur = opt.cur;
+      if (Math.random() < 0.20) { copy.corrupted = true; res = 'corrupt'; detail += ' \u2014 WOULD CORRUPT the item'; } }
+    else if (!D) return;
+    else {
+      res = mcApply(copy, s, D); cur = costKey(s);
+      if (res === 'destroyed') detail = 'the item would be DESTROYED';
+      else if (opt.kind === 'fracture') { const h = copy.affixes.find(a => a.fx && !lockedBefore.has(a.g + '|' + a.a));
+        detail = h ? 'would lock ' + (h.name || h.g) : 'nothing could be locked'; }
+      else { const d = emDescribe(before, copy.affixes, ''); detail = d.detail;
+        if (opt.kind === 'vaal' || opt.kind === 'architect') { const o = copy.lastCorrupt, tw = opt.kind === 'architect';
+          if (o === 'none' || o === 'socket' || o === 'reroll') detail = (tw ? '+ Twice Corrupted \u2014 ' : '') + corruptOutcomeNote(o);
+          else if (tw) detail += ' (corruption enchant)'; } }
+    }
+  } finally { Math.random = rnd0; }
+  emPend = { kind: 'preview', copy, cur, res, omen: s.omen, seeded: true,
              label: (s.omen ? omenById(s.omen).n + ' + ' : '') + (D ? D.name : opt.label), detail };
   drawEmu();
 }
@@ -2287,7 +2316,13 @@ function emApply(opt) {
   if (emPend) return;                 // a reveal or essence choice must be resolved first
   if (em.sanctified) return;                    // Sanctified: nothing more can be applied
   if (em.corrupted && opt.kind !== 'architect') return;
-  if (emLock && opt.kind !== 'essence' && opt.kind !== 'reveal') return emPreview(opt);
+  if (opt.kind === 'hinekora') {          // Hinekora's Lock now lives in the rail: arm/disarm
+    emLock = !emLock; emPend = null; emSim = null; drawEmu(); return;
+  }
+  // A quality change (infuser) is NOT captured by the Lock - it applies and
+  // re-seeds the next foresight, so changing quality shows a different outcome.
+  if (emLock && opt.kind !== 'essence' && opt.kind !== 'reveal'
+      && opt.kind !== 'quality' && opt.kind !== 'vaalinfuse') return emPreview(opt);
   // An essence is chosen before it exists as a step: the rail offers a generic
   // "Essence" with no ref, which stepDef cannot resolve, so the picker has to
   // come first.
@@ -2757,6 +2792,8 @@ function drawEmu() {
     pick.innerHTML = `<div class="emupickhead">Hinekora's Lock &mdash; foresight</div>
       <div class="emupreview"><b>${esc(emPend.label)}</b> would give:<br>
         <span class="emupdesc">${emPend.detail || 'no visible change'}</span></div>
+      <div class="emuphint">This outcome is fixed by the item's quality (${em.quality != null ? em.quality : 20}%).
+        Cancel and change quality (an infuser) to re-roll the foresight.</div>
       <div class="emupbtns">
         <button class="emuopt commit" data-commit>&#10003; Commit &mdash; consume the Lock</button>
         <button class="emuopt cancel" data-cancel>&times; Cancel &mdash; keep the Lock</button></div>`;
@@ -2881,6 +2918,7 @@ const SIG = {
   exalted: ['#e8dca0', 'Ex'], chaos: ['#c08a5a', 'Ch'], annul: ['#b06a8a', 'An'],
   essence: ['#c9a227', 'Es'], base: ['#8f8f9a', 'B'], brick: ['#b5573a', '!'],
   reveal: ['#8a6ab0', 'Rv'], fracture: ['#c8aa5a', 'Fr'], architect: ['#a03060', 'Ar'],
+  hinekora: ['#7a5cc0', 'Hk'],
   'q-weapon': ['#9aa7b8', 'Q'], 'q-armour': ['#9aa7b8', 'Q'], 'q-caster': ['#9aa7b8', 'Q'],
   'vinfuse-weapon': ['#b0384d', 'Vi'], 'vinfuse-armour': ['#b0384d', 'Vi'], 'vinfuse-caster': ['#b0384d', 'Vi'],
 };
@@ -2951,6 +2989,9 @@ const VAAL = { none: 0.25, lose: 0.25, gain: 0.25, reroll: 0.25 };
  */
 
 function stepDef(s) {
+  if (s.kind === 'hinekora')
+    return { name: "Hinekora's Lock", icon: 'hinekora', to: null,
+             from: ['normal', 'magic', 'rare'], rule: null, tiered: false };
   if (s.kind === 'essence') {
     const e = ESS.find(x => x.i === s.ref);
     if (!e) return null;
@@ -3010,6 +3051,7 @@ function stepDef(s) {
 
 /** Cost-table key: essences and bones are individual items, not one currency. */
 function costKey(s) {
+  if (s.kind === 'hinekora') return 'hinekora';
   if (s.kind === 'essence') return 'ess:' + s.ref;
   if (s.kind === 'bone') return s.ref;
   // kinds that carry no currency key of their own would otherwise all collapse
@@ -3056,6 +3098,7 @@ function stateBefore(i) {
       if (t) affixes.push({ g: t.g, a: 'c', tier: t.maxTier || 1, name: t.name, cor: true });
       continue;
     }
+    if (s.kind === 'hinekora') continue;       // foresight marker: no state change
     if (s.kind === 'divine') {
       // A Divine changes only values, so the affix list is unchanged; but a
       // Sanctification Divine permanently locks the item.
@@ -3269,6 +3312,7 @@ function stepChance(i) {
     return { p: 0, why: "an Architect's Orb only works on a corrupted item" };
   if (!D.from.includes(before.rarity))
     return { p: 0, why: `needs a ${D.from.map(r => RNAME[r]).join(' or ')} item` };
+  if (s.kind === 'hinekora') return { p: 1, why: null };   // foresight: always "succeeds", costs only
 
   // a bone adds a modifier, so the 6-modifier ceiling applies
   if (s.kind === 'bone' && before.affixes.length >= LIMITS.rare.total)
@@ -4071,6 +4115,9 @@ function optionsFor(st, forEmu) {
       : [{ kind: 'architect', cur: 'architect', label: "Architect's Orb",
            ref: null, tier: 'I', icon: 'architect' }];
   }
+  // Hinekora's Lock: in the emulator it arms foresight of the next currency; in
+  // the graph it is a costed marker for planning the ~1200 div spend.
+  push('hinekora', 'hinekora', "Hinekora's Lock", null);
   const hasDesecrated = countCat(st.affixes, 'desecrated') >= maxDesecrated();
   const hasCrafted = countCat(st.affixes, 'crafted') >= maxCrafted();
   if (r === 'rare') {
@@ -4356,6 +4403,7 @@ const CURDESC = {
   fracture: 'Locks one existing modifier at random so it can never be removed or rerolled.',
   reveal: 'Resolves one unrevealed desecrated modifier - you keep one of three shown.',
   essence: 'Guarantees a specific modifier (an item holds at most one crafted mod).',
+  hinekora: "Hinekora's Lock (~1200 div, the game's 2nd most expensive item): foresee the next currency's outcome before committing. Arm it, then use a currency to preview the result - the outcome is seeded by the item's quality, so change quality (an infuser) to re-roll the foresight. In a plan it is a costed marker only; it does not change the odds.",
 };
 function curDescOf(o) {
   let d = o.kind === 'bone'
