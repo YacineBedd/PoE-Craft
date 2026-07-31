@@ -199,6 +199,9 @@ const OMENFX = {
   // Sanctification turns a Divine into a per-modifier value shift (78-122%, can
   // beat the tier max) and permanently locks (Sanctifies) the item.
   OmenOnDivineSanctify:'sanctify',
+  // Omen of the Blessed makes a Divine reroll ONLY the implicit modifiers'
+  // values, leaving every explicit affix exactly as it is.
+  OmenOnDivineRerollImplicits:'blessed',
 };
 const ESSTIERS = ['lesser','normal','greater','perfect','special'];
 const ESSLABEL = { lesser:'Lesser', normal:'Normal', greater:'Greater',
@@ -970,6 +973,13 @@ function rerollVals(a) {
   a.v = rollVals(t[2]); a.x = m.x;
   return true;
 }
+/** Reroll one implicit's numbers inside its base window (Divine / Omen of the Blessed). */
+function rerollImpVals(a) {
+  const src = ((state.base && state.base.imp) || []).find(im => im.x === a.x);
+  if (!src || !src.v || !src.v.length) return false;
+  a.v = rollVals(src.v);
+  return true;
+}
 
 /** The concrete line a modifier shows once its values are rolled. */
 function modText(a) {
@@ -1130,16 +1140,24 @@ function mcApply(it, s, D) {
   }
   if (s.kind === 'divine') {
     if (it.corrupted || it.sanctified) return 'dead';   // both freeze the numbers
+    const dfx = omenFx(s.omen ? omenById(s.omen) : null);
     // Omen of Sanctification reshapes a Divine: values shift 0.78-1.22x (may beat
     // the tier max) and the item is permanently locked.
-    if (omenFx(s.omen ? omenById(s.omen) : null) === 'sanctify') {
+    if (dfx === 'sanctify') {
       for (const a of it.affixes) if (!a.fx) corruptRerollVals(a);
       it.sanctified = true;
       return 'ok';
     }
+    // Omen of the Blessed: reroll ONLY the implicit values, explicit untouched.
+    if (dfx === 'blessed') {
+      for (const a of (it.imp || [])) rerollImpVals(a);
+      return 'ok';                          // a Divine never bricks the item
+    }
     let moved = 0;
     // a fractured modifier is locked in every sense: its roll cannot move either
     for (const a of it.affixes) if (!a.fx && rerollVals(a)) moved++;
+    // a plain Divine rerolls implicit values too (the game rolls both)
+    for (const a of (it.imp || [])) if (rerollImpVals(a)) moved++;
     return moved ? 'ok' : 'dead';
   }
   if (s.kind === 'annul') {
@@ -2203,6 +2221,12 @@ function emOmenTargets(item, omenId) {
     return { keys: new Set(), note: `guarantees a ${LICHNAME[LICHTAG[o.c]] || 'lich'} modifier` };
   if (fx === 'reroll') return { keys: new Set(), note: 'rerolls the reveal options once' };
   if (fx === 'two') return { keys: new Set(), note: 'acts on two modifiers' };
+  if (fx === 'blessed') {
+    const has = item.imp && item.imp.length;
+    return { keys: new Set(), impl: true,
+             note: has ? "rerolls only the implicit modifiers' values"
+                       : 'this base has no implicit to reroll' };
+  }
   return { keys: new Set(), note: '' };
 }
 
@@ -2463,6 +2487,17 @@ function emDescribe(before, after, label) {
            addedKeys: added.map(a => a.g + '|' + a.a) };
 }
 
+/** Value changes between two implicit snapshots, as "old -> new" phrases. */
+function emImpDiff(before, after) {
+  const parts = [];
+  (after || []).forEach((a, i) => {
+    const b = before[i];
+    if (b && a.v && b.v && a.v.join(',') !== b.v.join(','))
+      parts.push(render(a.x, b.v) + ' → ' + render(a.x, a.v));
+  });
+  return parts;
+}
+
 /** Build the transient step object an action needs, honouring an armed omen. */
 function emStep(opt) {
   const s = { id: -1, kind: opt.kind, cur: opt.cur, tier: opt.tier || 'I',
@@ -2592,6 +2627,7 @@ function emApply(opt) {
 
   emHist.push(emSnap());
   const before = em.affixes.map(a => ({ ...a }));
+  const impBefore = (em.imp || []).map(a => ({ x: a.x, v: (a.v || []).slice() }));
   const lockedBefore = new Set(em.affixes.filter(a => a.fx).map(a => a.g + '|' + a.a));
   const res = mcApply(em, s, D);
   const label = (s.omen ? omenById(s.omen).n + ' + ' : '') + D.name;
@@ -2617,6 +2653,16 @@ function emApply(opt) {
         d.detail = (twice ? '+ Twice Corrupted \u2014 ' : '') + corruptOutcomeNote(o);
       else if (twice)
         d.detail += ' (corruption enchant)';  // the diff already names the implicit
+    }
+    // Divine (and Omen of the Blessed) can shift implicit values; surface them,
+    // since the explicit diff alone would read "no visible change" for a Blessed.
+    if (opt.kind === 'divine') {
+      const ic = emImpDiff(impBefore, em.imp || []);
+      if (ic.length) {
+        const impTxt = 'implicit ' + ic.join(', ');
+        d.detail = (d.detail && d.detail !== 'no visible change')
+          ? d.detail + ' · ' + impTxt : impTxt;
+      }
     }
     emLog.push(d);
     emFlash = d.addedKeys || [];
@@ -2991,8 +3037,9 @@ function drawEmu() {
       }).join('')
     : '<div class="m ghost">a bare base &mdash; no modifiers yet</div>';
   // implicit modifiers sit above the explicit block, separated by a rule (as in game)
+  const implCls = 'm impl' + (tgt.impl ? ' omtarget' : '');
   const implHTML = (em.imp && em.imp.length)
-    ? em.imp.map(im => `<div class="m impl"${tipAttr(im)} title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
+    ? em.imp.map(im => `<div class="${implCls}"${tipAttr(im)} title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
       + '<div class="implrule"></div>'
     : '';
   EMU_RENDER = false;
@@ -3852,6 +3899,38 @@ function sigil(kind) {
 // an integer index, so nothing HTML-unsafe ever lands in an attribute.
 let TIP_REG = [], EMU_RENDER = false, emTipBound = false;
 
+// A roll's position in its tier window as a good/bad cue: high = green (leave it),
+// mid = amber, low = red (a Divine is tempting). Same thresholds everywhere.
+const qualClass = pct => pct == null ? '' : pct >= 70 ? 'tq-hi' : pct >= 35 ? 'tq-mid' : 'tq-lo';
+const qualWord  = pct => pct == null ? '' : pct >= 70 ? 'high roll' : pct >= 35 ? 'mid roll' : 'low roll';
+
+/** The tier value windows + current roll for an affix, or null if it has none. */
+function modRanges(a) {
+  if (a.impl) {
+    const src = ((state.base && state.base.imp) || []).find(im => im.x === a.x);
+    if (!src || !src.v || !src.v.length) return null;
+    return { ranges: src.v, cur: a.v, tmpl: a.x, tier: '', tname: 'implicit', impl: true };
+  }
+  if (a.rand || a.twice || a.mark || a.un || a.a === 'c') return null;
+  const m = modOf(a);
+  if (!m || !m.t) return null;
+  const t = m.t.find(x => x[0] === a.tier);
+  if (!t || !t[2] || !t[2].length) return null;
+  return { ranges: t[2], cur: a.v, tmpl: m.x, tier: a.tier, tname: t[4] || '', fx: !!a.fx };
+}
+
+/** Mean percentile of a roll across its varying slots (0-100), or null. */
+function rollQuality(a) {
+  const r = modRanges(a);
+  if (!r || r.fx || !r.cur) return null;      // fractured can't be rerolled: no cue
+  let sum = 0, n = 0;
+  r.ranges.forEach((rg, i) => {
+    if (rg[1] <= rg[0] || r.cur[i] == null) return;
+    sum += (r.cur[i] - rg[0]) / (rg[1] - rg[0]); n++;
+  });
+  return n ? Math.round(sum / n * 100) : null;
+}
+
 function tipHTML({ ranges, cur, tmpl, tier, tname, note }) {
   const hasRange = ranges.some(r => r[0] !== r[1]);
   const rangeStr = renderRange(tmpl, ranges);
@@ -3862,13 +3941,14 @@ function tipHTML({ ranges, cur, tmpl, tier, tname, note }) {
     const pct = c != null && r[1] > r[0]
       ? Math.round(((c - r[0]) / (r[1] - r[0])) * 100) : null;
     const w = pct == null ? 0 : Math.max(0, Math.min(100, pct));
-    bars += `<div class="tiprow">
+    const q = qualClass(pct);
+    bars += `<div class="tiprow ${q}">
       <div class="tipbarwrap"><span class="tipend">${r[0]}</span>
         <div class="tipbar"><i style="width:${w}%"></i>${
           c != null ? `<b style="left:${w}%"></b>` : ''}</div>
         <span class="tipend">${r[1]}</span></div>
       ${c != null ? `<div class="tipnow">rolled <b>${c}</b>${
-        pct != null ? ` &middot; ${pct}% up the tier` : ''}</div>` : ''}
+        pct != null ? ` &middot; ${pct}% &middot; <span class="tqword">${qualWord(pct)}</span>` : ''}</div>` : ''}
     </div>`;
   });
   const tt = tier ? 'T' + tier : (tname === 'implicit' ? 'IMP' : '');
@@ -3882,21 +3962,12 @@ function tipHTML({ ranges, cur, tmpl, tier, tname, note }) {
 
 /** Tooltip HTML for one affix, or '' when it has no rerollable range. */
 function rangeTip(a) {
-  if (a.impl) {
-    const src = ((state.base && state.base.imp) || []).find(im => im.x === a.x);
-    if (!src || !src.v || !src.v.length) return '';
-    return tipHTML({ ranges: src.v, cur: a.v, tmpl: a.x, tier: '',
-                     tname: 'implicit', note: 'a Divine Orb also rerolls implicit values' });
-  }
-  if (a.rand || a.twice || a.mark || a.un || a.a === 'c') return '';
-  const m = modOf(a);
-  if (!m || !m.t) return '';
-  const t = m.t.find(x => x[0] === a.tier);
-  if (!t || !t[2] || !t[2].length) return '';
-  const note = a.fx ? 'fractured &mdash; locked; a Divine will not reroll it'
-                    : 'a Divine Orb rerolls the values within this tier';
-  return tipHTML({ ranges: t[2], cur: a.v, tmpl: m.x, tier: a.tier,
-                   tname: t[4] || '', note });
+  const r = modRanges(a);
+  if (!r) return '';
+  const note = r.impl ? 'a Divine Orb (or Omen of the Blessed) rerolls implicit values'
+    : r.fx ? 'fractured &mdash; locked; a Divine will not reroll it'
+    : 'a Divine Orb rerolls the values within this tier';
+  return tipHTML({ ...r, note });
 }
 
 /** Attribute snippet ` data-rtip="N"` when a line has a range to show (emu only).
@@ -3963,8 +4034,10 @@ function modLine(a, ghost) {
   if (a.fx) return `<div class="m fx"${tipAttr(a)} title="fractured: locked, cannot be removed or rerolled">
     <span class="tb">${a.tier ? 'T' + a.tier : '&#128274;'}</span>
     <span>&#128274; ${esc(name)}</span></div>`;
+  // at-a-glance roll-quality tint on the tier tag (emulator only)
+  const q = EMU_RENDER ? qualClass(rollQuality(a)) : '';
   return `<div class="m${ghost ? ' ghost' : ''}${cat}"${tipAttr(a)}>
-    <span class="tb">${a.tier ? 'T' + a.tier : '?'}</span>
+    <span class="tb${q ? ' ' + q : ''}">${a.tier ? 'T' + a.tier : '?'}</span>
     <span>${esc(name)}</span></div>`;
 }
 

@@ -536,6 +536,17 @@
                       background: var(--accent); box-shadow: 0 0 0 2px var(--panel); }
   .emutip .tipnow { margin-top: 4px; font-size: 11px; color: var(--dim); text-align: center; }
   .emutip .tipnow b { color: var(--ink); font-weight: 700; }
+  .emutip .tqword { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+  /* good/bad roll colour cue: green high, amber mid, red low */
+  .emutip .tq-hi  .tipbar i { background: color-mix(in srgb, var(--desec) 55%, transparent); }
+  .emutip .tq-mid .tipbar i { background: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .emutip .tq-lo  .tipbar i { background: color-mix(in srgb, var(--brick) 55%, transparent); }
+  .emutip .tq-hi  .tipbar b { background: var(--desec); }
+  .emutip .tq-mid .tipbar b { background: var(--accent); }
+  .emutip .tq-lo  .tipbar b { background: var(--brick); }
+  .emutip .tq-hi  .tqword { color: var(--desec); }
+  .emutip .tq-mid .tqword { color: var(--accent); }
+  .emutip .tq-lo  .tqword { color: var(--brick); }
   .emutip .tipfixed { font-size: 11px; color: var(--dim); font-style: italic; }
   .emutip .tipnote { margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line);
                      font-size: 11px; color: var(--faint); line-height: 1.4; }
@@ -573,6 +584,11 @@
   .m.craft .tb { color: var(--craft); }
   .m.abyssmark { color: var(--desec); }
   .m.abyssmark .tb { color: var(--desec); }
+  /* roll-quality tint on the tier tag: green good / amber mid / red low.
+     Placed after category colours so an actionable roll cue wins. */
+  .emumods .m .tb.tq-hi  { color: var(--desec); border-color: color-mix(in srgb, var(--desec) 45%, var(--line)); }
+  .emumods .m .tb.tq-mid { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+  .emumods .m .tb.tq-lo  { color: var(--brick); border-color: color-mix(in srgb, var(--brick) 45%, var(--line)); }
   .omnote.omapply { color: var(--ink); }
   .omnote.omapply b { color: #ff7086; }
   .revmix { margin-left: 8px; font: 500 10px ui-monospace, Menlo, monospace;
