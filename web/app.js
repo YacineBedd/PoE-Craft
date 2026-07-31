@@ -1820,7 +1820,7 @@ function itemStats(it) {
     attr: { str: 0, dex: 0, int: 0 },
     other: [],
   };
-  for (const a of it.affixes) {
+  for (const a of [...it.affixes, ...(it.imp || [])]) {   // implicits count too
     if (a.rand || a.un || a.twice) continue;         // nothing concrete to add up
     for (const line of String(modText(a)).split('\n')) {
       const txt = line.trim();
@@ -1830,7 +1830,7 @@ function itemStats(it) {
         const m = txt.match(re);
         if (m) { fn(m, s); hit = true; break; }
       }
-      if (!hit) s.other.push(txt);
+      if (!hit && !a.impl) s.other.push(txt);   // implicits are shown separately, not in "not summed"
     }
   }
 
@@ -1890,7 +1890,7 @@ function weaponDPS(it, B) {
   let fp = [0, 0], chaos = [0, 0], incPhys = 0, incAS = 0, incCrit = 0,
       acc = 0, critDmg = 0, incEle = 0, incFire = 0, incCold = 0, incLight = 0;
   const q = it.quality != null ? it.quality : qCap(it);
-  for (const a of it.affixes) {
+  for (const a of [...it.affixes, ...(it.imp || [])]) {   // implicits count too
     if (a.rand || a.un || a.twice) continue;
     for (const ln of String(modText(a)).split('\n')) {
       let m;
@@ -1948,7 +1948,7 @@ const SPARK_CAST = 0.70, SPARK_CRIT = 9;   // base cast time (s), base crit chan
 
 function spellDPS(it) {
   let incSpell = 0, incLight = 0, incEle = 0, extra = 0, incCast = 0, incCrit = 0, critDmg = 0, levels = 0;
-  for (const a of it.affixes) {
+  for (const a of [...it.affixes, ...(it.imp || [])]) {   // implicits count too
     if (a.rand || a.un || a.twice) continue;
     for (const ln of String(modText(a)).split('\n')) {
       let m;
@@ -2197,15 +2197,23 @@ function emOmenTargets(item, omenId) {
 
 function emSnap() {
   return { rarity: em.rarity, corrupted: em.corrupted, sanctified: em.sanctified, quality: em.quality, exc: em.exc,
-           sockets: (em.sockets || []).slice(),
+           sockets: (em.sockets || []).slice(), imp: (em.imp || []).map(a => ({ ...a })),
            affixes: em.affixes.map(a => ({ ...a })), log: emLog.length };
 }
 function emItem() { return { slug: state.slug, base: state.base, classTags: state.classTags,
-                             ilvl: state.ilvl, rarity: em.rarity, affixes: em.affixes,
+                             ilvl: state.ilvl, rarity: em.rarity, affixes: em.affixes, imp: em.imp,
                              corrupted: em.corrupted, sanctified: em.sanctified }; }
 
+// Implicit modifiers live on the base item type (not prefixes/suffixes). Roll a
+// concrete value for each, like the game would when the base drops.
+function rollImp(base) {
+  const imp = base && base.imp;
+  return imp ? imp.map(im => ({ g: 'implicit', a: 'i', impl: true,
+                                x: im.x, v: (im.v || []).map(r => rint(r[0], r[1])) })) : [];
+}
+
 function emStart(fresh) {
-  if (fresh || !em) { em = mcFresh(); em.quality = 20; emHist = []; emLog = []; emOmen = ''; emPend = null; emCompare = null; emSunk = {}; emLock = false; }
+  if (fresh || !em) { em = mcFresh(); em.quality = 20; em.imp = rollImp(state.base); emHist = []; emLog = []; emOmen = ''; emPend = null; emCompare = null; emSunk = {}; emLock = false; }
   document.getElementById('emu').classList.remove('hidden');
   drawEmu();
 }
@@ -2265,6 +2273,7 @@ function emCopyItem(it) {
            corruptDid: it.corruptDid || null, lastCorrupt: it.lastCorrupt || null,
            quality: it.quality, exc: it.exc,
            sockets: (it.sockets || []).slice(),
+           imp: (it.imp || []).map(a => ({ ...a })),
            affixes: (it.affixes || []).map(a => ({ ...a })) };
 }
 
@@ -2289,6 +2298,7 @@ function restoreBase(ctx) {
 function emStartFrom(item, label, ctx) {
   const switched = ctx && ctx.slug && ctx.slug !== state.slug && restoreBase(ctx);
   em = emCopyItem(item);
+  if (!em.imp || !em.imp.length) em.imp = rollImp(state.base);   // older snapshots carry none
   emHist = []; emLog = []; emOmen = ''; emPend = null; emCompare = null; emSunk = {}; emSim = null;
   if (switched) emLog.push({ label: '', detail: 'switched base to ' + esc(BASES[state.slug].ic || state.slug) +
                              ' to match this snapshot', note: true });
@@ -2454,6 +2464,7 @@ function emStep(opt) {
 }
 
 const emDeepCopy = it => ({ rarity: it.rarity, corrupted: it.corrupted, sanctified: it.sanctified, quality: it.quality, exc: it.exc,
+  imp: (it.imp || []).map(a => ({ ...a })),
   socketBonus: it.socketBonus || 0, corruptDid: it.corruptDid || null, lastCorrupt: it.lastCorrupt || null,
   sockets: (it.sockets || []).slice(), affixes: it.affixes.map(a => ({ ...a })) });
 
@@ -2521,7 +2532,7 @@ function emCommitPreview() {
   em = p.copy;
   if (p.res === 'destroyed') {
     emLog.push({ label: 'Hinekora + ' + p.label, cur: p.cur, hinekora: 1, detail: 'the item was DESTROYED', dead: true });
-    em = mcFresh(); em.quality = 20;
+    em = mcFresh(); em.quality = 20; em.imp = rollImp(state.base);
     emLog.push({ label: '', detail: 'started a fresh base', note: true });
   } else emLog.push({ label: 'Hinekora + ' + p.label, cur: p.cur, omen: p.omen || undefined,
                       hinekora: 1, detail: p.detail, dead: p.res === 'corrupt' });
@@ -2576,7 +2587,7 @@ function emApply(opt) {
   const cur = costKey(s), omenU = s.omen || undefined;
   if (res === 'destroyed') {
     emLog.push({ label, detail: 'the item was DESTROYED', dead: true, cur, omen: omenU, brick: true });
-    em = mcFresh();
+    em = mcFresh(); em.imp = rollImp(state.base);
     emLog.push({ label: '', detail: 'started a fresh base', note: true });
   } else if (opt.kind === 'fracture') {
     // locking changes no modifier, so a plain diff would report nothing
@@ -2732,7 +2743,7 @@ function emUndo() {
     if (e.brick) emSunk.base = (emSunk.base || 0) + 1;
   }
   em = { rarity: snap.rarity, corrupted: snap.corrupted, sanctified: snap.sanctified, quality: snap.quality, exc: snap.exc,
-         sockets: (snap.sockets || []).slice(),
+         sockets: (snap.sockets || []).slice(), imp: (snap.imp || []).map(a => ({ ...a })),
          affixes: snap.affixes.map(a => ({ ...a })) };
   emLog = emLog.slice(0, snap.log);
   emPend = null; emSim = null;
@@ -2967,7 +2978,12 @@ function drawEmu() {
         return cls ? modLine(a).replace('class="m', 'class="m' + cls) : modLine(a);
       }).join('')
     : '<div class="m ghost">a bare base &mdash; no modifiers yet</div>';
-  document.getElementById('emumods').innerHTML = mods;
+  // implicit modifiers sit above the explicit block, separated by a rule (as in game)
+  const implHTML = (em.imp && em.imp.length)
+    ? em.imp.map(im => `<div class="m impl" title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
+      + '<div class="implrule"></div>'
+    : '';
+  document.getElementById('emumods').innerHTML = implHTML + mods;
   syncEmRunes();
   document.getElementById('emucap').innerHTML = em.corrupted || em.sanctified ? '' : capacity(em);
   { const lk = document.getElementById('emulock'); if (lk) lk.classList.toggle('on', emLock); }

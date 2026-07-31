@@ -11,6 +11,7 @@ image file's basename. Images save to web/img/bases/ ; DATA.json bases get an
 `img` field. poe2db's CDN 403s without a browser Referer, so we send one.
 """
 import json, os, re, sys, glob, time, html, urllib.request, urllib.error
+from lib import plain, template_and_values
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -117,10 +118,41 @@ def essence_icons(db):
             print('  !', e['n'], ex.code); miss += 1
     print(f'essences: {got} matched, {miss} missing')
 
+IMP = re.compile(r'<div class="implicitMod">(.*?)</div>', re.S)
+
+def implicits(db):
+    """Attach each base's implicit modifiers (from the raw class pages) as `imp`:
+    a list of {x, v} in the same template/value form as explicit mods."""
+    name2imp = {}
+    for f in glob.glob(os.path.join(HERE, 'raw', '*.html')):
+        h = open(f, encoding='utf-8', errors='ignore').read()
+        starts = [c.start() for c in COL.finditer(h)]
+        for i, s in enumerate(starts):
+            e = starts[i + 1] if i + 1 < len(starts) else min(len(h), s + 8000)
+            blk = h[s:e]
+            a = ANCHOR.search(blk)
+            if not a:
+                continue
+            texts = [t for t in (plain(x).strip() for x in IMP.findall(blk)) if t]
+            if texts:
+                name2imp.setdefault(norm(html.unescape(a.group(1)).strip()), texts)
+    got = 0
+    for node in db['bases'].values():
+        for b in node.get('b', []):
+            imps = name2imp.get(norm(b['n']))
+            if imps:
+                b['imp'] = [{'x': x, 'v': v} for x, v in (template_and_values(t) for t in imps)]
+                got += 1
+    print(f'implicits: {got} bases got implicit modifiers')
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     flags = [a for a in sys.argv[1:] if a.startswith('--')]
     db = json.load(open(DATA))
+    if '--implicits' in flags and not args:        # standalone: base implicits only
+        implicits(db)
+        json.dump(db, open(DATA, 'w'), separators=(',', ':'))
+        print('wrote', DATA); return
     if '--essences' in flags and not args:         # standalone: essence icons only
         essence_icons(db)
         json.dump(db, open(DATA, 'w'), separators=(',', ':'))
