@@ -1889,6 +1889,49 @@ function weaponDPS(it, B) {
   return { aps, crit, critDmg, acc, incEle, incFire, incCold, incLight,
            pMin, pMax, ele, chaos, physDPS, eleDPS, chaosDPS, total, effTotal, critFactor };
 }
+// Spell-DPS benchmark for caster weapons (wands/staves/sceptres/foci). Caster
+// bases carry no damage, cast speed or crit, and PoE2 has no "adds damage to
+// spells" modifier - a spell's base damage comes from the gem. So we anchor to a
+// fixed benchmark spell (Spark, from poe2db) at gem level 20 and scale it by the
+// item's spell modifiers, PER PROJECTILE. Numbers: poe2db.tw/us/Spark.
+const SPARK_LVL = { 20:[13,245], 21:[15,277], 22:[16,313], 23:[19,354], 24:[21,399],
+                    25:[24,450], 26:[27,508], 27:[30,573], 28:[34,646], 29:[38,729], 30:[43,822] };
+const SPARK_CAST = 0.70, SPARK_CRIT = 9;   // base cast time (s), base crit chance (%)
+
+function spellDPS(it) {
+  let incSpell = 0, incLight = 0, incEle = 0, extra = 0, incCast = 0, incCrit = 0, critDmg = 0, levels = 0;
+  for (const a of it.affixes) {
+    if (a.rand || a.un || a.twice) continue;
+    for (const ln of String(modText(a)).split('\n')) {
+      let m;
+      // increased damage buckets that apply to Spark (a Lightning spell) - all additive.
+      // "increased Elemental Damage with Attacks" is attack-only and must NOT count.
+      if (/increased Elemental Damage with Attacks/i.test(ln)) { /* skip */ }
+      else if (m = ln.match(/(\d+)% increased Spell Damage/i)) incSpell += +m[1];
+      else if (m = ln.match(/(\d+)% increased Lightning Damage/i)) incLight += +m[1];
+      else if (m = ln.match(/(\d+)% increased Elemental Damage/i)) incEle += +m[1];
+      if (m = ln.match(/(\d+)% increased Cast Speed/i)) incCast += +m[1];
+      if (m = ln.match(/(\d+)% increased Critical Hit Chance for Spells/i)) incCrit += +m[1];
+      if (m = ln.match(/(\d+)% increased Critical Spell Damage Bonus/i)) critDmg += +m[1];
+      if (m = ln.match(/Gain (\d+)% of Damage as Extra (?:Fire|Cold|Lightning|Chaos) Damage/i)) extra += +m[1];
+      if (m = ln.match(/\+(\d+) to Level of all (?:Lightning Spell|Lightning|Spell) Skills/i)) levels += +m[1];
+      else if (m = ln.match(/\+(\d+) to Level of all Skills/i)) levels += +m[1];
+    }
+  }
+  const capped = 20 + levels > 30;
+  const gem = Math.max(20, Math.min(30, 20 + levels));
+  const [lo, hi] = SPARK_LVL[gem];
+  const incMul = 1 + (incSpell + incLight + incEle) / 100;
+  const extraMul = 1 + extra / 100;
+  const hitLo = lo * incMul * extraMul, hitHi = hi * incMul * extraMul, hitAvg = (hitLo + hitHi) / 2;
+  const casts = (1 / SPARK_CAST) * (1 + incCast / 100);
+  const crit = Math.min(100, SPARK_CRIT * (1 + incCrit / 100));
+  const critFactor = 1 + (crit / 100) * (1 + critDmg / 100);   // base crit = +100% bonus
+  const dps = hitAvg * casts * critFactor;
+  return { gem, capped, levels, hitLo, hitHi, hitAvg, casts, crit, critDmg, critFactor, dps,
+           incPool: incSpell + incLight + incEle, extra, incCast };
+}
+
 function drawStats() {
   const box = document.getElementById('emustats');
   if (!box || !em) return;
@@ -1912,8 +1955,10 @@ function drawStats() {
   const attrRow = (k, label) => S.attr[k]
     ? `<div class="strow"><span class="stk">${label}</span><span class="stv">+${S.attr[k]}</span></div>` : '';
 
-  const weapon = (state.classTags || []).includes('weapon');
+  const caster = (state.classTags || []).includes('caster');   // spell weapon: use Spark benchmark
+  const weapon = !caster && (state.classTags || []).includes('weapon');
   const D = weapon ? weaponDPS(em) : null;
+  const SD = caster ? spellDPS(em) : null;
   const rnd = x => Math.round(x);
   // what each socketed rune actually adds, shown on the sheet
   const catNow = runeCat(state.slug);
@@ -1947,15 +1992,55 @@ function drawStats() {
         rnd(Math.abs(dv))} vs snap #${last.id}</span>`;
     }
   }
+  let sdDelta = '';
+  if (caster && emSnaps.length) {
+    const last = emSnaps[emSnaps.length - 1], sctx = snapBaseCtx(last);
+    if (sctx && (sctx.classTags || []).includes('caster')) {
+      const dv = SD.dps - spellDPS(last.item).dps;
+      sdDelta = `<span class="dpsdelta ${dv > 0.5 ? 'good' : dv < -0.5 ? 'bad' : ''}"
+        title="Spell DPS change from snapshot #${last.id}">${dv >= 0 ? '+' : '\u2212'}${
+        rnd(Math.abs(dv))} vs snap #${last.id}</span>`;
+    }
+  }
   const eleRanges = D ? ['Fire', 'Cold', 'Lightning'].filter(k => D.ele[k][1])
     .map(k => `${k[0]} ${rnd(D.ele[k][0])}\u2013${rnd(D.ele[k][1])}`) : [];
-  // weapon damage mods are folded into DPS, so drop them from the "not summed" list
-  const other = weapon ? S.other.filter(o => !/Adds \d+ to \d+ (Physical|Fire|Cold|Lightning|Chaos) Damage|increased (Physical Damage|Attack Speed|Critical Hit Chance)/i.test(o)) : S.other;
+  // damage mods folded into DPS are dropped from the "not summed" list. For
+  // spells only pure single-stat lines are dropped (anchored), so a hybrid mod's
+  // other half - e.g. the mana on "increased Spell Damage +X Mana" - is not lost.
+  const casterFold = [
+    /^\d+% increased Spell Damage$/i, /^\d+% increased Lightning Damage$/i,
+    /^\d+% increased Elemental Damage$/i, /^\d+% increased Cast Speed$/i,
+    /^\d+% increased Critical Hit Chance for Spells$/i, /^\d+% increased Critical Spell Damage Bonus$/i,
+    /^Gain \d+% of Damage as Extra (?:Fire|Cold|Lightning|Chaos) Damage$/i,
+    /^\+\d+ to Level of all (?:Lightning Spell|Lightning|Spell) Skills$/i, /^\+\d+ to Level of all Skills$/i,
+  ];
+  const other = caster ? S.other.filter(o => !casterFold.some(re => re.test(o)))
+    : weapon ? S.other.filter(o => !/Adds \d+ to \d+ (Physical|Fire|Cold|Lightning|Chaos) Damage|increased (Physical Damage|Attack Speed|Critical Hit Chance)/i.test(o)) : S.other;
   box.innerHTML = `
-    <div class="sthead">Item totals <span class="stnote">${weapon
+    <div class="sthead">Item totals <span class="stnote">${caster
+      ? 'spell DPS &mdash; Spark benchmark, per projectile (a spell&rsquo;s base damage comes from the gem, not the weapon)'
+      : weapon
       ? 'weapon DPS &mdash; local flat &amp; increases; global % (e.g. increased Elemental Damage) is not local'
       : 'base &plus; flat, then increases' + (S.total.quality > 20 ? ' &middot; quality ' + S.total.quality + '%' : '')}</span></div>
-    ${weapon ? `<div class="stgrid">
+    ${caster ? `<div class="stgrid">
+      <div class="stbig"><div class="stbigk">Spell DPS</div><div class="stbigv dps-ele">${rnd(SD.dps)}${sdDelta}</div>
+        <div class="stcalc">per projectile &middot; Spark lvl ${SD.gem}${SD.capped ? '+' : ''}</div></div>
+      <div class="stbig"><div class="stbigk">Spell hit</div><div class="stbigv">${rnd(SD.hitAvg)}</div>
+        <div class="stcalc">${rnd(SD.hitLo)}–${rnd(SD.hitHi)} / cast</div></div>
+      <div class="stbig"><div class="stbigk">Casts / sec</div><div class="stbigv">${SD.casts.toFixed(2)}</div>
+        <div class="stcalc">${(1 / SPARK_CAST).toFixed(2)} base${SD.incCast ? ' &plus;' + SD.incCast + '%' : ''}</div></div>
+    </div>
+    <div class="stcols"><div>
+      ${row('Crit chance', SD.crit.toFixed(2) + '%')}
+      ${row('Crit damage', '+' + (100 + SD.critDmg) + '%')}
+      ${row('+Skill levels', SD.levels ? '+' + SD.levels + ' &rarr; Spark lvl ' + SD.gem : '')}
+    </div><div>
+      ${row('Incr. spell dmg', SD.incPool ? '+' + SD.incPool + '%' : '')}
+      ${row('Gain as extra', SD.extra ? '+' + SD.extra + '%' : '')}
+      ${row('Cast speed', SD.incCast ? '+' + SD.incCast + '%' : '')}
+    </div></div>
+    <div class="stnote stwnote">Spark benchmark (level 20 &plus; your &plus;skill levels), per projectile. The item scales the gem&rsquo;s base via increased damage (Spell &plus; Lightning &plus; Elemental), gain-as-extra, cast speed and spell crit.${SD.capped ? ' Gem level capped at 30.' : ''}</div>`
+    : weapon ? `<div class="stgrid">
       <div class="stbig"><div class="stbigk">Total DPS</div><div class="stbigv">${rnd(D.total)}</div>
         <div class="stcalc">at ${D.aps.toFixed(2)} aps</div></div>
       <div class="stbig"><div class="stbigk">Physical DPS</div><div class="stbigv dps-phys">${rnd(D.physDPS)}</div>
