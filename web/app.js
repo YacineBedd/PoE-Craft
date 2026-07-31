@@ -889,6 +889,27 @@ function modLevel(a) {
   return t ? t[1] : 0;
 }
 
+/**
+ * The real tier a rolled value belongs to. Essences grant a value RANGE that
+ * spans several of a mod's tiers (e.g. "Adds 48-79 Cold Damage" is a T3 roll on
+ * the ladder, not a T1), so match the rolled numbers against the tier windows to
+ * show the true tier and give Whittling the right mod level.
+ */
+function realTier(m, v) {
+  if (!m || !v || !v.length) return null;
+  // The largest rolled number is the discriminating one ("Adds A to B" scales on
+  // B; lightning fixes A=1). Align it with each tier's window for that same slot -
+  // by position from the end, since an essence template may drop the fixed min.
+  const eMax = v[v.length - 1];
+  const win = t => t[2][t[2].length - 1];
+  for (const t of m.t) { const w = win(t); if (w && eMax >= w[0] && eMax <= w[1]) return t; }
+  // Below the base's weakest tier (essences can grant sub-tier rolls) or above its
+  // best: clamp to the nearest tier by that value.
+  let lo = m.t[0], hi = m.t[0];
+  for (const t of m.t) { if (win(t)[0] < win(lo)[0]) lo = t; if (win(t)[0] > win(hi)[0]) hi = t; }
+  return eMax < win(lo)[0] ? lo : hi;
+}
+
 /** The single modifier Whittling would take: lowest level, then worst tier. */
 function lowestMod(list) {
   let worst = null;
@@ -1129,9 +1150,19 @@ function mcApply(it, s, D) {
     const e = D.ess;
     if (countCat(it.affixes, 'crafted') >= maxCrafted()) return 'dead';
     if (it.affixes.some(a => a.g === e.g && a.a === e.a)) return 'dead';
-    const add = () => it.affixes.push({ g: e.g, a: e.a, tier: 1, name: e.n,
-                                        cat: 'crafted', x: e.x, v: rollVals(e.v),
-                                        ml: e.ml || 0 });   // so Whittling ranks it by ilvl too
+    const add = () => {
+      const v = rollVals(e.v);
+      // resolve the real mod on this base so the rolled values show their true tier.
+      // Match by group/side/class (the essence's template can differ from the mod's
+      // - lightning's "Adds 1 to {0}" vs the mod's "Adds {0} to {1}") and prefer the
+      // one whose text starts the same way (Adds vs Gain, for the damage families).
+      const verb = String(e.x).split(' ')[0];
+      const cands = MODS.filter(x => x.g === e.g && x.a === e.a && (x.c || []).includes(state.slug));
+      const m = cands.find(x => String(x.x).split(' ')[0] === verb) || cands[0];
+      const t = realTier(m, v);
+      it.affixes.push({ g: e.g, a: e.a, tier: t ? t[0] : 1, name: e.n, cat: 'crafted',
+                        x: e.x, v, tname: t ? t[4] || null : null, ml: t ? t[1] : (e.ml || 0) });
+    };
     if (isPerfectEss(e)) {
       // A Crystallisation omen forces which side is replaced: Sinistral -> prefix,
       // Dextral -> suffix (ESSSIDE holds the mapping).
