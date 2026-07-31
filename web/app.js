@@ -3889,7 +3889,7 @@ function drawPlan() {
       <div class="m ghost">ilvl ${state.ilvl} &middot; ${RNAME[state.rarity]}</div>
       ${capacity(state)}
     </div>
-    ${rail(-1, null)}</div>`);
+    ${plan.length === 0 ? rail(-1, null) : ''}</div>`);
 
   plan.forEach((s, i) => {
     const D = stepDef(s), ev = steps[i], before = stateBefore(i);
@@ -3971,7 +3971,6 @@ function drawPlan() {
       ${!bad && strict && !isFinite(stepWalk(ev).uses)
         ? `<div class="costfoot" style="color:var(--suffix)">Removals undo this faster than it
            lands &mdash; ${ev.landed} of ${ev.mods} modifiers here are targets.</div>` : ''}
-      ${rail(i, s.id)}
     </div>`);
   });
 
