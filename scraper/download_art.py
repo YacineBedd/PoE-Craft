@@ -10,7 +10,7 @@ to an image by normalising its name (lowercase, alphanumerics only) against the
 image file's basename. Images save to web/img/bases/ ; DATA.json bases get an
 `img` field. poe2db's CDN 403s without a browser Referer, so we send one.
 """
-import json, os, re, sys, glob, time, urllib.request, urllib.error
+import json, os, re, sys, glob, time, html, urllib.request, urllib.error
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -20,18 +20,25 @@ HDRS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebK
         'Referer': 'https://poe2db.tw/', 'Accept': 'image/webp,*/*'}
 norm = lambda s: re.sub(r'[^a-z0-9]', '', s.lower())
 
+COL = re.compile(r'<div class="col">')
+ANCHOR = re.compile(r'<a class="whiteitem[^"]*"[^>]*>([^<]{1,60})</a>')
+BASEIMG = re.compile(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/[^"\'\s]*?/Basetypes/[^"\'\s]+\.webp')
+
 def art_urls():
-    """normalised-basename -> best art URL, from the cached HTML (prefer Basetypes)."""
-    urls = set()
-    for f in glob.glob(os.path.join(HERE, 'raw', '*.html')):
-        urls |= set(re.findall(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/[^"\'\s]*\.webp',
-                               open(f, encoding='utf-8', errors='ignore').read()))
+    """normalised base display-name -> art URL, by pairing each base card's
+    <a class="whiteitem">Name</a> with the Basetypes image in the same col block.
+    Armour/weapon art uses internal names (BodyStr01.webp), so we must read the
+    name and image together from the row rather than guess a filename."""
     m = {}
-    for u in urls:
-        base = norm(os.path.splitext(u.rsplit('/', 1)[1])[0])
-        # prefer a Basetypes art over a unique with the same normalised name
-        if base not in m or ('/Basetypes/' in u and '/Basetypes/' not in m[base]):
-            m[base] = u
+    for f in glob.glob(os.path.join(HERE, 'raw', '*.html')):
+        h = open(f, encoding='utf-8', errors='ignore').read()
+        starts = [c.start() for c in COL.finditer(h)]
+        for i, s in enumerate(starts):
+            e = starts[i + 1] if i + 1 < len(starts) else min(len(h), s + 8000)
+            blk = h[s:e]
+            a, u = ANCHOR.search(blk), BASEIMG.search(blk)
+            if a and u:
+                m.setdefault(norm(html.unescape(a.group(1)).strip()), u.group(0))
     return m
 
 def fetch(url, dest):

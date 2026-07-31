@@ -1039,6 +1039,8 @@
   .emuphint { font-size: 11.5px; color: var(--faint); margin: 6px 0 2px; line-height: 1.4; }
   .baseart { height: 38px; width: auto; vertical-align: middle; margin-right: 8px;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+  .basepick { display: inline-flex; align-items: center; gap: 6px; }
+  .basethumb { height: 30px; width: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
 
   /* --- "emulate from your item" editor --- */
   .startbox { max-width: 640px; }

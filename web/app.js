@@ -819,6 +819,16 @@ function autoPreview() {
 function draw() {
   autoPreview(); drawItem(); drawTierPicker(); drawOmens(); drawCurrency();
   drawEssences(); drawBones(); drawLog(); drawOdds();
+  drawBaseThumb();
+}
+
+// the selected base's art next to the base picker (graph view)
+function drawBaseThumb() {
+  const t = document.getElementById('basethumb');
+  if (!t) return;
+  const src = state && state.base && state.base.img;
+  if (src) { if (t.getAttribute('src') !== src) t.src = src; t.hidden = false; }
+  else { t.hidden = true; t.removeAttribute('src'); }
 }
 
 /* ================= Monte Carlo =================
