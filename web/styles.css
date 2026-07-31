@@ -1039,6 +1039,12 @@
   .emuphint { font-size: 11.5px; color: var(--faint); margin: 6px 0 2px; line-height: 1.4; }
   .baseart { height: 38px; width: auto; vertical-align: middle; margin-right: 8px;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+  /* large item art at the top of the emulator, above the item name */
+  .emuartbig { margin: 0 0 12px; }
+  .emuartbig img { height: 104px; width: auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+  /* full simulation outcome list (scrolls if long) */
+  .emsimlist { max-height: 320px; overflow-y: auto; }
+  .emsimmore { font-size: 11px; color: var(--faint); padding: 5px 2px 0; font-style: italic; }
   .basepick { display: inline-flex; align-items: center; gap: 6px; }
   .basethumb { height: 30px; width: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
 

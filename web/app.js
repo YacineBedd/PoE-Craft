@@ -2764,17 +2764,24 @@ function emSimStep(opt, n) {
 }
 function renderSim(r) {
   if (!r) return '';
-  const rows = Object.entries(r.tally).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  // Show every outcome that occurred, not just the top few - the mods players
+  // most want (attack speed, crit, +levels) are low-weight and would be cut off.
+  const all = Object.entries(r.tally).sort((a, b) => b[1] - a[1]);
+  const CAP = 40;
+  const rows = all.slice(0, CAP);
+  const hidden = all.length - rows.length;
   return `<div class="emsimres"><div class="emsimn">${r.n} runs of ${esc(r.label)}${
       r.dead ? ` \u00b7 ${r.dead} could not apply` : ''}${
       r.stepDiv ? ` \u00b7 ${fmtDiv(r.stepDiv)} div/try` : ''}</div>` +
-    rows.map(([k, c]) => {
+    `<div class="emsimlist">` + rows.map(([k, c]) => {
       const p = c / r.n, pct = (100 * p).toFixed(1);
       const land = p && r.stepDiv ? ` \u00b7 &asymp;${fmtDiv(r.stepDiv / p)} div to land` : '';
       const one = p ? ` \u00b7 1 in ${(1 / p).toFixed(p < 0.1 ? 0 : 1)}` : '';
       return `<div class="emsimrow"><span class="emsimpct">${pct}%</span>
         <span class="emsimk">${esc(simLabel(k))}</span><span class="emsimc">${one}${land}</span></div>`;
-    }).join('') + `</div>`;
+    }).join('') + `</div>` +
+    (hidden > 0 ? `<div class="emsimmore">+ ${hidden} rarer outcome${hidden === 1 ? '' : 's'} not shown</div>` : '') +
+    `</div>`;
 }
 
 /* Where this run's total currency spend falls in the current plan's Monte Carlo
@@ -2902,7 +2909,7 @@ function drawEmu() {
     ? `<span class="emusock" title="${sk} socket${sk === 1 ? '' : 's'}">${
         '\u25c8'.repeat(sk)}</span>` : '';
   document.getElementById('emuname').innerHTML =
-    `${state.base && state.base.img ? `<img class="baseart" src="${esc(state.base.img)}" alt="" loading="lazy">` : ''}
+    `${state.base && state.base.img ? `<div class="emuartbig"><img src="${esc(state.base.img)}" alt="" loading="lazy"></div>` : ''}
      <span style="color:${rc}">${esc((state.base && state.base.n) || BASES[state.slug].ic || state.slug)}</span>
      <span class="emurar">${em.sanctified ? 'Sanctified ' : em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
        &middot; ilvl ${state.ilvl}</span> ${sockets}`;
