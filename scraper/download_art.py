@@ -92,10 +92,39 @@ def class_icons(db):
             print('  ! class icon', cls, e.code)
     print(f'class icons: {borrowed} reuse a base art, {made} downloaded a representative')
 
+ESS_A = re.compile(r'<a class="item_currency[^"]*"[^>]*>\s*<img[^>]*src="([^"]*Currency/[^"]+\.webp)"[^>]*/?>\s*([^<]{1,50})</a>')
+
+def essence_icons(db):
+    """Exact essence name -> icon, parsed from the cached poe2db Essence page
+    (raw/Essence.html): each essence anchor wraps its own icon and name."""
+    f = os.path.join(HERE, 'raw', 'Essence.html')
+    if not os.path.exists(f):
+        print('  ! raw/Essence.html missing'); return
+    h = open(f, encoding='utf-8', errors='ignore').read()
+    pairs = {}
+    for u, name in ESS_A.findall(h):
+        pairs[html.unescape(name).strip().lower()] = u
+    got = miss = 0
+    for e in db['ess']:
+        u = pairs.get(e['n'].strip().lower())
+        if not u:
+            miss += 1; continue
+        fn = u.rsplit('/', 1)[1]
+        try:
+            fetch(u, os.path.join(IMGDIR, 'essence', fn))
+            e['img'] = 'img/essence/' + fn; got += 1
+        except urllib.error.HTTPError as ex:
+            print('  !', e['n'], ex.code); miss += 1
+    print(f'essences: {got} matched, {miss} missing')
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     flags = [a for a in sys.argv[1:] if a.startswith('--')]
     db = json.load(open(DATA))
+    if '--essences' in flags and not args:         # standalone: essence icons only
+        essence_icons(db)
+        json.dump(db, open(DATA, 'w'), separators=(',', ':'))
+        print('wrote', DATA); return
     if '--classicons' in flags and not args:      # standalone: just (re)build class icons
         class_icons(db)
         json.dump(db, open(DATA, 'w'), separators=(',', ':'))

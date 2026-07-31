@@ -2980,6 +2980,7 @@ function drawEmu() {
     pick.innerHTML = `<div class="emupickhead">Choose an essence</div>` +
       (esub.length ? `<div class="emupicksub">${esub.join(' &middot; ')}</div>` : '') +
       (emPend.rows.length ? emPend.rows.map(e => `<button class="emuopt" data-ess="${esc(e.i)}">
+        ${e.img ? `<img class="essicon" src="${esc(e.img)}" alt="" loading="lazy">` : ''}
         <span class="tag ${e.a}">${e.a === 'p' ? 'P' : 'S'}</span>
         <span>${esc(e.n)}</span>
         <span class="emuoptt">${esc(renderRange(e.x, e.v))}</span>
