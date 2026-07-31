@@ -2680,6 +2680,7 @@ function emUndo() {
   for (const e of emLog.slice(snap.log)) {
     if (e.cur) emSunk[e.cur] = (emSunk[e.cur] || 0) + 1;
     if (e.omen) { const k = 'omen:' + e.omen; emSunk[k] = (emSunk[k] || 0) + 1; }
+    if (e.hinekora) emSunk.hinekora = (emSunk.hinekora || 0) + e.hinekora;   // a spent Lock is not refunded
     if (e.brick) emSunk.base = (emSunk.base || 0) + 1;
   }
   em = { rarity: snap.rarity, corrupted: snap.corrupted, sanctified: snap.sanctified, quality: snap.quality, exc: snap.exc,
