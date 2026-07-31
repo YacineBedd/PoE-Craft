@@ -506,6 +506,39 @@
                  border-bottom: 1px solid var(--line); margin-bottom: 10px; }
   .emurar { font: 500 11px ui-monospace, Menlo, monospace; color: var(--faint); }
   .emumods .m { padding: 3px 0; font-size: 13px; }
+  .emumods .m[data-rtip] { cursor: help; }
+  .emumods .m[data-rtip] span:last-child { border-bottom: 1px dotted color-mix(in srgb, var(--line) 70%, transparent);
+                                           transition: border-color .12s; }
+  .emumods .m[data-rtip]:hover span:last-child { border-bottom-color: var(--accent); }
+
+  /* roll-range hover tooltip */
+  .emutip { position: fixed; z-index: 60; max-width: 320px; pointer-events: none;
+            background: var(--panel); border: 1px solid var(--line);
+            border-radius: 10px; padding: 12px 13px; font-size: 12px; color: var(--ink);
+            box-shadow: 0 12px 34px rgba(0,0,0,.5); }
+  .emutip.hidden { display: none; }
+  .emutip .tiptag { font: 600 10px ui-monospace, Menlo, monospace; letter-spacing: .05em;
+                    color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+  .emutip .tiphead { font: 600 9px system-ui; letter-spacing: .1em; text-transform: uppercase;
+                     color: var(--faint); }
+  .emutip .tiprangelbl { font-size: 14px; font-weight: 600; margin: 2px 0 9px;
+                         color: var(--ink); }
+  .emutip .tiprow { margin-bottom: 8px; }
+  .emutip .tipbarwrap { display: flex; align-items: center; gap: 7px; }
+  .emutip .tipend { font: 500 11px ui-monospace, Menlo, monospace; color: var(--faint);
+                    min-width: 1.6em; text-align: center; }
+  .emutip .tipbar { position: relative; flex: 1; height: 7px; border-radius: 4px;
+                    background: var(--sunk); overflow: visible; }
+  .emutip .tipbar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px;
+                      background: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .emutip .tipbar b { position: absolute; top: 50%; width: 3px; height: 13px;
+                      transform: translate(-50%, -50%); border-radius: 2px;
+                      background: var(--accent); box-shadow: 0 0 0 2px var(--panel); }
+  .emutip .tipnow { margin-top: 4px; font-size: 11px; color: var(--dim); text-align: center; }
+  .emutip .tipnow b { color: var(--ink); font-weight: 700; }
+  .emutip .tipfixed { font-size: 11px; color: var(--dim); font-style: italic; }
+  .emutip .tipnote { margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line);
+                     font-size: 11px; color: var(--faint); line-height: 1.4; }
   .emupick { margin-top: 12px; }
   .emupicksub { font-size: 11px; color: var(--faint); margin: -4px 0 8px; line-height: 1.4; }
   .emupickhead { font: 600 10px system-ui; letter-spacing: .08em; text-transform: uppercase;

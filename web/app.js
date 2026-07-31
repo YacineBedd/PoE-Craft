@@ -2982,6 +2982,7 @@ function drawEmu() {
   const ordered = em.affixes.map((a, i) => ({ a, i }))
     .sort((x, y) => rank(x.a) - rank(y.a) || x.i - y.i).map(x => x.a);
   const tgt = emOmenTargets(em, emOmen);
+  TIP_REG = []; EMU_RENDER = true;                  // collect hover ranges for this render
   const mods = ordered.length
     ? ordered.map(a => {
         const key = a.g + '|' + a.a;
@@ -2991,10 +2992,12 @@ function drawEmu() {
     : '<div class="m ghost">a bare base &mdash; no modifiers yet</div>';
   // implicit modifiers sit above the explicit block, separated by a rule (as in game)
   const implHTML = (em.imp && em.imp.length)
-    ? em.imp.map(im => `<div class="m impl" title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
+    ? em.imp.map(im => `<div class="m impl"${tipAttr(im)} title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
       + '<div class="implrule"></div>'
     : '';
+  EMU_RENDER = false;
   document.getElementById('emumods').innerHTML = implHTML + mods;
+  bindEmuTip();
   syncEmRunes();
   document.getElementById('emucap').innerHTML = em.corrupted || em.sanctified ? '' : capacity(em);
   { const lk = document.getElementById('emulock'); if (lk) lk.classList.toggle('on', emLock); }
@@ -3842,6 +3845,99 @@ function sigil(kind) {
   return `<span class="sig" style="background:${c}">${t}</span>`;
 }
 
+// Hover tooltips for the emulator: for each mod we show the value window its
+// current tier can roll and where the actual roll landed inside it, so a player
+// can see at a glance whether a Divine Orb (rerolls values within the tier) is
+// worth it. Built at render time into a small registry; the mod line only carries
+// an integer index, so nothing HTML-unsafe ever lands in an attribute.
+let TIP_REG = [], EMU_RENDER = false, emTipBound = false;
+
+function tipHTML({ ranges, cur, tmpl, tier, tname, note }) {
+  const hasRange = ranges.some(r => r[0] !== r[1]);
+  const rangeStr = renderRange(tmpl, ranges);
+  let bars = '';
+  ranges.forEach((r, i) => {
+    if (r[0] === r[1]) return;                       // fixed slot, no bar
+    const c = cur ? cur[i] : null;
+    const pct = c != null && r[1] > r[0]
+      ? Math.round(((c - r[0]) / (r[1] - r[0])) * 100) : null;
+    const w = pct == null ? 0 : Math.max(0, Math.min(100, pct));
+    bars += `<div class="tiprow">
+      <div class="tipbarwrap"><span class="tipend">${r[0]}</span>
+        <div class="tipbar"><i style="width:${w}%"></i>${
+          c != null ? `<b style="left:${w}%"></b>` : ''}</div>
+        <span class="tipend">${r[1]}</span></div>
+      ${c != null ? `<div class="tipnow">rolled <b>${c}</b>${
+        pct != null ? ` &middot; ${pct}% up the tier` : ''}</div>` : ''}
+    </div>`;
+  });
+  const tt = tier ? 'T' + tier : (tname === 'implicit' ? 'IMP' : '');
+  return `<div class="tiptag">${tt}${tname && tname !== 'implicit'
+        ? ' &middot; ' + esc(tname) : ''}</div>
+    <div class="tiphead">this tier can roll</div>
+    <div class="tiprangelbl">${esc(rangeStr)}</div>
+    ${hasRange ? bars : '<div class="tipfixed">fixed value &mdash; nothing to reroll</div>'}
+    <div class="tipnote">${note}</div>`;
+}
+
+/** Tooltip HTML for one affix, or '' when it has no rerollable range. */
+function rangeTip(a) {
+  if (a.impl) {
+    const src = ((state.base && state.base.imp) || []).find(im => im.x === a.x);
+    if (!src || !src.v || !src.v.length) return '';
+    return tipHTML({ ranges: src.v, cur: a.v, tmpl: a.x, tier: '',
+                     tname: 'implicit', note: 'a Divine Orb also rerolls implicit values' });
+  }
+  if (a.rand || a.twice || a.mark || a.un || a.a === 'c') return '';
+  const m = modOf(a);
+  if (!m || !m.t) return '';
+  const t = m.t.find(x => x[0] === a.tier);
+  if (!t || !t[2] || !t[2].length) return '';
+  const note = a.fx ? 'fractured &mdash; locked; a Divine will not reroll it'
+                    : 'a Divine Orb rerolls the values within this tier';
+  return tipHTML({ ranges: t[2], cur: a.v, tmpl: m.x, tier: a.tier,
+                   tname: t[4] || '', note });
+}
+
+/** Attribute snippet ` data-rtip="N"` when a line has a range to show (emu only).
+ * A dedicated attribute (not the shared plain-text `data-tip`) so the global
+ * cursor tooltip leaves these rich range popups to bindEmuTip. */
+function tipAttr(a) {
+  if (!EMU_RENDER) return '';
+  const html = rangeTip(a);
+  if (!html) return '';
+  return ' data-rtip="' + (TIP_REG.push(html) - 1) + '"';
+}
+
+function bindEmuTip() {
+  if (emTipBound) return;
+  const emu = document.getElementById('emu');
+  const tip = document.getElementById('emutip');
+  if (!emu || !tip) return;
+  emTipBound = true;
+  const hide = () => tip.classList.add('hidden');
+  emu.addEventListener('mouseover', e => {
+    const el = e.target.closest('[data-rtip]');
+    if (!el) return;
+    const html = TIP_REG[+el.dataset.rtip];
+    if (!html) { hide(); return; }
+    tip.innerHTML = html;
+    tip.classList.remove('hidden');
+    const r = el.getBoundingClientRect(), tr = tip.getBoundingClientRect();
+    let left = r.left, top = r.bottom + 8;
+    if (left + tr.width > innerWidth - 8) left = innerWidth - 8 - tr.width;
+    if (top + tr.height > innerHeight - 8) top = r.top - 8 - tr.height;
+    tip.style.left = Math.max(8, left) + 'px';
+    tip.style.top = Math.max(8, top) + 'px';
+  });
+  emu.addEventListener('mouseout', e => {
+    if (!e.target.closest('[data-rtip]')) return;
+    const to = e.relatedTarget;
+    if (to && to.closest && to.closest('[data-rtip]') === e.target.closest('[data-rtip]')) return;
+    hide();
+  });
+}
+
 function modLine(a, ghost) {
   // a family splits per item class (Armour vs Energy Shield variants share a
   // group), so resolve the name against THIS base, not the first global match
@@ -3864,10 +3960,10 @@ function modLine(a, ghost) {
   if (a.un) return `<div class="m unrevealed" title="desecrated and unrevealed: cannot be fractured until revealed">
     <span class="tb">&#9679;</span>
     <span>${esc(name)} <span class="unrev">unrevealed</span></span></div>`;
-  if (a.fx) return `<div class="m fx" title="fractured: locked, cannot be removed or rerolled">
+  if (a.fx) return `<div class="m fx"${tipAttr(a)} title="fractured: locked, cannot be removed or rerolled">
     <span class="tb">${a.tier ? 'T' + a.tier : '&#128274;'}</span>
     <span>&#128274; ${esc(name)}</span></div>`;
-  return `<div class="m${ghost ? ' ghost' : ''}${cat}">
+  return `<div class="m${ghost ? ' ghost' : ''}${cat}"${tipAttr(a)}>
     <span class="tb">${a.tier ? 'T' + a.tier : '?'}</span>
     <span>${esc(name)}</span></div>`;
 }
