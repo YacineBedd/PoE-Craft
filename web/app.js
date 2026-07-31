@@ -196,6 +196,9 @@ const OMENFX = {
   OmenOnExaltAddTwoMods:'two', OmenOnAnnulRemoveTwoMods:'two',
   OmenOnChaosLowestLevelMod:'lowest',
   OmenOnExaltAddExistingModType:'homog', OmenOnRegalAddExistingModType:'homog',
+  // Sanctification turns a Divine into a per-modifier value shift (78-122%, can
+  // beat the tier max) and permanently locks (Sanctifies) the item.
+  OmenOnDivineSanctify:'sanctify',
 };
 const ESSTIERS = ['lesser','normal','greater','perfect','special'];
 const ESSLABEL = { lesser:'Lesser', normal:'Normal', greater:'Greater',
@@ -277,7 +280,7 @@ function newItem() {
   return {
     slug, base, classTags: src.ct, itemClass: src.ic,
     ilvl: +document.getElementById('ilvl').value || 1,
-    rarity: 'normal', affixes: [], corrupted: false,
+    rarity: 'normal', affixes: [], corrupted: false, sanctified: false,
     exceptional: exceptional,           // carried across resets from the toggle
   };
 }
@@ -392,8 +395,15 @@ const CURR = [
              if(omenFx(o)==='two' && it.affixes.length){ const g2=omenRemove(it,o);
                return `removed ${[g,g2].filter(Boolean).map(x=>x.text).join('; ')}`; }
              return `removed ${g?g.text:'nothing'}`; } },
-  { k:'divine', n:'Divine', ok: it => it.affixes.length>0 && it.rarity!=='normal',
-    run(it){ const by=new Map(MODS.map(m=>[m.i,m]));
+  { k:'divine', n:'Divine', ok: it => it.affixes.length>0 && it.rarity!=='normal' && !it.sanctified,
+    run(it,mn,o){ const by=new Map(MODS.map(m=>[m.i,m]));
+             if(omenFx(o)==='sanctify'){
+               // Sanctify: multiply each non-fractured value by 0.78-1.22x (can
+               // exceed the tier max), then lock the item for good.
+               for(const a of it.affixes){ if(a.fx) continue;
+                 if(corruptRerollVals(a)){ const m=by.get(a.id); if(m) a.text=render(m.x,a.v); } }
+               it.sanctified=true;
+               return 'Sanctified — each modifier shifted 78-122%; the item is now locked'; }
              for(const a of it.affixes){ const m=by.get(a.id); const t=m.t.find(t=>t[0]===a.tier);
                if(t){ a.v=t[2].map(r=>rint(r[0],r[1])); a.text=render(m.x,a.v); } }
              return 'rerolled numeric values'; } },
@@ -460,6 +470,7 @@ function drawItem() {
     }
   }
   if (it.corrupted) t.push('<div class="rule"></div><div class="empty" style="color:var(--suffix)">Corrupted</div>');
+  if (it.sanctified) t.push('<div class="rule"></div><div class="empty" style="color:var(--accent)">Sanctified</div>');
   document.getElementById('tip').innerHTML = t.join('');
 
   const L = LIM(it.rarity);
@@ -490,7 +501,7 @@ function drawCurrency() {
     const o = omenById(omen);
     const armed = o && o.r.includes(curId(c));
     if (armed) b.classList.add('armed');
-    b.disabled = state.corrupted || !c.ok(state);
+    b.disabled = state.corrupted || state.sanctified || !c.ok(state);
     b.onclick = () => {
       let msg;
       try { msg = c.run(state, mn, armed ? o : null); }
@@ -508,7 +519,7 @@ function drawCurrency() {
 function drawOmens() {
   const sel = document.getElementById('omensel');
   // only omens whose paired currency is usable on this item right now
-  const usable = new Set(CURR.filter(c => !state.corrupted && c.ok(state)).map(curId));
+  const usable = new Set(CURR.filter(c => !state.corrupted && !state.sanctified && c.ok(state)).map(curId));
   const list = OMENS.filter(o => o.r.some(id => usable.has(id)));
   if (!list.find(o => o.i === omen)) omen = '';
   sel.innerHTML = `<option value="">none</option>` + list.map(o =>
@@ -569,7 +580,7 @@ function drawEssences() {
   const clash = chosen && state.affixes.some(a => a.g === chosen.g);
 
   document.getElementById('essgo').disabled =
-    !rows.length || state.corrupted || !okRarity || !roomy || !!clash;
+    !rows.length || state.corrupted || state.sanctified || !okRarity || !roomy || !!clash;
   document.getElementById('essnote').innerHTML = rows.length
     ? `${ESSLABEL[etier]} essences apply to a <b>${needRare ? 'Rare' : 'Magic'}</b> item and grant their modifier outright &mdash; no weighted roll.` +
       (okRarity ? '' : `<br>This item is <b>${RNAME[state.rarity]}</b>.`) +
@@ -626,7 +637,7 @@ function drawBones() {
               : b.min ? `Only modifiers of level ${b.min} or higher`
               : 'No modifier level restriction')
               + ` — ${reach} reachable on this base`;
-    btn.disabled = state.corrupted || state.rarity !== 'rare' || isFull(state) || !reach;
+    btn.disabled = state.corrupted || state.sanctified || state.rarity !== 'rare' || isFull(state) || !reach;
     btn.onclick = () => {
       // poe2db lists both pools for a bone but publishes no split, and the
       // desecrated pool carries no weights. Mixing them would bury desecrated
@@ -744,7 +755,8 @@ function drawOdds() {
   const tbody = document.getElementById('rows');
   if (!fams.length) {
     tbody.innerHTML = `<tr><td colspan="5" class="empty" style="padding:22px">
-      ${state.corrupted ? 'Item is corrupted — no further modifiers can be added.'
+      ${state.sanctified ? 'Item is Sanctified — permanently locked; no further modifiers can be added.'
+        : state.corrupted ? 'Item is corrupted — no further modifiers can be added.'
         : !P.weighted && pool === 'desecrated' && state.rarity !== 'rare'
           ? 'Desecrated modifiers land on Rare items, via Abyssal bones.'
         : state.rarity === 'normal' && P.weighted
@@ -918,7 +930,7 @@ function modText(a) {
 
 function mcFresh() {
   return { rarity: state.rarity === 'normal' ? 'normal' : state.rarity,
-           corrupted: !!state.corrupted, socketBonus: 0, corruptDid: null, sockets: [],
+           corrupted: !!state.corrupted, sanctified: !!state.sanctified, socketBonus: 0, corruptDid: null, sockets: [],
            affixes: state.affixes.filter(a => a.a !== 'c')
                       .map(a => ({ g: a.g, a: a.a, tier: a.tier, cat: a.cat, fx: a.fx })) };
 }
@@ -1067,7 +1079,14 @@ function mcApply(it, s, D) {
     return 'ok';
   }
   if (s.kind === 'divine') {
-    if (it.corrupted) return 'dead';          // corruption freezes the numbers too
+    if (it.corrupted || it.sanctified) return 'dead';   // both freeze the numbers
+    // Omen of Sanctification reshapes a Divine: values shift 0.78-1.22x (may beat
+    // the tier max) and the item is permanently locked.
+    if (omenFx(s.omen ? omenById(s.omen) : null) === 'sanctify') {
+      for (const a of it.affixes) if (!a.fx) corruptRerollVals(a);
+      it.sanctified = true;
+      return 'ok';
+    }
     let moved = 0;
     // a fractured modifier is locked in every sense: its roll cannot move either
     for (const a of it.affixes) if (!a.fx && rerollVals(a)) moved++;
@@ -1233,7 +1252,7 @@ function mcHit(it, s) {
   return s.mode === 'all' ? s.targets.every(has) : s.targets.some(has);
 }
 
-const mcCopy = it => ({ rarity: it.rarity, corrupted: it.corrupted,
+const mcCopy = it => ({ rarity: it.rarity, corrupted: it.corrupted, sanctified: it.sanctified,
                         socketBonus: it.socketBonus || 0, corruptDid: it.corruptDid || null,
                         affixes: it.affixes.map(a => ({ ...a })) });
 
@@ -1247,6 +1266,7 @@ function mcTrial(cap, P) {
     const s = P[k], D = stepDef(s);
     if (!D) { k++; continue; }
     // corruption is final - except for the one currency built to act on it
+    if (it.sanctified) return { stuck: true, use, bricks };   // a total, permanent lock
     if (it.corrupted && s.kind !== 'architect') return { stuck: true, use, bricks };
     if (!it.corrupted && D.needsCorrupt) return { stuck: true, use, bricks };
     if (!D.from.includes(it.rarity)) return { stuck: true, use, bricks };
@@ -2042,13 +2062,13 @@ function emOmenTargets(item, omenId) {
 }
 
 function emSnap() {
-  return { rarity: em.rarity, corrupted: em.corrupted, quality: em.quality, exc: em.exc,
+  return { rarity: em.rarity, corrupted: em.corrupted, sanctified: em.sanctified, quality: em.quality, exc: em.exc,
            sockets: (em.sockets || []).slice(),
            affixes: em.affixes.map(a => ({ ...a })), log: emLog.length };
 }
 function emItem() { return { slug: state.slug, base: state.base, classTags: state.classTags,
                              ilvl: state.ilvl, rarity: em.rarity, affixes: em.affixes,
-                             corrupted: em.corrupted }; }
+                             corrupted: em.corrupted, sanctified: em.sanctified }; }
 
 function emStart(fresh) {
   if (fresh || !em) { em = mcFresh(); em.quality = 20; emHist = []; emLog = []; emOmen = ''; emPend = null; emCompare = null; emSunk = {}; emLock = false; }
@@ -2107,7 +2127,7 @@ function drawEmuRunes() {
 
 /** A deep, emulator-shaped copy of an item state. */
 function emCopyItem(it) {
-  return { rarity: it.rarity, corrupted: !!it.corrupted, socketBonus: it.socketBonus || 0,
+  return { rarity: it.rarity, corrupted: !!it.corrupted, sanctified: !!it.sanctified, socketBonus: it.socketBonus || 0,
            corruptDid: it.corruptDid || null, lastCorrupt: it.lastCorrupt || null,
            quality: it.quality, exc: it.exc,
            sockets: (it.sockets || []).slice(),
@@ -2214,7 +2234,7 @@ function emStep(opt) {
   return s;
 }
 
-const emDeepCopy = it => ({ rarity: it.rarity, corrupted: it.corrupted, quality: it.quality, exc: it.exc,
+const emDeepCopy = it => ({ rarity: it.rarity, corrupted: it.corrupted, sanctified: it.sanctified, quality: it.quality, exc: it.exc,
   socketBonus: it.socketBonus || 0, corruptDid: it.corruptDid || null, lastCorrupt: it.lastCorrupt || null,
   sockets: (it.sockets || []).slice(), affixes: it.affixes.map(a => ({ ...a })) });
 
@@ -2265,6 +2285,7 @@ function emCancelPreview() { if (emPend && emPend.kind === 'preview') { emPend =
 
 function emApply(opt) {
   if (emPend) return;                 // a reveal or essence choice must be resolved first
+  if (em.sanctified) return;                    // Sanctified: nothing more can be applied
   if (em.corrupted && opt.kind !== 'architect') return;
   if (emLock && opt.kind !== 'essence' && opt.kind !== 'reveal') return emPreview(opt);
   // An essence is chosen before it exists as a step: the rail offers a generic
@@ -2456,7 +2477,7 @@ function emUndo() {
     if (e.omen) { const k = 'omen:' + e.omen; emSunk[k] = (emSunk[k] || 0) + 1; }
     if (e.brick) emSunk.base = (emSunk.base || 0) + 1;
   }
-  em = { rarity: snap.rarity, corrupted: snap.corrupted, quality: snap.quality, exc: snap.exc,
+  em = { rarity: snap.rarity, corrupted: snap.corrupted, sanctified: snap.sanctified, quality: snap.quality, exc: snap.exc,
          sockets: (snap.sockets || []).slice(),
          affixes: snap.affixes.map(a => ({ ...a })) };
   emLog = emLog.slice(0, snap.log);
@@ -2504,7 +2525,7 @@ function emSimStep(opt, n) {
   let dead = 0;
   const stepDiv = curDiv(costKey(s0)) + (s0.omen ? curDiv('omen:' + s0.omen) : 0);
   for (let i = 0; i < n; i++) {
-    const it = { rarity: em.rarity, corrupted: em.corrupted, socketBonus: em.socketBonus || 0,
+    const it = { rarity: em.rarity, corrupted: em.corrupted, sanctified: em.sanctified, socketBonus: em.socketBonus || 0,
                  sockets: (em.sockets || []).slice(), affixes: em.affixes.map(a => ({ ...a })) };
     const s = emStep(opt);
     const lockBefore = new Set(it.affixes.filter(a => a.fx).map(a => a.g + '|' + a.a));
@@ -2576,7 +2597,7 @@ function drawTally() {
     `<div class="tlyrow"><span class="tlyn">${use[k]}&times;</span>
        <span class="tlyk">${esc(costLabel(k))}</span>
        <span class="tlyd">${curDiv(k) ? fmtDiv(use[k] * curDiv(k)) + ' div' : ''}</span></div>`).join('');
-  const finished = em.corrupted;
+  const finished = em.corrupted || em.sanctified;
   const cmp = emCompare;
   let cmpHtml = '';
   if (cmp) {
@@ -2658,7 +2679,7 @@ function drawTally() {
 
 function drawEmu() {
   if (!em) return;
-  const rc = em.corrupted ? 'var(--brick)'
+  const rc = em.sanctified ? 'var(--accent)' : em.corrupted ? 'var(--brick)'
     : em.rarity === 'rare' ? 'var(--rare)' : em.rarity === 'magic' ? 'var(--magic)' : 'var(--ink)';
   const sk = maxSockets(em);
   const sockets = sk > 0
@@ -2666,7 +2687,7 @@ function drawEmu() {
         '\u25c8'.repeat(sk)}</span>` : '';
   document.getElementById('emuname').innerHTML =
     `<span style="color:${rc}">${esc(BASES[state.slug].ic || state.slug)}</span>
-     <span class="emurar">${em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
+     <span class="emurar">${em.sanctified ? 'Sanctified ' : em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
        &middot; ilvl ${state.ilvl}</span> ${sockets}`;
 
   // a stable reading order: prefixes, then suffixes, then the corrupted lines.
@@ -2685,7 +2706,7 @@ function drawEmu() {
     : '<div class="m ghost">a bare base &mdash; no modifiers yet</div>';
   document.getElementById('emumods').innerHTML = mods;
   syncEmRunes();
-  document.getElementById('emucap').innerHTML = em.corrupted ? '' : capacity(em);
+  document.getElementById('emucap').innerHTML = em.corrupted || em.sanctified ? '' : capacity(em);
   { const lk = document.getElementById('emulock'); if (lk) lk.classList.toggle('on', emLock); }
   drawEmuRunes();
   drawSnaps();
@@ -2762,8 +2783,9 @@ function drawEmu() {
           ? `<span class="tiermark">${ROMAN[o.tier]}</span>` : ''}</span>
         <span class="emucurn">${esc(o.label.replace(/^Orb of /, ''))}</span>
       </button>`).join('')
-    : `<div class="emudone">${em.corrupted
-        ? 'This item is corrupted and finished.' : 'Nothing more can be applied.'}</div>`;
+    : `<div class="emudone">${em.sanctified
+        ? 'This item is Sanctified — permanently locked and finished.'
+        : em.corrupted ? 'This item is corrupted and finished.' : 'Nothing more can be applied.'}</div>`;
   if (!locked)
     rail.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => emApply(opts[+b.dataset.opt]));
 
@@ -2826,7 +2848,7 @@ function drawEmu() {
       </div>`).join('')
     : '<div class="m ghost">no currency used yet</div>';
   // once the item is corrupted the run is over: settle the comparison on its own
-  if (em.corrupted && !emCompare && plan.length) emCompare = emRunCompare();
+  if ((em.corrupted || em.sanctified) && !emCompare && plan.length) emCompare = emRunCompare();
   drawTally();
   drawStats();
   const nMods = em.affixes.filter(a => a.a !== 'c').length;
@@ -3010,6 +3032,7 @@ const curName = (k, t) => (STEPCUR[k].tiered ? TIERWORD[t] : '') + STEPCUR[k].n;
 function stateBefore(i) {
   let rarity = state.rarity === 'normal' ? 'normal' : state.rarity;
   let corrupted = !!state.corrupted;
+  let sanctified = !!state.sanctified;
   const affixes = state.affixes.filter(a => a.a !== 'c')
                     .map(a => ({ g: a.g, a: a.a, tier: a.tier, cat: a.cat, fx: a.fx }));
   for (let k = 0; k < i; k++) {
@@ -3031,6 +3054,12 @@ function stateBefore(i) {
       // shown sealed but unchanged rather than promising a modifier
       const t = s.targets && s.targets[0];
       if (t) affixes.push({ g: t.g, a: 'c', tier: t.maxTier || 1, name: t.name, cor: true });
+      continue;
+    }
+    if (s.kind === 'divine') {
+      // A Divine changes only values, so the affix list is unchanged; but a
+      // Sanctification Divine permanently locks the item.
+      if (omenFx(s.omen ? omenById(s.omen) : null) === 'sanctify') sanctified = true;
       continue;
     }
     if (s.kind === 'reveal') {
@@ -3111,7 +3140,7 @@ function stateBefore(i) {
         affixes.push(bm); }
     }
   }
-  return { rarity, affixes, corrupted };
+  return { rarity, affixes, corrupted, sanctified };
 }
 
 /**
@@ -3129,7 +3158,7 @@ function blankMod(rarity, affixes) {
 
 const asItem = st => ({ slug: state.slug, base: state.base, classTags: state.classTags,
                         ilvl: state.ilvl, rarity: st.rarity, affixes: st.affixes,
-                        corrupted: !!st.corrupted });
+                        corrupted: !!st.corrupted, sanctified: !!st.sanctified });
 
 /**
  * A step whose targets must ALL land, for an add-type currency.
@@ -3232,6 +3261,8 @@ function stepChance(i) {
   const s = plan[i], D = stepDef(s);
   if (!D) return { p: 0, why: 'unknown step' };
   const before = stateBefore(i);
+  if (before.sanctified)
+    return { p: 0, why: 'the item is Sanctified; it is permanently locked' };
   if (before.corrupted && s.kind !== 'architect')
     return { p: 0, why: 'the item is corrupted; no further currency can be used' };
   if (D.needsCorrupt && !before.corrupted)
@@ -3309,7 +3340,7 @@ function stepChance(i) {
 
   // a Divine Orb always applies; it moves numbers, never tiers
   if (s.kind === 'divine') {
-    if (before.corrupted) return { p: 0, why: 'a corrupted item cannot be divined' };
+    if (before.corrupted || before.sanctified) return { p: 0, why: 'this item can no longer be divined' };
     if (!before.affixes.some(a => a.a !== 'c' && !a.fx))
       return { p: 0, why: 'every modifier here is fractured or corrupted' };
     return { p: 1, why: null };
@@ -4029,6 +4060,8 @@ function optionsFor(st, forEmu) {
       else if (baseSockets(state.slug) > 0) push('vaalinfuse', 'vinfuse-armour', "Vaal Armourer's Infuser");
     }
   }
+  // Sanctification is a permanent, total lock: nothing further, not even Architect
+  if (st.sanctified) return [];
   // corrupting is the last thing that can happen to an item
   push('vaal', 'vaal', 'Vaal Orb', null);
   if (st.corrupted) {
