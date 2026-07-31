@@ -822,11 +822,18 @@ function draw() {
   drawBaseThumb();
 }
 
+// the item's art: its own if it has one, else a per-class fallback icon
+function baseArt() {
+  if (!state) return null;
+  return (state.base && state.base.img)
+      || (BASES[state.slug] && BASES[state.slug].classimg) || null;
+}
+
 // the selected base's art next to the base picker (graph view)
 function drawBaseThumb() {
   const t = document.getElementById('basethumb');
   if (!t) return;
-  const src = state && state.base && state.base.img;
+  const src = baseArt();
   if (src) { if (t.getAttribute('src') !== src) t.src = src; t.hidden = false; }
   else { t.hidden = true; t.removeAttribute('src'); }
 }
@@ -2908,8 +2915,9 @@ function drawEmu() {
   const sockets = sk > 0
     ? `<span class="emusock" title="${sk} socket${sk === 1 ? '' : 's'}">${
         '\u25c8'.repeat(sk)}</span>` : '';
+  const _bart = baseArt();
   document.getElementById('emuname').innerHTML =
-    `${state.base && state.base.img ? `<div class="emuartbig"><img src="${esc(state.base.img)}" alt="" loading="lazy"></div>` : ''}
+    `${_bart ? `<div class="emuartbig"><img src="${esc(_bart)}" alt="" loading="lazy"></div>` : ''}
      <span style="color:${rc}">${esc((state.base && state.base.n) || BASES[state.slug].ic || state.slug)}</span>
      <span class="emurar">${em.sanctified ? 'Sanctified ' : em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
        &middot; ilvl ${state.ilvl}</span> ${sockets}`;

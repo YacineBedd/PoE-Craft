@@ -22,13 +22,26 @@ norm = lambda s: re.sub(r'[^a-z0-9]', '', s.lower())
 
 COL = re.compile(r'<div class="col">')
 ANCHOR = re.compile(r'<a class="whiteitem[^"]*"[^>]*>([^<]{1,60})</a>')
-BASEIMG = re.compile(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/[^"\'\s]*?/Basetypes/[^"\'\s]+\.webp')
+BASETYPES = re.compile(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/[^"\'\s]*?/Basetypes/[^"\'\s]+\.webp')
+# some classes (spears, shields, flails, crossbows, quarterstaves, bucklers) store
+# base art directly under the class folder, not a Basetypes/ subfolder.
+DIRECTART = re.compile(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/(?:Weapons|Offhand|Armours|Amulets|Rings|Belts|Charms|Quivers|Jewels)/[^"\'\s]+\.webp')
+
+def block_img(blk):
+    m = BASETYPES.search(blk)
+    if m:
+        return m.group(0)
+    for m in DIRECTART.finditer(blk):
+        u = m.group(0)
+        if 'Uniques' not in u and 'minimap' not in u.lower() and '/maps/' not in u.lower():
+            return u
+    return None
 
 def art_urls():
     """normalised base display-name -> art URL, by pairing each base card's
-    <a class="whiteitem">Name</a> with the Basetypes image in the same col block.
-    Armour/weapon art uses internal names (BodyStr01.webp), so we must read the
-    name and image together from the row rather than guess a filename."""
+    <a class="whiteitem">Name</a> with its item image in the same col block.
+    Armour/weapon art uses internal names (BodyStr01.webp / 1HSpear01.webp), so
+    the name and image must be read together from the row."""
     m = {}
     for f in glob.glob(os.path.join(HERE, 'raw', '*.html')):
         h = open(f, encoding='utf-8', errors='ignore').read()
@@ -36,9 +49,9 @@ def art_urls():
         for i, s in enumerate(starts):
             e = starts[i + 1] if i + 1 < len(starts) else min(len(h), s + 8000)
             blk = h[s:e]
-            a, u = ANCHOR.search(blk), BASEIMG.search(blk)
+            a, u = ANCHOR.search(blk), block_img(blk)
             if a and u:
-                m.setdefault(norm(html.unescape(a.group(1)).strip()), u.group(0))
+                m.setdefault(norm(html.unescape(a.group(1)).strip()), u)
     return m
 
 def fetch(url, dest):
@@ -51,10 +64,42 @@ def fetch(url, dest):
     open(dest, 'wb').write(data)
     return len(data)
 
+UNIQUE = re.compile(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/[^"\'\s]*Uniques/[^"\'\s]+\.webp')
+ANYART = re.compile(r'https?://cdn\.poe2db\.tw/image/[Aa]rt/2[Dd][Ii]tems/[^"\'\s]+\.webp')
+
+def class_icons(db):
+    """A fallback icon per class, for bases that have no art of their own: a
+    sibling base's art when the class has any, else a representative unique from
+    the class page (so art-less classes like Spears still show something)."""
+    made = borrowed = 0
+    for cls, node in db['bases'].items():
+        bs = node.get('b', [])
+        art = next((b['img'] for b in bs if b.get('img')), None)
+        if art:
+            node['classimg'] = art; borrowed += 1; continue
+        f = os.path.join(HERE, 'raw', cls + '.html')
+        if not os.path.exists(f):
+            continue
+        h = open(f, encoding='utf-8', errors='ignore').read()
+        m = UNIQUE.search(h) or ANYART.search(h)
+        if not m:
+            continue
+        u = m.group(0); fn = u.rsplit('/', 1)[1]
+        try:
+            fetch(u, os.path.join(IMGDIR, 'class', fn))
+            node['classimg'] = 'img/class/' + fn; made += 1
+        except urllib.error.HTTPError as e:
+            print('  ! class icon', cls, e.code)
+    print(f'class icons: {borrowed} reuse a base art, {made} downloaded a representative')
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     flags = [a for a in sys.argv[1:] if a.startswith('--')]
     db = json.load(open(DATA))
+    if '--classicons' in flags and not args:      # standalone: just (re)build class icons
+        class_icons(db)
+        json.dump(db, open(DATA, 'w'), separators=(',', ':'))
+        print('wrote', DATA); return
     amap = art_urls()
     classes = list(db['bases']) if (not args or args == ['ALL']) else args
 
