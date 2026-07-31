@@ -69,6 +69,8 @@
         <span class="note">two-column zig-zag &middot; ctrl+scroll to zoom &middot; every number is solved from the pool, not simulated</span>
         <button class="emubtn" id="emuopen" title="Emulate crafting one real item, roll by roll">
           &#9654; Emulate a craft</button>
+        <button class="emubtn" id="startopen" title="Already own a base with a couple of good mods? Enter them and roll out the rest, tallying from there">
+          &#9654; Emulate from your item</button>
       </h2>
       <div class="planbar">
         <span class="glabel">Add step</span>
@@ -842,6 +844,41 @@
 </div>
 
 <div id="tiptip" class="tiptip" hidden></div>
+  <!-- ===================== "emulate from your item" editor ===================== -->
+  <div id="startedit" class="emu hidden" role="dialog" aria-modal="true" aria-label="Emulate from your item">
+    <div class="emubox startbox">
+      <div class="emuhead">
+        <div>
+          <div class="emutitle">Emulate from your item</div>
+          <div class="emusub">enter the modifiers you already have, then roll out the rest &mdash; the currency tally starts from here</div>
+        </div>
+        <div class="emuactions">
+          <button class="ghost" id="startclose">&times; Close</button>
+        </div>
+      </div>
+      <div class="startbody">
+        <div class="startbar">
+          <span class="startbase">Base: <b id="startbasen"></b> &middot; ilvl <b id="startilvl"></b></span>
+          <span class="startraritypick">rarity
+            <span class="chips" id="startrar">
+              <button class="chip" data-rar="magic">Magic</button>
+              <button class="chip" data-rar="rare" aria-pressed="true">Rare</button>
+            </span>
+          </span>
+        </div>
+        <div class="startmods" id="startmods"></div>
+        <div class="startaddrow">
+          <label class="startadd">add prefix <select id="startaddp"></select></label>
+          <label class="startadd">add suffix <select id="startadds"></select></label>
+        </div>
+        <div class="startfoot">
+          <button class="emubtn" id="startgo">&#9654; Emulate the rest</button>
+          <span class="mcnote" id="startnote"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Supabase client (vendored UMD, no CDN at runtime) — sets window.supabase -->
   <script src="vendor/supabase.js"></script>
   <script type="module" src="app.js"></script>

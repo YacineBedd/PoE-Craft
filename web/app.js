@@ -2250,6 +2250,91 @@ function emStartFrom(item, label, ctx) {
   drawEmu();
 }
 
+/* ---- "Emulate from your item": enter the mods you already have, then roll the
+   rest with the currency tally starting from that state. ---- */
+let startAffixes = [];   // [{ m, t }] chosen mod record + tier tuple
+let startRar = 'rare';
+
+function openStartEdit() {
+  startAffixes = []; startRar = 'rare';
+  document.getElementById('startedit').classList.remove('hidden');
+  drawStartEdit();
+}
+function closeStartEdit() { document.getElementById('startedit').classList.add('hidden'); }
+
+// a light item used only to ask eligible() what can still be added
+function startProbe() {
+  return { slug: state.slug, base: state.base, ilvl: state.ilvl, rarity: startRar,
+           affixes: startAffixes.map(x => ({ g: x.m.g, a: x.m.a })) };
+}
+// one emulator-shaped affix from a chosen mod + tier tuple (values rolled in-tier)
+function startAffix(m, t) {
+  return { id: m.i, g: m.g, a: m.a, tier: t[0], ml: t[1], name: m.n, x: m.x,
+           v: t[2].map(r => rint(r[0], r[1])), tname: t[4] || null, g2: m.g2 };
+}
+
+function drawStartEdit() {
+  document.getElementById('startbasen').textContent = (state.base && state.base.n) || state.slug;
+  document.getElementById('startilvl').textContent = state.ilvl;
+  document.querySelectorAll('#startrar .chip').forEach(c => {
+    c.setAttribute('aria-pressed', String(c.dataset.rar === startRar));
+    c.onclick = () => {
+      startRar = c.dataset.rar;
+      const cap = LIM(startRar), kept = { p: 0, s: 0 };      // trim to the new caps
+      startAffixes = startAffixes.filter(x => ++kept[x.m.a] <= (x.m.a === 'p' ? cap.p : cap.s));
+      drawStartEdit();
+    };
+  });
+
+  const box = document.getElementById('startmods');
+  box.innerHTML = startAffixes.length
+    ? startAffixes.map((x, i) => {
+        const tiers = x.m.t.filter(t => t[1] <= state.ilvl);
+        const tsel = tiers.length > 1
+          ? `<select class="starttier" data-ti="${i}">${tiers.map(t =>
+              `<option value="${t[0]}"${t[0] === x.t[0] ? ' selected' : ''}>T${t[0]}${t[4] ? ' · ' + esc(t[4]) : ''}</option>`).join('')}</select>`
+          : '';
+        return `<div class="startchip ${x.m.a === 'p' ? 'pre' : 'suf'}">
+          <span class="startk">${x.m.a === 'p' ? 'prefix' : 'suffix'}</span>
+          <b>${esc(render(x.m.x, x.t[2].map(r => r[0] === r[1] ? String(r[0]) : r[0] + '–' + r[1])))}</b>
+          ${tsel}<button class="startx" data-del="${i}" title="remove">&times;</button></div>`;
+      }).join('')
+    : '<div class="startempty">No modifiers yet &mdash; add the prefixes and suffixes your item already has.</div>';
+  box.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { startAffixes.splice(+b.dataset.del, 1); drawStartEdit(); });
+  box.querySelectorAll('[data-ti]').forEach(sel => sel.onchange = () => {
+    const x = startAffixes[+sel.dataset.ti], t = x.m.t.find(tt => tt[0] === +sel.value);
+    if (t) x.t = t; drawStartEdit();
+  });
+
+  const probe = startProbe();
+  const fill = (side, selId) => {
+    const sel = document.getElementById(selId), seen = new Map();
+    for (const e of eligible(probe, side, 0, Infinity, MODS)) {
+      const cur = seen.get(e.m.g);
+      if (!cur) seen.set(e.m.g, { m: e.m, best: e.t });
+      else if (e.t[0] < cur.best[0]) cur.best = e.t;
+    }
+    const opts = [...seen.values()].sort((a, b) => a.m.n.localeCompare(b.m.n));
+    sel.innerHTML = `<option value="">${opts.length ? 'choose a modifier…' : 'no open slot'}</option>` +
+      opts.map((o, i) => `<option value="${i}">${esc(o.m.n)} (best T${o.best[0]})</option>`).join('');
+    sel.disabled = !opts.length;
+    sel.onchange = () => { if (sel.value !== '') { startAffixes.push({ m: opts[+sel.value].m, t: opts[+sel.value].best }); drawStartEdit(); } };
+  };
+  fill('p', 'startaddp');
+  fill('s', 'startadds');
+  const note = document.getElementById('startnote'); if (note) note.textContent = '';
+}
+
+function startEmulate() {
+  const affixes = startAffixes.map(x => startAffix(x.m, x.t));
+  const item = { rarity: startRar, affixes, quality: 20, exc: state.exceptional || '',
+                 sockets: [], corrupted: false, sanctified: false };
+  const ctx = { slug: state.slug, baseName: state.base && state.base.n,
+                ilvl: state.ilvl, exceptional: state.exceptional };
+  closeStartEdit();
+  emStartFrom(item, `your item (${affixes.length} mod${affixes.length === 1 ? '' : 's'})`, ctx);
+}
+
 /** Save the current item so a later run can branch or re-roll from this point. */
 function emSnapshot() {
   if (!em) return;
@@ -5015,6 +5100,9 @@ document.getElementById('obnext').onclick = () => { if (obIdx < OB.length - 1) {
 document.getElementById('onboard').addEventListener('click', e => { if (e.target.id === 'onboard') obClose(); });
 
 document.getElementById('emuopen').onclick = () => emStart(!em);
+document.getElementById('startopen').onclick = openStartEdit;
+document.getElementById('startclose').onclick = closeStartEdit;
+document.getElementById('startgo').onclick = startEmulate;
 document.getElementById('emuclose').onclick = emCloseModal;
 document.getElementById('emureset').onclick = () => emStart(true);
 document.getElementById('emusnap').onclick = emSnapshot;

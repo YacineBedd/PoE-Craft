@@ -1037,6 +1037,30 @@
     .acct { position: static; max-width: none; justify-content: flex-start; margin-bottom: 12px; }
   }
   .emuphint { font-size: 11.5px; color: var(--faint); margin: 6px 0 2px; line-height: 1.4; }
+
+  /* --- "emulate from your item" editor --- */
+  .startbox { max-width: 640px; }
+  .startbody { padding: 4px 2px; }
+  .startbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    padding: 4px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 12px; font-size: 13px; }
+  .startbase b { color: var(--ink); }
+  .startraritypick { display: inline-flex; align-items: center; gap: 8px; color: var(--dim); }
+  .startmods { display: flex; flex-direction: column; gap: 6px; min-height: 40px; margin-bottom: 12px; }
+  .startempty { font-size: 12.5px; color: var(--faint); padding: 8px 2px; }
+  .startchip { display: flex; align-items: center; gap: 9px; font-size: 13px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; }
+  .startchip.pre { border-left: 3px solid var(--prefix); }
+  .startchip.suf { border-left: 3px solid var(--suffix); }
+  .startchip b { flex: 1 1 auto; font-weight: 500; }
+  .startk { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); min-width: 40px; }
+  .starttier, .startaddrow select { background: var(--sunk); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 3px; padding: 3px 6px; font-size: 12px; }
+  .startx { cursor: pointer; color: var(--faint); background: none; border: none; font-size: 16px; line-height: 1; padding: 0 2px; }
+  .startx:hover { color: var(--brick); }
+  .startaddrow { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .startadd { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--dim); flex: 1 1 220px; }
+  .startaddrow select:disabled { opacity: .5; }
+  .startfoot { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
   .cloudchip.shared { border-color: var(--accent); }
   .sharebanner { margin: 0 0 16px; padding: 9px 13px; font-size: 12.5px; line-height: 1.5;
     background: var(--panel); color: var(--ink);
