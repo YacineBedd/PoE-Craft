@@ -4378,7 +4378,7 @@ function modLine(a, ghost) {
     <span class="glyphs" aria-label="unrevealed desecrated modifier">${unrevGlyphs(a)}</span></div>`;
   if (a.fx) return `<div class="m fx"${tipAttr(a)} title="fractured: locked, cannot be removed or rerolled">
     <span class="tb">${a.tier ? 'T' + a.tier : '&#128274;'}</span>
-    <span>&#128274; ${esc(name)}</span></div>`;
+    <span><span class="fxlock">&#128274;</span> ${esc(name)}</span></div>`;
   // at-a-glance quality tint on the tier tag: in the emulator it grades the real
   // ROLL within its tier; in the graph (no rolled value) it grades the TIER itself.
   let q = '', tbTitle = '';

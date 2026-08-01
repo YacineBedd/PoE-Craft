@@ -1269,7 +1269,25 @@
           cursor: pointer; margin-left: auto; }
   .tcyc:hover { color: var(--accent); border-color: var(--accent); }
   .m.rand { opacity: .62; font-style: italic; }
-  .m.fx { color: var(--rare); font-weight: 600; }
+  /* fractured mods read as frozen crystal (matching the Fracturing Orb) — icy
+     glow + gold, with a breathing lock and a one-shot crack burst when it lands */
+  .m.fx { color: #c6dcf2; font-weight: 600; border-left: 2px solid #7fa8d8;
+    background: linear-gradient(90deg, rgba(180,214,255,.08), transparent 72%); }
+  .m.fx .fxlock { display: inline-block; color: #dcecff;
+    text-shadow: 0 0 8px rgba(190,224,255,.75), 0 0 16px rgba(200,170,90,.4);
+    animation: frostBreathe 3.6s ease-in-out infinite; }
+  @keyframes frostBreathe { 0%,100% { opacity: .78; filter: drop-shadow(0 0 1px rgba(190,224,255,.3)); } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .m.fx .fxlock { animation: none; } }
+  /* when a Fracturing Orb just landed, the mod flash-freezes and cracks */
+  .m.fx.flash { animation: fractureIn .8s cubic-bezier(.2,.7,.3,1) 1; }
+  @keyframes fractureIn {
+    0%   { background: rgba(207,230,255,.55); box-shadow: inset 0 0 0 1px rgba(220,236,255,.9), 0 0 26px rgba(190,224,255,.7); transform: translateX(0) scale(1.01); }
+    12%  { transform: translateX(-2px); }
+    24%  { transform: translateX(2px); }
+    38%  { transform: translateX(-1px); }
+    100% { background: linear-gradient(90deg, rgba(180,214,255,.08), transparent 72%); box-shadow: none; transform: translateX(0) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) { .m.fx.flash { animation: none; } }
   .m.cor { color: var(--brick); font-weight: 600; }
   .m.cor .tb { color: var(--brick); }
   .m.cor.twice { letter-spacing: .02em; text-transform: uppercase; font-size: 10.5px; }
