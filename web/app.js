@@ -973,6 +973,8 @@ function corruptRerollVals(a) {
   return true;
 }
 function rerollVals(a) {
+  // essence/alloy mods reroll inside their OWN window (a.er), not the base ladder
+  if (a.er && a.er.length) { a.v = rollVals(a.er); return true; }
   const m = modOf(a);
   const t = m && m.t.find(x => x[0] === a.tier);
   if (!t) return false;
@@ -1196,7 +1198,11 @@ function mcApply(it, s, D) {
       const m = cands.find(x => String(x.x).split(' ')[0] === verb) || cands[0];
       const t = realTier(m, v);
       it.affixes.push({ g: e.g, a: e.a, tier: t ? t[0] : 1, name: e.n, cat: 'crafted',
-                        x: e.x, v, tname: t ? t[4] || null : null, ml: t ? t[1] : (e.ml || 0) });
+                        // er = the essence's OWN value window; a Divine and the range
+                        // tooltip must stay inside it, not the base mod's wider ladder
+                        // (e.g. an Expansive Alloy caps Presence AoE at 35-50%, not 80%)
+                        x: e.x, v, er: (e.v || []).map(r => r.slice()),
+                        tname: t ? t[4] || null : null, ml: t ? t[1] : (e.ml || 0) });
     };
     if (isPerfectEss(e)) {
       // A Crystallisation omen forces which side is replaced: Sinistral -> prefix,
@@ -4221,6 +4227,8 @@ function modRanges(a) {
     return { ranges: src.v, cur: a.v, tmpl: a.x, tier: '', tname: 'implicit', impl: true };
   }
   if (a.rand || a.twice || a.mark || a.un || a.a === 'c') return null;
+  // essence/alloy mods are graded against their own window, not the base ladder
+  if (a.er && a.er.length) return { ranges: a.er, cur: a.v, tmpl: a.x, tier: a.tier, tname: a.tname || '', fx: !!a.fx };
   const m = modOf(a);
   if (!m || !m.t) return null;
   const t = m.t.find(x => x[0] === a.tier);
