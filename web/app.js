@@ -2825,6 +2825,80 @@ function emTakeReveal(j) {
   emPend = null;
   drawEmu();
 }
+function emCloseReveal() {           // back out without revealing (keeps the unrevealed mod)
+  if (emPend && emPend.kind === 'reveal') { emPend = null; drawEmu(); }
+}
+
+/**
+ * The Well of Souls: the one-shot desecrated reveal as a full takeover. Three
+ * candidate slabs, pool-coloured (acid = actually desecrated, blue = an ordinary
+ * mod a bone can also surface). The tier-window bar branches — a fixed modifier
+ * has no roll to grade, so it shows no bar (a full bar would say the opposite).
+ */
+function drawWell() {
+  const well = document.getElementById('well');
+  if (!emPend || emPend.kind !== 'reveal') { well.classList.add('hidden'); return; }
+  if (emPend.sel == null) emPend.sel = 0;
+  const isDes = m => m.i && String(m.i).indexOf('des:') === 0;
+  const held = em.affixes[emPend.idx];
+  const sideWord = held && held.a === 'p' ? 'Prefix' : 'Suffix';
+  const itemName = (state.base && state.base.n) || BASES[state.slug].ic || state.slug;
+  const slabs = emPend.opts.map((o, j) => {
+    const des = isDes(o.e.m);
+    const lich = des ? (LICHNAME[(o.e.m.g2 || []).find(x => /_mod$/.test(x)) || ''] || '') : '';
+    const ranges = o.e.t[2] || [];
+    const hasWindow = ranges.some(r => r[0] !== r[1]);
+    const li = ranges.length - 1;
+    const lo = ranges[li] ? ranges[li][0] : 0, hi = ranges[li] ? ranges[li][1] : 0, cur = o.v[li];
+    const pct = hi > lo ? Math.max(0, Math.min(100, Math.round((cur - lo) / (hi - lo) * 100))) : 0;
+    const where = pct >= 67 ? 'upper third of the window' : pct >= 34 ? 'middle of the window' : 'lower third of the window';
+    const bar = hasWindow
+      ? `<div class="wellbar">
+           <div class="wellbarlbl"><span>${lo}</span><span class="wellbark">tier window</span><span>${hi}</span></div>
+           <div class="wellbartrack"><i style="width:${pct}%"></i><b style="left:${pct}%"></b></div>
+           <div class="wellbarnow">rolled <b>${cur}</b> &middot; ${where}</div>
+         </div>`
+      : `<div class="wellbar nobar"><div class="wellfixed">fixed value &middot; no roll range to grade</div></div>`;
+    return `<button class="wellslab ${des ? 'des' : 'norm'}${emPend.sel === j ? ' sel' : ''}" data-rev="${j}">
+      <div class="wellhdr">
+        <span class="wellpool ${des ? 'des' : 'norm'}">${des ? 'desecrated' : 'normal'}</span>
+        <span class="welllich">${des ? esc(lich || '—') : '&mdash;'}</span>
+        <span class="welltier">T${o.e.t[0]}</span>
+      </div>
+      <div class="wellmodwrap"><div class="wellmod ${des ? 'des' : 'norm'}">${esc(render(o.e.m.x, o.v))}</div></div>
+      ${bar}
+      <div class="wellfoot">
+        <div class="wellconseq"><span>${sideWord} slot</span><b>${des ? 'desecrated' : 'ordinary'}</b></div>
+        <div class="wellnote">${des
+          ? 'A genuinely desecrated modifier &mdash; acid green means desecrated, nothing else.'
+          : 'An ordinary modifier, surfaced because no faction omen was spent.'}</div>
+      </div>
+    </button>`;
+  }).join('');
+  const reroll = emPend.echo
+    ? (emPend.rerolled
+        ? '<span class="wellreroll spent">&#10003; Abyssal Echoes reroll spent &mdash; keep one</span>'
+        : '<button class="wellreroll" data-wellreroll>&#8635; Reroll once &middot; Abyssal Echoes</button>')
+    : '<span class="wellreroll note">one reveal, no retry &mdash; Annul it off to try again</span>';
+  well.innerHTML = `<div class="wellbg"></div><div class="wellbloom"></div>
+    <div class="wellbox">
+      <div class="wellhead">
+        <div><div class="welltitle">The Well of Souls</div>
+          <div class="wellsub">one modifier resolves, once &mdash; three candidates, keep one</div></div>
+        <span class="wellchip">${esc(itemName)} &middot; ${sideWord} slot</span>
+        <button class="wellx" data-wellclose title="back out (keeps it unrevealed)">&times;</button>
+      </div>
+      <div class="wellslabs">${slabs}</div>
+      <div class="wellactions">${reroll}
+        <button class="wellconfirm" data-wellconfirm>Confirm</button></div>
+    </div>`;
+  well.classList.remove('hidden');
+  well.querySelectorAll('[data-rev]').forEach(b => b.onclick = () => { emPend.sel = +b.dataset.rev; drawWell(); });
+  const cf = well.querySelector('[data-wellconfirm]'); if (cf) cf.onclick = () => emTakeReveal(emPend.sel);
+  const rr = well.querySelector('[data-wellreroll]'); if (rr) rr.onclick = emRerollReveal;
+  const xb = well.querySelector('[data-wellclose]'); if (xb) xb.onclick = emCloseReveal;
+  well.querySelector('.wellbg').onclick = emCloseReveal;
+}
 
 /** An essence: pick which one, then apply it. */
 function emOpenEssence() {
@@ -3146,7 +3220,11 @@ function drawEmu() {
       + '<div class="implrule"></div>'
     : '';
   EMU_RENDER = false;
-  document.getElementById('emumods').innerHTML = implHTML + mods;
+  // the game's own instruction when an unrevealed desecrated modifier is present
+  const unrevHint = em.affixes.some(a => a.un)
+    ? `<div class="revealhint">Take this item to the <b>Well of Souls</b> to reveal the
+        <span class="desecword">Desecrated Modifier</span></div>` : '';
+  document.getElementById('emumods').innerHTML = implHTML + mods + unrevHint;
   bindEmuTip();
   syncEmRunes();
   document.getElementById('emucap').innerHTML = em.corrupted || em.sanctified ? '' : capacity(em);
@@ -3156,33 +3234,10 @@ function drawEmu() {
 
   // the pending-choice tray: reveal options or an essence list
   const pick = document.getElementById('emupick');
+  document.getElementById('well').classList.toggle('hidden', !(emPend && emPend.kind === 'reveal'));
   if (emPend && emPend.kind === 'reveal') {
-    const isDes = m => m.i && String(m.i).indexOf('des:') === 0;
-    pick.innerHTML = `<div class="emupickhead">Reveal &mdash; keep one of ${emPend.opts.length}
-        <span class="revmix">${emPend.omened
-          ? 'desecrated pool only &middot; omen active'
-          : 'desecrated + normal pool'}</span></div>` +
-      emPend.opts.map((o, j) => {
-        const des = isDes(o.e.m);
-        const lich = des ? (LICHNAME[(o.e.m.g2 || []).find(x => /_mod$/.test(x))] || '') : '';
-        const src = des
-          ? `<span class="revsrc des" title="from the desecrated pool">${lich || 'desecrated'}</span>`
-          : `<span class="revsrc norm" title="an ordinary modifier, surfaced because no faction omen was used">normal</span>`;
-        return `<button class="emuopt${des ? ' isdes' : ''}" data-rev="${j}">
-          <span class="tag ${o.e.m.a}">${o.e.m.a === 'p' ? 'P' : 'S'}</span>
-          ${src}
-          <span>${esc(render(o.e.m.x, o.v))}</span>
-          <span class="emuoptt">T${o.e.t[0]}</span>
-        </button>`;
-      }).join('');
-    if (emPend.echo)
-      pick.innerHTML += `<div class="revreroll">${emPend.rerolled
-        ? '<span class="revused">&#10003; Abyssal Echoes reroll spent &mdash; keep one</span>'
-        : '<button class="ghost" id="emureroll">&#8635; Reroll once (Abyssal Echoes)</button>'}</div>`;
-    else
-      pick.innerHTML += `<div class="revreroll"><span class="revused">keep one &mdash; a reveal cannot be redone (Annul it off to retry)</span></div>`;
-    pick.querySelectorAll('[data-rev]').forEach(b => b.onclick = () => emTakeReveal(+b.dataset.rev));
-    const rr = document.getElementById('emureroll'); if (rr) rr.onclick = emRerollReveal;
+    pick.innerHTML = '';        // the reveal takes over the Well of Souls modal instead
+    drawWell();
   } else if (emPend && emPend.kind === 'essence') {
     const esub = [];
     if (emPend.side) esub.push(`${emPend.side === 'p' ? 'prefix' : 'suffix'}-only \u2014 Crystallisation armed (disarm to see both sides)`);
@@ -3225,14 +3280,18 @@ function drawEmu() {
     stepOmens({ kind: o.kind, cur: o.cur, tier: o.tier, ref: o.ref }).some(x => x.i === emOmen);
   const anyLink = opts.some(linkOf);
   rail.innerHTML = opts.length
-    ? opts.map((o, j) => `<button class="emucur${locked ? ' dim' : ''}${
+    ? opts.map((o, j) => {
+        // bones ride the acid ramp and badge their mod-level floor, not a tier
+        const bone = o.kind === 'bone' ? BONES.find(x => x.id === o.ref) : null;
+        return `<button class="emucur${o.kind === 'bone' ? ' bone' : ''}${locked ? ' dim' : ''}${
         anyLink ? (linkOf(o) ? ' omlink' : ' omdim') : ''}" data-opt="${j}"
         data-tipname="${esc(o.label)}" data-tip="${esc(curDescOf(o))}">
         ${j < RAILKEYS.length ? `<span class="emucurkey" title="press ${RAILKEYS[j].toUpperCase()} to apply">${RAILKEYS[j].toUpperCase()}</span>` : ''}
+        ${bone ? `<span class="bonefloor" title="mod-level floor this bone raises the ordinary pool to">${bone.min || 0}</span>` : ''}
         <span class="sigwrap">${sigil(o.icon)}${o.tier && o.tier !== 'I'
           ? `<span class="tiermark">${ROMAN[o.tier]}</span>` : ''}</span>
         <span class="emucurn">${esc(o.label.replace(/^Orb of /, ''))}</span>
-      </button>`).join('')
+      </button>`; }).join('')
     : `<div class="emudone">${em.sanctified
         ? 'This item is Sanctified — permanently locked and finished.'
         : em.corrupted ? 'This item is corrupted and finished.' : 'Nothing more can be applied.'}</div>`;
@@ -4180,6 +4239,22 @@ function bindEmuTip() {
   });
 }
 
+// An unrevealed desecrated modifier reads as illegible acid script, like the
+// game. Cyrillic/Greek codepoints (present in every system font + Source Sans 3,
+// so never tofu). Shuffled deterministically per affix so two differ but the same
+// one is stable across re-renders.
+const UNREV_GLYPHS = ['Ѭ','Ж','Ѧ','⊕','Ϟ','Ѫ','⊗','Ψ','Ѱ','Ђ','Ҩ','Ϫ','Ѯ','Җ'];
+function unrevGlyphs(a) {
+  let s = hashStr((a.g || '') + '|' + (a.a || '') + '|' + (a.ml || 0)) || 1;
+  const arr = UNREV_GLYPHS.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    const j = s % (i + 1);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, 8).join(' ');
+}
+
 function modLine(a, ghost) {
   // a family splits per item class (Armour vs Energy Shield variants share a
   // group), so resolve the name against THIS base, not the first global match
@@ -4199,9 +4274,9 @@ function modLine(a, ghost) {
   if (a.mark) return `<div class="m abyssmark" title="Mark of the Abyssal Lord: a desecration bone turns this into an unrevealed desecrated modifier">
     <span class="tb">&#9670;</span>
     <span>Mark of the Abyssal Lord <span class="unrev">abyss mark</span></span></div>`;
-  if (a.un) return `<div class="m unrevealed" title="desecrated and unrevealed: cannot be fractured until revealed">
-    <span class="tb">&#9679;</span>
-    <span>${esc(name)} <span class="unrev">unrevealed</span></span></div>`;
+  if (a.un) return `<div class="m unrevealed" title="an unrevealed desecrated modifier — reveal it at the Well of Souls; it cannot be fractured until revealed">
+    <span class="tb">??</span>
+    <span class="glyphs" aria-label="unrevealed desecrated modifier">${unrevGlyphs(a)}</span></div>`;
   if (a.fx) return `<div class="m fx"${tipAttr(a)} title="fractured: locked, cannot be removed or rerolled">
     <span class="tb">${a.tier ? 'T' + a.tier : '&#128274;'}</span>
     <span>&#128274; ${esc(name)}</span></div>`;
@@ -5095,7 +5170,10 @@ function omenIco(o) {
  */
 function omenChip(o, active, data, extra) {
   const short = o.n.replace(/^Omen of (the )?/, '');
-  return `<button class="omchip${active ? ' on' : ''}" data-omen="${data}"
+  // abyss/desecration omens take the acid rim, not the red one, so a bone-omen
+  // reads as such before it is spent
+  const abyss = /^OmenOnAbyss/.test(o.c || '');
+  return `<button class="omchip${abyss ? ' abyss' : ''}${active ? ' on' : ''}" data-omen="${data}"
     data-tipname="${esc(o.n)}" data-tip="${esc(omenExplain(o) || 'A special omen - its effect shows when it is armed.')}">
     <span class="omico">${omenIco(o)}</span>
     <span class="omname">${esc(short)}</span>${extra || ''}
@@ -5588,6 +5666,7 @@ document.getElementById('emugraph').onclick = () => { emCloseModal(); setView('g
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !document.getElementById('onboard').classList.contains('hidden')) return obClose();
   if (e.key === 'Escape' && !document.getElementById('mcfix').classList.contains('hidden')) return closeMcFix();
+  if (e.key === 'Escape' && !document.getElementById('well').classList.contains('hidden')) return emCloseReveal();
   if (e.key === 'Escape' && !document.getElementById('emu').classList.contains('hidden')) return emCloseModal();
   emuKey(e);
 });

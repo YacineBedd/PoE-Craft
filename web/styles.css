@@ -39,7 +39,16 @@
   --normal:      #c8c8c8;
   --magic:       #8888ff;
   --rare:        #ffef8a;
-  --desec:       #5fca92;
+  /* desecration / Abyss — the game's toxic bile-green (retired mint #5fca92) */
+  --desec:       #c3e02a;   /* acid core   — glyphs, chance figures        */
+  --acid-br:     #d8f24a;   /* acid bright — confirm label, roll marker    */
+  --acid:        #a8c81e;   /* acid mid    — section labels, hover ink      */
+  --acid-dim:    #7d9418;   /* acid dim    — side bars, active borders      */
+  --acid-ink:    #8a9a55;   /* moss ink    — resting body text on abyss     */
+  --acid-edge:   #3b4315;   /* resting border on abyss controls            */
+  --acid-sunk:   #0b0c06;   /* abyss control background                     */
+  --acid-glow:   rgba(180,217,25,.28);
+  --good:        #5fca92;   /* "good roll" cue green — NOT desecration      */
   --craft:       #a8bcff;
   --brick:       #d1414f;
   --omen:        #ff7086;
@@ -654,13 +663,13 @@
   .emutip .tipnow b { color: var(--ink); font-weight: 700; }
   .emutip .tqword { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
   /* good/bad roll colour cue: green high, amber mid, red low */
-  .emutip .tq-hi  .tipbar i { background: color-mix(in srgb, var(--desec) 55%, transparent); }
+  .emutip .tq-hi  .tipbar i { background: color-mix(in srgb, var(--good) 55%, transparent); }
   .emutip .tq-mid .tipbar i { background: color-mix(in srgb, var(--accent) 55%, transparent); }
   .emutip .tq-lo  .tipbar i { background: color-mix(in srgb, var(--brick) 55%, transparent); }
-  .emutip .tq-hi  .tipbar b { background: var(--desec); }
+  .emutip .tq-hi  .tipbar b { background: var(--good); }
   .emutip .tq-mid .tipbar b { background: var(--accent); }
   .emutip .tq-lo  .tipbar b { background: var(--brick); }
-  .emutip .tq-hi  .tqword { color: var(--desec); }
+  .emutip .tq-hi  .tqword { color: var(--good); }
   .emutip .tq-mid .tqword { color: var(--accent); }
   .emutip .tq-lo  .tqword { color: var(--brick); }
   .emutip .tipfixed { font-size: 11px; color: var(--dim); font-style: italic; }
@@ -740,6 +749,15 @@
     box-shadow: 0 0 0 1px var(--omen-edge), 0 0 13px rgba(224,56,77,.5); }
   .emucur.omlink .emucurn { color: var(--ink); }
   .emucur.omdim { opacity: .32; filter: grayscale(.5); }
+  /* bones ride the abyss/acid ramp */
+  .emucur.bone { width: 88px; background: linear-gradient(180deg,#161707,#0b0c06);
+    border-color: var(--acid-edge); color: var(--acid-ink); }
+  .emucur.bone:hover { border-color: var(--acid); color: var(--acid-br); box-shadow: 0 0 18px var(--acid-glow); }
+  .emucur.bone .sig.art { filter: drop-shadow(0 0 8px rgba(180,217,25,.30)); }
+  .bonefloor { position: absolute; top: 4px; right: 4px; min-width: 15px; height: 14px; padding: 0 3px;
+    display: flex; align-items: center; justify-content: center;
+    font: 700 8.5px/1 ui-monospace, Menlo, monospace; color: var(--acid);
+    background: rgba(74,90,16,.55); border-radius: var(--r-ctl); pointer-events: none; }
   .m.desec { color: var(--desec); }
   .m.desec .tb { color: var(--desec); }
   .m.craft { color: var(--craft); }
@@ -749,7 +767,7 @@
   /* quality tint on the tier tag: green good / amber mid / red low.
      Emulator grades the roll; graph cards grade the tier. Placed after category
      colours (and scoped 4-deep) so an actionable cue wins. */
-  .emumods .m .tb.tq-hi,  .card .m .tb.tq-hi  { color: var(--desec); border-color: color-mix(in srgb, var(--desec) 45%, var(--line)); }
+  .emumods .m .tb.tq-hi,  .card .m .tb.tq-hi  { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
   .emumods .m .tb.tq-mid, .card .m .tb.tq-mid { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
   .emumods .m .tb.tq-lo,  .card .m .tb.tq-lo  { color: var(--brick); border-color: color-mix(in srgb, var(--brick) 45%, var(--line)); }
   .omnote.omapply { color: var(--ink); }
@@ -758,10 +776,10 @@
     letter-spacing: 0; text-transform: none; color: var(--faint); }
   .revsrc { font: 700 8.5px/1 ui-monospace, Menlo, monospace; letter-spacing: .04em;
     padding: 3px 5px; border-radius: 3px; flex: none; text-transform: uppercase; }
-  .revsrc.des { color: var(--desec); background: rgba(95, 202, 146, .16);
-    border: 1px solid rgba(95, 202, 146, .5); }
-  .revsrc.norm { color: var(--faint); background: none; border: 1px solid var(--line); }
-  .emuopt.isdes { border-left: 2px solid rgba(138, 106, 176, .7); }
+  .revsrc.des { color: var(--desec); background: rgba(180, 217, 25, .14);
+    border: 1px solid rgba(180, 217, 25, .45); }
+  .revsrc.norm { color: var(--prefix-ink); background: rgba(142, 168, 255, .12); border: 1px solid rgba(142, 168, 255, .3); }
+  .emuopt.isdes { border-left: 2px solid var(--acid-dim); }
 
   .revreroll { margin-top: 8px; }
   .revreroll .ghost { font-size: 11px; padding: 5px 10px; }
@@ -1077,6 +1095,79 @@
   .omchip:hover { border-color: var(--omen-edge); color: var(--omen); box-shadow: 0 0 14px rgba(224,56,77,.25); }
   .omchip.on { border-color: var(--omen-edge); color: var(--omen); background: rgba(224,56,77,.12);
     box-shadow: 0 0 0 1px var(--omen-edge), 0 0 11px rgba(224,56,77,.5); }
+  /* abyss/desecration omens take the acid rim instead of red */
+  .omchip.abyss:hover { border-color: var(--acid); color: var(--acid-br); box-shadow: 0 0 16px var(--acid-glow); }
+  .omchip.abyss.on { border-color: var(--acid); color: var(--acid-br); background: rgba(180,217,25,.12);
+    box-shadow: 0 0 0 1px var(--acid), 0 0 12px var(--acid-glow); }
+
+  /* ---- The Well of Souls (desecrated reveal takeover) ---- */
+  .well { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .well.hidden { display: none; }
+  .wellbg { position: absolute; inset: 0; backdrop-filter: blur(3px);
+    background: radial-gradient(1000px 700px at 50% 50%, rgba(58,74,10,.42) 0%, rgba(10,12,4,.90) 62%, rgba(4,5,2,.96) 100%); }
+  .wellbloom { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px 400px at 50% 58%, rgba(180,217,25,.16), transparent 70%);
+    animation: wellPulse 5.5s ease-in-out infinite; }
+  @keyframes wellPulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .wellbloom { animation: none; } }
+  .wellbox { position: relative; width: min(1000px, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    background: linear-gradient(180deg,#181a0c,#0c0d07); border: 1px solid #4a5a10; border-radius: var(--r-pan);
+    box-shadow: 0 30px 90px rgba(0,0,0,.9), 0 0 60px rgba(180,217,25,.12), inset 0 1px 0 rgba(180,217,25,.14); overflow: hidden; }
+  .wellhead { display: flex; align-items: center; gap: 14px; padding: 14px 20px;
+    border-bottom: 1px solid #3b4315; background: linear-gradient(180deg,#1c1f0d,#12140a); box-shadow: inset 0 1px 0 rgba(180,217,25,.14); }
+  .welltitle { font: 700 15px/1 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--acid-br);
+    text-shadow: 0 1px 0 #000, 0 0 20px rgba(180,217,25,.35); }
+  .wellsub { font-size: 11.5px; color: var(--acid-ink); margin-top: 4px; }
+  .wellchip { margin-left: auto; font: 700 9.5px 'Source Sans 3', sans-serif; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--acid); background: var(--acid-sunk); border: 1px solid var(--acid-edge); border-radius: var(--r-ctl); padding: 6px 10px; }
+  .wellx { font-size: 18px; line-height: 1; cursor: pointer; color: var(--acid-ink);
+    background: var(--acid-sunk); border: 1px solid var(--acid-edge); border-radius: var(--r-ctl); padding: 5px 10px; }
+  .wellx:hover { color: var(--acid-br); border-color: var(--acid); }
+  .wellslabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 20px; overflow-y: auto; }
+  .wellslab { display: flex; flex-direction: column; text-align: left; cursor: pointer;
+    background: linear-gradient(180deg,#24261a,#131409); border: 1px solid var(--acid-edge); border-radius: var(--r-pan);
+    padding: 0; overflow: hidden; transition: border-color .12s, box-shadow .12s; }
+  .wellslab:hover { border-color: var(--acid); box-shadow: 0 0 26px rgba(180,217,25,.26); }
+  .wellslab.sel { border-color: var(--acid); box-shadow: 0 0 0 1px var(--acid), 0 0 28px rgba(180,217,25,.3); }
+  .wellslab.norm.sel { border-color: var(--prefix-ink); box-shadow: 0 0 0 1px var(--prefix-ink), 0 0 24px rgba(136,136,255,.28); }
+  .wellhdr { display: flex; align-items: center; gap: 8px; padding: 11px 13px; border-bottom: 1px solid rgba(180,217,25,.12); }
+  .wellpool { font: 700 8.5px ui-monospace, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase;
+    border-radius: var(--r-ctl); padding: 3px 6px; }
+  .wellpool.des { color: var(--desec); background: rgba(180,217,25,.14); box-shadow: 0 0 12px rgba(180,217,25,.45); }
+  .wellpool.norm { color: var(--prefix-ink); background: rgba(142,168,255,.12); box-shadow: 0 0 10px rgba(136,136,255,.35); }
+  .welllich { font: 600 11px 'Source Sans 3', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--acid-ink); }
+  .welltier { margin-left: auto; font: 700 9px ui-monospace, Menlo, monospace; color: var(--faint);
+    border: 1px solid var(--line2); border-radius: var(--r-ctl); padding: 2px 5px; }
+  .wellmodwrap { display: grid; place-items: center; min-height: 86px; padding: 14px 13px; }
+  .wellmod { text-align: center; font: 600 15.5px/1.4 'Source Sans 3', sans-serif; }
+  .wellmod.des { color: var(--desec); text-shadow: 0 0 12px rgba(180,217,25,.4); }
+  .wellmod.norm { color: var(--mod); }
+  .wellbar { padding: 0 14px 8px; }
+  .wellbar.nobar { display: grid; align-items: center; min-height: 41px; border-top: 1px dashed var(--acid-edge); margin: 0 14px; padding: 12px 0 8px; }
+  .wellfixed { text-align: center; font-size: 11px; color: #6b7250; font-style: italic; }
+  .wellbarlbl { display: flex; align-items: center; justify-content: space-between;
+    font: 500 10px ui-monospace, Menlo, monospace; color: var(--acid-ink); }
+  .wellbark { font: 700 8.5px 'Source Sans 3', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+  .wellbartrack { position: relative; height: 6px; margin: 6px 0; border-radius: 4px; background: var(--acid-sunk); }
+  .wellbartrack i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: linear-gradient(90deg,#4a5a10,#a8c81e); }
+  .wellbartrack b { position: absolute; top: 50%; width: 3px; height: 12px; transform: translate(-50%,-50%); border-radius: 2px;
+    background: var(--acid-br); box-shadow: 0 0 8px rgba(180,217,25,.7); }
+  .wellbarnow { text-align: center; font-size: 11px; color: var(--acid-ink); margin-top: 3px; }
+  .wellbarnow b { color: var(--acid-br); font-weight: 700; }
+  .wellfoot { margin-top: auto; padding: 11px 13px; border-top: 1px solid rgba(180,217,25,.10); background: rgba(0,0,0,.25); }
+  .wellconseq { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; color: var(--dim2); }
+  .wellconseq b { color: var(--acid-ink); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .wellnote { margin-top: 5px; font-size: 10.5px; color: var(--faint); line-height: 1.45; }
+  .wellactions { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-top: 1px solid #3b4315; background: linear-gradient(180deg,#141609,#0c0d07); }
+  .wellreroll { display: inline-flex; align-items: center; gap: 8px; font: 500 11.5px 'Source Sans 3', sans-serif;
+    background: var(--acid-sunk); border: 1px solid var(--acid-edge); border-radius: 20px; padding: 7px 14px; color: var(--acid-ink); cursor: pointer; }
+  .wellreroll:hover { border-color: var(--acid); color: var(--acid-br); box-shadow: 0 0 14px var(--acid-glow); }
+  .wellreroll.note, .wellreroll.spent { cursor: default; background: none; border-color: transparent; color: var(--faint); }
+  .wellconfirm { margin-left: auto; font: 700 12px/1 var(--serif); letter-spacing: .16em; text-transform: uppercase;
+    color: #e8f9a0; background: linear-gradient(180deg,#3a4709,#202805); border: 1px solid var(--acid);
+    border-radius: var(--r-ctl); padding: 11px 26px; cursor: pointer;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.5), inset 0 1px 0 rgba(216,242,74,.2), 0 0 22px rgba(180,217,25,.25); }
+  .wellconfirm:hover { background: linear-gradient(180deg,#48590c,#2a3407); }
 
   /* ---- hover tooltip (currencies + omens) ---- */
   .tiptip { position: fixed; z-index: 90; max-width: 262px; pointer-events: none;
@@ -1142,8 +1233,21 @@
   .m.cor { color: var(--brick); font-weight: 600; }
   .m.cor .tb { color: var(--brick); }
   .m.cor.twice { letter-spacing: .02em; text-transform: uppercase; font-size: 10.5px; }
-  .m.unrevealed { color: var(--desec); }
-  .m.unrevealed .tb { color: var(--desec); }
+  /* an unrevealed desecrated modifier renders as glowing illegible acid script */
+  .m.unrevealed { display: flex; align-items: center; gap: 9px; padding: 6px 0 6px 10px;
+    border-left: 2px solid var(--acid-dim);
+    background: linear-gradient(90deg, rgba(180,217,25,.09), transparent 70%); }
+  .m.unrevealed .tb { color: var(--acid); border-color: rgba(180,217,25,.45); }
+  .m.unrevealed .glyphs { font: 700 15px/1.4 'Source Sans 3', sans-serif; letter-spacing: .22em;
+    color: var(--desec); text-shadow: 0 0 10px rgba(180,217,25,.75), 0 0 22px rgba(180,217,25,.35);
+    animation: glyphBreathe 3.4s ease-in-out infinite; }
+  @keyframes glyphBreathe { 0%,100% { opacity: .72; filter: blur(.2px); } 50% { opacity: 1; filter: blur(0); } }
+  @media (prefers-reduced-motion: reduce) { .m.unrevealed .glyphs { animation: none; } }
+  /* the "Well of Souls" instruction line under the tooltip */
+  .revealhint { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--acid-edge);
+    text-align: center; font: italic 400 11.5px 'Source Sans 3', sans-serif; color: var(--faint); }
+  .revealhint b { font-style: normal; color: var(--acid); font-weight: 600; }
+  .revealhint .desecword { color: var(--acid-ink); border-bottom: 1px dotted var(--acid-ink); }
   .unrev { font: 700 8.5px ui-monospace, Menlo, monospace; letter-spacing: .04em;
            text-transform: uppercase; color: var(--suffix);
            border: 1px solid var(--suffix); border-radius: 2px; padding: 1px 3px; opacity: .8; }
