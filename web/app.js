@@ -2185,6 +2185,16 @@ let emSim = null;           // last "simulate this step x1000" result
 let emLock = false;         // Hinekora's Lock armed: preview the next outcome
 let emSnaps = [];           // saved item states you can branch an emulation from
 let mcSampleItems = [];     // real outcomes the last simulation surfaced to emulate
+let emRepeat = 1;           // bulk-apply count for the next currency click (shift+click)
+let emLast = null;          // { opt, omen } of the last standard apply, for "reuse" (R)
+let emMacro = [];           // recorded rotation: [{ opt, omen, n }] replayed in a loop
+let emRecording = false;    // capture applies into emMacro
+
+/** Currencies that can be spammed / scripted (no picker, can repeat). */
+const bulkable = k => k === 'orb' || k === 'annul' || k === 'divine';
+/** Is this exact option legal on the item right now? (for bulk / macro guards) */
+const optLegal = opt => optionsFor(em, true).some(o => o.kind === opt.kind &&
+  o.cur === opt.cur && (o.tier || 'I') === (opt.tier || 'I') && (o.ref || null) === (opt.ref || null));
 
 /**
  * Which modifiers an armed omen is aiming at, so the item can show them before
@@ -2667,9 +2677,95 @@ function emApply(opt) {
     emLog.push(d);
     emFlash = d.addedKeys || [];
   }
+  // remember this action for "reuse last" (R) and macro recording
+  if (res !== 'destroyed') {
+    emLast = { opt: { ...opt }, omen: s.omen || '' };
+    if (emRecording && bulkable(opt.kind)) emMacro.push({ opt: { ...opt }, omen: s.omen || '', n: 1 });
+  }
   if (s.omen) emOmen = '';            // an omen is consumed on use
   emPend = null; emSim = null;
   drawEmu();
+}
+
+/** Reuse the last currency (keyboard R / Cmd+D): re-arm its omen if still valid. */
+function emReuse() {
+  if (!emLast || !em || em.corrupted || em.sanctified || emPend) return;
+  if (!optLegal(emLast.opt)) return;
+  if (emLast.omen) {
+    const probe = { kind: emLast.opt.kind, cur: emLast.opt.cur,
+                    tier: emLast.opt.tier || 'I', ref: emLast.opt.ref };
+    if (stepOmens(probe).some(o => o.i === emLast.omen)) emOmen = emLast.omen;
+  }
+  emApply(emLast.opt);
+}
+
+/** Apply one currency n times as a SINGLE undo/log unit (shift-click a currency,
+ *  or the bulk-count chips). Stops early if the item can no longer take it. */
+function emBulk(opt, n) {
+  if (!em || emPend || em.corrupted || em.sanctified) return;
+  if (!bulkable(opt.kind) || n <= 1) return emApply(opt);
+  emHist.push(emSnap());
+  const before = em.affixes.map(a => ({ ...a }));
+  const s0 = emStep(opt);                       // resolves the armed omen (first use only)
+  const cur = costKey(s0), usedOmen = s0.omen || '';
+  let done = 0, destroyed = false;
+  for (let i = 0; i < n; i++) {
+    if (em.corrupted || em.sanctified || !optLegal(opt)) break;
+    const s = i === 0 ? s0 : emStep(opt), D = stepDef(s);
+    if (!D) break;
+    const res = mcApply(em, s, D);
+    if (s.omen) emOmen = '';
+    if (res === 'destroyed') { em = mcFresh(); em.imp = rollImp(state.base); done++; destroyed = true; break; }
+    if (res === 'dead') break;
+    done++;
+  }
+  if (!done) { emHist.pop(); return; }
+  const d = emDescribe(before, em.affixes, opt.label + ' ×' + done);
+  d.cur = cur; d.count = done; d.omen = usedOmen || undefined;
+  if (destroyed) { d.detail += ' — item DESTROYED, restarted'; d.brick = true; }
+  emLog.push(d);
+  emLast = { opt: { ...opt }, omen: usedOmen };
+  if (emRecording) emMacro.push({ opt: { ...opt }, omen: usedOmen, n: done });
+  emFlash = d.addedKeys || [];
+  emPend = null; emSim = null; drawEmu();
+}
+
+/** Replay the recorded rotation k full loops, as one undo/log unit. Stops the
+ *  moment a step becomes illegal (e.g. Transmutation once the item is Magic). */
+function emRunMacro(k) {
+  if (!emMacro.length || !em || emPend || em.corrupted || em.sanctified) return;
+  emHist.push(emSnap());
+  const before = em.affixes.map(a => ({ ...a }));
+  const costs = {};
+  let loops = 0;
+  loop: for (let r = 0; r < k; r++) {
+    for (const ent of emMacro) {
+      for (let i = 0; i < (ent.n || 1); i++) {
+        if (em.corrupted || em.sanctified || !optLegal(ent.opt)) break loop;
+        if (i === 0 && ent.omen) {
+          const probe = { kind: ent.opt.kind, cur: ent.opt.cur,
+                          tier: ent.opt.tier || 'I', ref: ent.opt.ref };
+          if (stepOmens(probe).some(o => o.i === ent.omen)) emOmen = ent.omen;
+        }
+        const s = emStep(ent.opt), D = stepDef(s);
+        if (!D) break loop;
+        const om = s.omen, key = costKey(s);
+        const res = mcApply(em, s, D);
+        if (s.omen) emOmen = '';
+        costs[key] = (costs[key] || 0) + 1;
+        if (om) costs['omen:' + om] = (costs['omen:' + om] || 0) + 1;
+        if (res === 'destroyed') { em = mcFresh(); em.imp = rollImp(state.base); break loop; }
+        if (res === 'dead') break loop;
+      }
+    }
+    loops++;
+  }
+  if (!Object.keys(costs).length) { emHist.pop(); return; }
+  const names = emMacro.map(e => e.opt.label.replace(/^Orb of /, '') + (e.n > 1 ? '×' + e.n : '')).join(' → ');
+  const d = emDescribe(before, em.affixes, `Macro ×${loops} (${names})`);
+  d.costs = costs;
+  emLog.push(d);
+  emLast = null; emSim = null; emPend = null; drawEmu();
 }
 
 /** Draw three distinct candidates from a reveal pool. */
@@ -2816,8 +2912,8 @@ function emTally() {
   const bump = (k, v = 1) => { if (k) use[k] = (use[k] || 0) + v; };
   let bricks = 0;
   for (const e of emLog) {
-    bump(e.cur);
-    if (e.omen) bump('omen:' + e.omen);
+    if (e.costs) { for (const k in e.costs) bump(k, e.costs[k]); }   // a macro run
+    else { bump(e.cur, e.count || 1); if (e.omen) bump('omen:' + e.omen); }
     if (e.hinekora) bump('hinekora');
     if (e.brick) { bricks++; bump('base'); }
   }
@@ -3132,7 +3228,22 @@ function drawEmu() {
         ? 'This item is Sanctified — permanently locked and finished.'
         : em.corrupted ? 'This item is corrupted and finished.' : 'Nothing more can be applied.'}</div>`;
   if (!locked)
-    rail.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => emApply(opts[+b.dataset.opt]));
+    rail.querySelectorAll('[data-opt]').forEach(b => b.onclick = e => {
+      const opt = opts[+b.dataset.opt];
+      // shift-click bursts (mirrors the game's shift+right-click); the bulk chips
+      // set a standing count. Only spammable currencies bulk; the rest apply once.
+      const n = e.shiftKey ? Math.max(emRepeat, 10) : emRepeat;
+      (n > 1 && bulkable(opt.kind)) ? emBulk(opt, n) : emApply(opt);
+    });
+
+  // bulk-count chips in the rail header
+  const bulkBox = document.getElementById('emubulk');
+  if (bulkBox) {
+    bulkBox.innerHTML = `<span class="ebk">bulk</span>` +
+      [1, 5, 10, 25].map(c => `<button class="ebchip${emRepeat === c ? ' on' : ''}" data-bulk="${c}">×${c}</button>`).join('') +
+      `<span class="ebhint" title="Hold Shift and click a currency to burst-apply it (only Transmute/Regal/Exalt/Chaos/Annul/Divine repeat)">shift-click = burst</span>`;
+    bulkBox.querySelectorAll('[data-bulk]').forEach(b => b.onclick = () => { emRepeat = +b.dataset.bulk; drawEmu(); });
+  }
 
   // omen strip: arm one that pairs with a currency available right now
   const kinds = new Set(opts.map(o => o.kind));
@@ -3167,6 +3278,37 @@ function drawEmu() {
     omBox.insertAdjacentHTML('beforeend',
       `<div class="omnote">${tgt.keys.size ? '&#9679; ' : ''}${tgt.note}${
         tgt.keys.size ? ' &mdash; highlighted on the item' : ''}</div>`);
+  }
+
+  // macro: record a rotation of currencies and replay it in a loop
+  const macroBox = document.getElementById('emumacro');
+  if (macroBox) {
+    const canRun = emMacro.length && !em.corrupted && !em.sanctified && !emPend;
+    macroBox.innerHTML = `
+      <div class="emmhead"><span class="emurailk">macro</span>
+        <button class="emmrec${emRecording ? ' on' : ''}" data-macrec>${
+          emRecording ? '&#9632; Stop recording' : '&#9679; Record'}</button></div>
+      ${emMacro.length
+        ? `<div class="emmchips">${emMacro.map((e, i) =>
+            `<span class="emmchip">${esc(e.opt.label.replace(/^Orb of /, ''))}${
+              e.omen ? ' <i>+omen</i>' : ''}${e.n > 1 ? ' &times;' + e.n : ''}<b data-macdel="${i}"
+              title="remove">&times;</b></span>`).join('<span class="emmarr">&rsaquo;</span>')}</div>`
+        : `<div class="emmempty">${emRecording
+            ? 'recording &mdash; apply currencies to capture a rotation'
+            : 'Record a rotation (e.g. Annul &rsaquo; Augment), then replay it in a loop to cycle a base. Stops when a step no longer fits.'}</div>`}
+      ${emMacro.length ? `<div class="emmrun">
+          <button class="ghost" data-macrun${canRun ? '' : ' disabled'}>&#9654; Run once</button>
+          <input id="emmk" type="number" min="1" max="500" value="20" class="emmk" title="loops">
+          <button class="ghost" data-macrunk${canRun ? '' : ' disabled'}>&#9654; Run &times;N</button>
+          <button class="ghost" data-macclear>Clear</button></div>` : ''}`;
+    macroBox.querySelector('[data-macrec]').onclick = () => { emRecording = !emRecording; drawEmu(); };
+    macroBox.querySelectorAll('[data-macdel]').forEach(b => b.onclick = ev => {
+      ev.stopPropagation(); emMacro.splice(+b.dataset.macdel, 1); drawEmu(); });
+    const r1 = macroBox.querySelector('[data-macrun]'); if (r1) r1.onclick = () => emRunMacro(1);
+    const rk = macroBox.querySelector('[data-macrunk]'); if (rk) rk.onclick = () =>
+      emRunMacro(Math.max(1, Math.min(500, +document.getElementById('emmk').value || 1)));
+    const cl = macroBox.querySelector('[data-macclear]'); if (cl) cl.onclick = () => {
+      emMacro = []; emRecording = false; drawEmu(); };
   }
 
   // step simulator: pick a legal currency and run it 1000x on this item
@@ -5406,8 +5548,36 @@ document.getElementById('emugraph').onclick = () => { emCloseModal(); setView('g
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !document.getElementById('onboard').classList.contains('hidden')) return obClose();
   if (e.key === 'Escape' && !document.getElementById('mcfix').classList.contains('hidden')) return closeMcFix();
-  if (e.key === 'Escape' && !document.getElementById('emu').classList.contains('hidden')) emCloseModal();
+  if (e.key === 'Escape' && !document.getElementById('emu').classList.contains('hidden')) return emCloseModal();
+  emuKey(e);
 });
+
+/* Emulator keyboard shortcuts, live only while the emulator is open and the user
+   is not typing in a field. Deliberately single-key for speed; a legend under the
+   currency rail keeps them discoverable. */
+function emuKey(e) {
+  if (document.getElementById('emu').classList.contains('hidden') || !em || emPend) return;
+  const t = e.target;
+  if (t && (/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName) || t.isContentEditable)) return;
+  const meta = e.metaKey || e.ctrlKey;
+  // Cmd/Ctrl+D and Cmd/Ctrl+Z are the two chorded ones; the rest are bare keys.
+  if (meta && (e.key === 'd' || e.key === 'D')) { e.preventDefault(); return emReuse(); }
+  if (meta && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); return emUndo(); }
+  if (meta) return;                                   // leave other browser chords alone
+  const k = e.key;
+  if (k >= '1' && k <= '9') {                          // apply the Nth currency (Shift = burst)
+    const opts = optionsFor(em, true), opt = opts[+k - 1];
+    if (opt) { e.preventDefault(); (e.shiftKey && bulkable(opt.kind)) ? emBulk(opt, Math.max(emRepeat, 10)) : emApply(opt); }
+    return;
+  }
+  const map = {
+    r: emReuse, u: emUndo, z: emUndo, s: emSnapshot,
+    l: () => emApply({ kind: 'hinekora' }),           // toggle Hinekora's Lock
+    n: () => emStart(true), m: () => { emRecording = !emRecording; drawEmu(); },
+  };
+  const fn = map[k.toLowerCase()];
+  if (fn) { e.preventDefault(); fn(); }
+}
 document.getElementById('stepadd').onchange = e => {
   const sel = e.target, v = sel.value;
   if (!v) return;

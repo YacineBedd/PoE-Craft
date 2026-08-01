@@ -563,6 +563,46 @@
   .emurailwrap { }
   .emurailk { font: 600 10px system-ui; letter-spacing: .08em; text-transform: uppercase;
               color: var(--faint); margin-bottom: 8px; }
+  .emurailhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .emurailhead .emurailk { margin-bottom: 0; }
+  /* bulk-count chips */
+  .emubulk { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+  .emubulk .ebk { font: 600 9px system-ui; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+  .ebchip { font: 600 11px ui-monospace, Menlo, monospace; padding: 2px 7px; border-radius: 5px;
+            background: var(--sunk); border: 1px solid var(--line); color: var(--dim); cursor: pointer; }
+  .ebchip:hover { border-color: var(--accent); color: var(--accent); }
+  .ebchip.on { background: color-mix(in srgb, var(--accent) 22%, var(--sunk)); border-color: var(--accent); color: var(--ink); }
+  .ebhint { font-size: 10px; color: var(--faint); font-style: italic; margin-left: 2px; }
+  /* macro panel */
+  .emumacro { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+  .emmhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+  .emmhead .emurailk { margin-bottom: 0; }
+  .emmrec { font: 600 10px system-ui; padding: 3px 9px; border-radius: 6px; cursor: pointer;
+            background: var(--sunk); border: 1px solid var(--line); color: var(--dim); }
+  .emmrec:hover { border-color: var(--brick); color: var(--brick); }
+  .emmrec.on { background: color-mix(in srgb, var(--brick) 22%, var(--sunk)); border-color: var(--brick);
+               color: var(--brick); animation: emmpulse 1.4s ease-in-out infinite; }
+  @keyframes emmpulse { 50% { opacity: .6; } }
+  @media (prefers-reduced-motion: reduce) { .emmrec.on { animation: none; } }
+  .emmempty { font-size: 11px; color: var(--faint); line-height: 1.45; }
+  .emmchips { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 5px; margin-bottom: 9px; }
+  .emmchip { display: inline-flex; align-items: center; gap: 4px; font: 600 11px system-ui;
+             padding: 3px 4px 3px 8px; border-radius: 6px; background: var(--sunk);
+             border: 1px solid var(--line); color: var(--ink); }
+  .emmchip i { font-style: normal; font-size: 9px; color: var(--accent); text-transform: uppercase; }
+  .emmchip b { cursor: pointer; color: var(--faint); font-weight: 700; padding: 0 2px; }
+  .emmchip b:hover { color: var(--brick); }
+  .emmarr { color: var(--faint); font-size: 12px; }
+  .emmrun { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .emmrun .ghost { font-size: 11px; padding: 4px 9px; }
+  .emmk { width: 52px; font: 600 12px ui-monospace, Menlo, monospace; padding: 4px 6px;
+          background: var(--sunk); border: 1px solid var(--line); border-radius: 5px; color: var(--ink); }
+  /* shortcut legend */
+  .emukeys { margin-top: 12px; padding-top: 9px; border-top: 1px solid var(--line);
+             font-size: 10.5px; line-height: 1.7; color: var(--faint); }
+  .emukeys b { display: inline-block; font: 600 10px ui-monospace, Menlo, monospace;
+               color: var(--ink); background: var(--sunk); border: 1px solid var(--line);
+               border-radius: 4px; padding: 0 4px; }
   .emurail { display: flex; flex-wrap: wrap; gap: 6px; }
   .emucur { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 64px;
             cursor: pointer; background: var(--sunk); border: 1px solid var(--line);
