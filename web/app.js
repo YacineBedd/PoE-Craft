@@ -3228,7 +3228,7 @@ function drawEmu() {
     ? opts.map((o, j) => `<button class="emucur${locked ? ' dim' : ''}${
         anyLink ? (linkOf(o) ? ' omlink' : ' omdim') : ''}" data-opt="${j}"
         data-tipname="${esc(o.label)}" data-tip="${esc(curDescOf(o))}">
-        ${j < 9 ? `<span class="emucurkey" title="press ${j + 1} to apply">${j + 1}</span>` : ''}
+        ${j < RAILKEYS.length ? `<span class="emucurkey" title="press ${RAILKEYS[j].toUpperCase()} to apply">${RAILKEYS[j].toUpperCase()}</span>` : ''}
         <span class="sigwrap">${sigil(o.icon)}${o.tier && o.tier !== 'I'
           ? `<span class="tiermark">${ROMAN[o.tier]}</span>` : ''}</span>
         <span class="emucurn">${esc(o.label.replace(/^Orb of /, ''))}</span>
@@ -4781,6 +4781,11 @@ function emRailOpts() {
     .sort((a, b) => railKey(a[0]) - railKey(b[0]) || a[1] - b[1])
     .map(x => x[0]);
 }
+/* Keyboard slots for the rail: 1-9, then 0 for the tenth, then top-row letters
+   for the rest (a rare weapon can offer ~16 currencies). Skips the keys already
+   bound to actions (R U Z S L N M) so nothing collides. */
+const RAILKEYS = ['1','2','3','4','5','6','7','8','9','0',
+                  'q','w','e','t','y','i','o','p','a','d','f','g','h','j','k'];
 
 /** Modifiers this step could actually roll, with their share of pool weight. */
 /**
@@ -5599,11 +5604,12 @@ function emuKey(e) {
   if (meta && (e.key === 'd' || e.key === 'D')) { e.preventDefault(); return emReuse(); }
   if (meta && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); return emUndo(); }
   if (meta) return;                                   // leave other browser chords alone
-  const k = e.key;
-  if (k >= '1' && k <= '9') {                          // apply the Nth currency (Shift = burst)
-    const opts = emRailOpts(), opt = opts[+k - 1];
-    if (opt) { e.preventDefault(); (e.shiftKey && bulkable(opt.kind)) ? emBulk(opt, Math.max(emRepeat, 10)) : emApply(opt); }
-    return;
+  const k = e.key.toLowerCase();
+  const ki = RAILKEYS.indexOf(k);                       // 1-9, 0, then letters
+  if (ki >= 0) {                                        // apply the Nth currency (Shift = burst)
+    const opts = emRailOpts(), opt = opts[ki];
+    if (opt) { e.preventDefault(); (e.shiftKey && bulkable(opt.kind)) ? emBulk(opt, Math.max(emRepeat, 10)) : emApply(opt); return; }
+    // no currency in that slot: fall through (letters here aren't action keys)
   }
   const map = {
     r: emReuse, u: emUndo, z: emUndo, s: emSnapshot,
