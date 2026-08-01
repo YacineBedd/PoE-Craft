@@ -8,18 +8,26 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="wrap">
-  <header>
+<div class="appbar">
+  <div class="appbar-in">
+    <div class="brand">
+      <div class="mark"></div>
+      <div class="brandtext">
+        <div class="wordmark">Craft Planner</div>
+        <div class="brandsub">Path of Exile 2 &middot; poe2db data</div>
+      </div>
+    </div>
+    <div class="viewtabs" id="viewpick">
+      <button class="vtab" data-v="graph" aria-pressed="true">Craft Graph</button>
+      <button class="vtab" data-v="bench" aria-pressed="false">Bench</button>
+      <button class="vtab" data-v="prices" aria-pressed="false">Currency</button>
+    </div>
+    <span class="appbar-spacer"></span>
+    <button class="ghost" id="obopen" title="How this tool works &mdash; open the getting-started guide">Guide</button>
     <div id="acct" class="acct"></div>
-    <h1>PoE2 Craft Planner</h1>
-    <p class="sub">
-      Plan a craft as a graph of currency steps, read the exact pool odds at each one, stress-test
-      the route with a Monte Carlo run, then roll one real item in the emulator. Weights, tier
-      ladders and currency rules are scraped from poe2db; probabilities are computed exactly from
-      the pool, not estimated.
-    </p>
-  </header>
-
+  </div>
+</div>
+<div class="wrap">
   <div id="sharebanner" class="sharebanner hidden"></div>
 
   <div class="controls">
@@ -35,8 +43,7 @@
       <label for="ilvl">Item level</label>
       <input type="number" id="ilvl" min="1" max="100" value="82">
     </div>
-    <button class="ghost" id="reset">Reset item</button>
-    <button class="ghost" id="obopen" title="How this tool works &mdash; open the getting-started guide">&#63; Guide</button>
+    <span class="ctlrule"></span>
     <div class="field">
       <label>Aldur runes (Rare caps)</label>
       <span class="chips" id="runepick">
@@ -52,19 +59,13 @@
         <button class="chip" data-exc="quality" aria-pressed="false" title="A rare exceptional drop with quality over the 20% cap">+quality</button>
       </span>
     </div>
-    <span style="flex:1"></span>
-    <div class="field">
-      <label>View</label>
-      <span class="chips" id="viewpick">
-        <button class="chip" data-v="graph" aria-pressed="true">Craft graph</button>
-        <button class="chip" data-v="prices" aria-pressed="false">Currency</button>
-      </span>
-    </div>
+    <span class="appbar-spacer"></span>
+    <button class="ghost" id="reset">Reset item</button>
   </div>
 
   <!-- ============================ graph view ============================ -->
   <div id="graphview">
-    <section class="panel">
+    <section class="panel brk">
       <h2>Craft plan
         <span class="note">two-column zig-zag &middot; ctrl+scroll to zoom &middot; every number is solved from the pool, not simulated</span>
         <button class="emubtn" id="emuopen" title="Emulate crafting one real item, roll by roll">

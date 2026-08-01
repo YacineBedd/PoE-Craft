@@ -485,7 +485,9 @@ function drawItem() {
   }
   if (it.corrupted) t.push('<div class="rule"></div><div class="empty" style="color:var(--suffix)">Corrupted</div>');
   if (it.sanctified) t.push('<div class="rule"></div><div class="empty" style="color:var(--accent)">Sanctified</div>');
-  document.getElementById('tip').innerHTML = t.join('');
+  const tipEl = document.getElementById('tip');
+  tipEl.className = 'tip ' + rc;               // rarity tints the border + name banner
+  tipEl.innerHTML = t.join('');
 
   const L = LIM(it.rarity);
   document.getElementById('slots').innerHTML =
@@ -3113,9 +3115,11 @@ function drawEmu() {
   const _bart = baseArt();
   document.getElementById('emuname').innerHTML =
     `${_bart ? `<div class="emuartbig"><img src="${esc(_bart)}" alt="" loading="lazy"></div>` : ''}
-     <span style="color:${rc}">${esc((state.base && state.base.n) || BASES[state.slug].ic || state.slug)}</span>
-     <span class="emurar">${em.sanctified ? 'Sanctified ' : em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
-       &middot; ilvl ${state.ilvl}</span> ${sockets}`;
+     <div class="emubanner">
+       <span class="emuiname" style="color:${rc}">${esc((state.base && state.base.n) || BASES[state.slug].ic || state.slug)}</span>
+       <span class="emurar">${em.sanctified ? 'Sanctified ' : em.corrupted ? 'Corrupted ' : ''}${RNAME[em.rarity]}
+         &middot; ilvl ${state.ilvl} ${sockets}</span>
+     </div>`;
 
   // a stable reading order: prefixes, then suffixes, then the corrupted lines.
   // Without this a Chaos Orb looks like it rewrote the whole item when it only
@@ -5384,13 +5388,14 @@ function openEssencePick(at) {
 
 function setView(v) {
   view = v;
-  document.getElementById('benchview').classList.add('hidden');       // retired
+  document.getElementById('benchview').classList.toggle('hidden', v !== 'bench');
   document.getElementById('graphview').classList.toggle('hidden', v !== 'graph');
   const pv = document.getElementById('pricesview');
   if (pv) pv.classList.toggle('hidden', v !== 'prices');
   document.querySelectorAll('#viewpick button').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.v === v)));
   if (v === 'graph') { stepMenu(); drawPlan(); }
+  if (v === 'bench') { drawItem(); drawOdds(); }
   if (v === 'prices') drawPrices();
 }
 
