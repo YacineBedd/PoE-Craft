@@ -3931,6 +3931,26 @@ function rollQuality(a) {
   return n ? Math.round(sum / n * 100) : null;
 }
 
+/**
+ * Graph analogue of rollQuality: with no rolled value to grade, rate the affix
+ * by which TIER it sits on within the mod's ladder (a tier's value ceiling vs
+ * the mod's best/worst tier). Top tier -> green, weakest -> red. Value-based so
+ * it holds whichever way the tier indices run. null for single-tier / valueless.
+ */
+function tierQuality(a) {
+  if (a.fx || a.rand || a.twice || a.a === 'c' || a.mark || a.un || a.impl || !a.tier) return null;
+  const m = modOf(a);
+  if (!m || !m.t || m.t.length < 2) return null;
+  const ceil = t => { const last = t[2] && t[2][t[2].length - 1]; return last ? last[1] : null; };
+  const mine = m.t.find(t => t[0] === a.tier);
+  const myTop = mine && ceil(mine);
+  if (myTop == null) return null;
+  const tops = m.t.map(ceil).filter(v => v != null);
+  const hi = Math.max(...tops), lo = Math.min(...tops);
+  if (hi === lo) return null;
+  return Math.round((myTop - lo) / (hi - lo) * 100);
+}
+
 function tipHTML({ ranges, cur, tmpl, tier, tname, note }) {
   const hasRange = ranges.some(r => r[0] !== r[1]);
   const rangeStr = renderRange(tmpl, ranges);
@@ -4034,10 +4054,17 @@ function modLine(a, ghost) {
   if (a.fx) return `<div class="m fx"${tipAttr(a)} title="fractured: locked, cannot be removed or rerolled">
     <span class="tb">${a.tier ? 'T' + a.tier : '&#128274;'}</span>
     <span>&#128274; ${esc(name)}</span></div>`;
-  // at-a-glance roll-quality tint on the tier tag (emulator only)
-  const q = EMU_RENDER ? qualClass(rollQuality(a)) : '';
+  // at-a-glance quality tint on the tier tag: in the emulator it grades the real
+  // ROLL within its tier; in the graph (no rolled value) it grades the TIER itself.
+  let q = '', tbTitle = '';
+  if (EMU_RENDER) q = qualClass(rollQuality(a));
+  else {
+    q = qualClass(tierQuality(a));
+    if (q) tbTitle = ` title="T${a.tier} — ${q === 'tq-hi' ? 'a top tier'
+      : q === 'tq-mid' ? 'a mid tier' : 'a low tier'} for this modifier"`;
+  }
   return `<div class="m${ghost ? ' ghost' : ''}${cat}"${tipAttr(a)}>
-    <span class="tb${q ? ' ' + q : ''}">${a.tier ? 'T' + a.tier : '?'}</span>
+    <span class="tb${q ? ' ' + q : ''}"${tbTitle}>${a.tier ? 'T' + a.tier : '?'}</span>
     <span>${esc(name)}</span></div>`;
 }
 

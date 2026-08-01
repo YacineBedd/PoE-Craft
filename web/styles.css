@@ -584,11 +584,12 @@
   .m.craft .tb { color: var(--craft); }
   .m.abyssmark { color: var(--desec); }
   .m.abyssmark .tb { color: var(--desec); }
-  /* roll-quality tint on the tier tag: green good / amber mid / red low.
-     Placed after category colours so an actionable roll cue wins. */
-  .emumods .m .tb.tq-hi  { color: var(--desec); border-color: color-mix(in srgb, var(--desec) 45%, var(--line)); }
-  .emumods .m .tb.tq-mid { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
-  .emumods .m .tb.tq-lo  { color: var(--brick); border-color: color-mix(in srgb, var(--brick) 45%, var(--line)); }
+  /* quality tint on the tier tag: green good / amber mid / red low.
+     Emulator grades the roll; graph cards grade the tier. Placed after category
+     colours (and scoped 4-deep) so an actionable cue wins. */
+  .emumods .m .tb.tq-hi,  .card .m .tb.tq-hi  { color: var(--desec); border-color: color-mix(in srgb, var(--desec) 45%, var(--line)); }
+  .emumods .m .tb.tq-mid, .card .m .tb.tq-mid { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+  .emumods .m .tb.tq-lo,  .card .m .tb.tq-lo  { color: var(--brick); border-color: color-mix(in srgb, var(--brick) 45%, var(--line)); }
   .omnote.omapply { color: var(--ink); }
   .omnote.omapply b { color: #ff7086; }
   .revmix { margin-left: 8px; font: 500 10px ui-monospace, Menlo, monospace;
