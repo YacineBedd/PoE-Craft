@@ -1288,6 +1288,14 @@
     text-align: center; font: italic 400 11.5px 'Source Sans 3', sans-serif; color: var(--faint); }
   .revealhint b { font-style: normal; color: var(--acid); font-weight: 600; }
   .revealhint .desecword { color: var(--acid-ink); border-bottom: 1px dotted var(--acid-ink); }
+  /* "Well of Souls" is a live button into the reveal */
+  .wellbtn { font: inherit; font-weight: 700; font-style: normal; color: var(--acid);
+    background: none; border: 0; border-bottom: 1px solid rgba(180,217,25,.5); cursor: pointer; padding: 0 1px;
+    text-shadow: 0 0 8px rgba(180,217,25,.4); transition: color .12s, text-shadow .12s, border-color .12s; }
+  .wellbtn:hover { color: var(--acid-br); border-bottom-color: var(--acid); text-shadow: 0 0 12px rgba(180,217,25,.75); }
+  .revealtip { margin-top: 6px; font: 400 10.5px 'Source Sans 3', sans-serif; font-style: normal; color: var(--faint); }
+  .revealtip b { color: var(--acid-ink); font-weight: 700; }
+  .revealtip.armed { color: var(--acid); }
   .unrev { font: 700 8.5px ui-monospace, Menlo, monospace; letter-spacing: .04em;
            text-transform: uppercase; color: var(--suffix);
            border: 1px solid var(--suffix); border-radius: 2px; padding: 1px 3px; opacity: .8; }

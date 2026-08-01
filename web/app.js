@@ -2911,6 +2911,12 @@ function emTakeReveal(j) {
 function emCloseReveal() {           // back out without revealing (keeps the unrevealed mod)
   if (emPend && emPend.kind === 'reveal') { emPend = null; drawEmu(); }
 }
+/** Jump straight into the reveal from the "Well of Souls" instruction link. */
+function emGoReveal() {
+  if (!em || emPend) return;
+  const opt = optionsFor(em, true).find(o => o.kind === 'reveal');
+  if (opt) emApply(opt);
+}
 
 /**
  * The Well of Souls: the one-shot desecrated reveal as a full takeover. Three
@@ -3303,11 +3309,21 @@ function drawEmu() {
       + '<div class="implrule"></div>'
     : '';
   EMU_RENDER = false;
-  // the game's own instruction when an unrevealed desecrated modifier is present
+  // the game's own instruction when an unrevealed desecrated modifier is present.
+  // "Well of Souls" is a live shortcut straight into the reveal.
+  const echoArmed = emOmen && omenFx(omenById(emOmen)) === 'reroll';
   const unrevHint = em.affixes.some(a => a.un)
-    ? `<div class="revealhint">Take this item to the <b>Well of Souls</b> to reveal the
-        <span class="desecword">Desecrated Modifier</span></div>` : '';
+    ? `<div class="revealhint">
+        <div>Take this item to the <button class="wellbtn" data-wellgo
+            title="open the reveal">Well of Souls</button> to reveal the
+          <span class="desecword">Desecrated Modifier</span></div>
+        <div class="revealtip${echoArmed ? ' armed' : ''}">${echoArmed
+          ? '&#9679; Omen of Abyssal Echoes armed &mdash; you&rsquo;ll get one reroll of the three'
+          : 'Tip: arm <b>Omen of Abyssal Echoes</b> first for one reroll of the three candidates'}</div>
+      </div>` : '';
   document.getElementById('emumods').innerHTML = implHTML + mods + unrevHint;
+  const wgo = document.querySelector('#emumods [data-wellgo]');
+  if (wgo) wgo.onclick = emGoReveal;
   bindEmuTip();
   syncEmRunes();
   document.getElementById('emucap').innerHTML = em.corrupted || em.sanctified ? '' : capacity(em);
