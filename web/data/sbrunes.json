@@ -1,0 +1,124 @@
+{
+  "_note": "Socket-bound Augment runes that unlock a modifier family on a specific base. Transcribed from poe2db (images from the user). Value RANGES are TBD except where shown inline as vr; ml=mod level (the middle column), w=weight (red column), tiers=tier count (green column). a=p prefix / s suffix.",
+  "runes": [
+    {
+      "id": "uhtreds-sidereus", "name": "Uhtred's Sidereus", "family": "Chronomancy",
+      "base": "Boots", "icon": "Art/2DItems/Currency/Expedition2/GameWarpRuneTime",
+      "bonded": { "x": "{0}% increased Cooldown Recovery Rate", "vr": [[10, 10]] },
+      "mods": [
+        { "a": "p", "x": "{0}% increased Movement Speed\n{1}% reduced Slowing Potency of Debuffs on You", "tags": ["speed"], "ml": 78, "tiers": 3 },
+        { "a": "p", "x": "{0}% increased Movement Speed while Sprinting", "tags": ["speed"], "ml": 78, "tiers": 2 },
+        { "a": "p", "x": "+{0} metres to Dodge Roll distance", "tags": [], "ml": 78, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Skill Effect Duration", "tags": [], "ml": 78, "tiers": 3 },
+        { "a": "s", "x": "{0}% increased Cooldown Recovery Rate", "tags": [], "ml": 78, "tiers": 3 },
+        { "a": "s", "x": "Skills have {0}% chance to not remove Charges but still count as consuming them", "tags": [], "ml": 78, "tiers": 2 },
+        { "a": "s", "x": "Debuffs on you expire {0}% faster", "tags": [], "ml": 78, "tiers": 2 }
+      ]
+    },
+    {
+      "id": "kolrs-hunt", "name": "Kolr's Hunt", "family": "Marksman",
+      "base": "Gloves", "icon": "",
+      "bonded": { "x": "{0}% increased Projectile Damage", "vr": [[20, 20]] },
+      "mods": [
+        { "a": "p", "x": "{0}% increased Projectile Damage", "tags": ["damage"], "ml": 75, "tiers": 3 },
+        { "a": "p", "x": "{0}% increased Effect of your Mark Skills", "tags": [], "ml": 65, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased Projectile Speed", "tags": ["speed"], "ml": 75, "tiers": 3 },
+        { "a": "s", "x": "{0}% increased Critical Hit Chance", "tags": ["critical"], "ml": 75, "tiers": 3 },
+        { "a": "s", "x": "{0}% chance to Pierce an Enemy", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% Surpassing chance to fire an additional Projectile", "tags": [], "ml": 75, "tiers": 3 },
+        { "a": "s", "x": "Projectiles have {0}% chance to Chain an additional time from terrain", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Projectiles have {0}% chance for an additional Projectile when Forking", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Mark Skills have {0}% increased Skill Effect Duration", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Mark Skills have {0}% increased Use Speed", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "+{0} to Level of all Mark Skills", "tags": [], "ml": 65, "tiers": 4 },
+        { "a": "s", "x": "+{0} to Level of all Projectile Skills", "tags": [], "ml": 65, "tiers": 1 }
+      ]
+    },
+    {
+      "id": "katlas-gloom", "name": "Katla's Gloom", "family": "Decay",
+      "base": "Gloves", "icon": "",
+      "bonded": { "x": "{0}% reduced Effect of Non-Damaging Ailments on you", "vr": [[25, 25]] },
+      "mods": [
+        { "a": "p", "x": "{0}% increased Ignite Magnitude", "tags": ["damage", "elemental", "fire", "ailment"], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased Magnitude of Bleeding you inflict", "tags": ["damage", "physical", "attack", "ailment"], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased Magnitude of Poison you inflict", "tags": ["damage", "ailment"], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased Magnitude of Ailments you inflict", "tags": ["damage", "ailment"], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "Damaging Ailments deal damage {0}% faster", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Duration of Damaging Ailments on Enemies", "tags": ["ailment"], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Leech {0}% of Physical Attack Damage as Life\nLeech Life {1}% faster", "tags": ["life"], "ml": 45, "tiers": 2 },
+        { "a": "s", "x": "Leech {0}% of Physical Attack Damage as Life\nLeech Life {1}% slower", "tags": ["life"], "ml": 45, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased amount of Life Leeched", "tags": ["life"], "ml": 45, "tiers": 1, "vr": [[30, 40]] },
+        { "a": "s", "x": "{0}% increased Withered Magnitude", "tags": ["chaos"], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Curse Magnitudes", "tags": ["caster", "curse"], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Exposure Effect", "tags": ["elemental", "fire", "cold", "lightning"], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Curse Duration", "tags": ["caster", "curse"], "ml": 75, "tiers": 1, "vr": [[50, 99]] },
+        { "a": "s", "x": "{0}% faster Curse Activation", "tags": ["caster", "curse"], "ml": 75, "tiers": 1, "vr": [[20, 30]] }
+      ]
+    },
+    {
+      "id": "thruds-might", "name": "Thrud's Might", "family": "Destruction",
+      "base": "Weapon", "icon": "",
+      "bonded": { "x": "+{0}% to all Elemental Resistances", "vr": [[5, 5]] },
+      "mods": [
+        { "a": "p", "x": "{0}% increased Explicit Speed Modifier magnitudes", "tags": ["speed"], "ml": 65, "tiers": 1, "vr": [[25, 30]] },
+        { "a": "p", "x": "{0}% increased Explicit Critical Modifier magnitudes", "tags": ["critical"], "ml": 65, "tiers": 1, "vr": [[20, 30]] },
+        { "a": "s", "x": "{0}% increased Explicit Physical Modifier magnitudes", "tags": ["physical"], "ml": 65, "tiers": 1, "vr": [[10, 15]] },
+        { "a": "s", "x": "{0}% increased Explicit Fire Modifier magnitudes", "tags": ["elemental", "fire"], "ml": 65, "tiers": 4 },
+        { "a": "s", "x": "{0}% increased Explicit Lightning Modifier magnitudes", "tags": ["elemental", "lightning"], "ml": 65, "tiers": 4 },
+        { "a": "s", "x": "{0}% increased Explicit Cold Modifier magnitudes", "tags": ["elemental", "cold"], "ml": 65, "tiers": 4 },
+        { "a": "s", "x": "{0}% increased Explicit Elemental Damage Modifier magnitudes", "tags": ["elemental"], "ml": 65, "tiers": 4 },
+        { "a": "s", "x": "{0}% increased Explicit Chaos Modifier magnitudes", "tags": ["chaos"], "ml": 65, "tiers": 1, "vr": [[15, 20]] },
+        { "a": "s", "x": "{0}% increased Explicit Mana Modifier magnitudes", "tags": ["mana"], "ml": 65, "tiers": 1, "vr": [[25, 30]] }
+      ]
+    },
+    {
+      "id": "medveds-tending", "name": "Medved's Tending", "family": "Soul",
+      "base": "Body Armours", "icon": "",
+      "bonded": { "x": "{0}% increased maximum Life\n{1}% increased maximum Mana", "vr": [[3, 3], [3, 3]] },
+      "mods": [
+        { "a": "p", "x": "{0}% increased maximum Life", "tags": ["life"], "ml": 65, "tiers": 1, "vr": [[1, 20]] },
+        { "a": "p", "x": "{0}% increased maximum Mana", "tags": ["mana"], "ml": 65, "tiers": 1, "vr": [[1, 20]] },
+        { "a": "p", "x": "{0}% increased Spirit", "tags": [], "ml": 65, "tiers": 1, "vr": [[1, 20]] },
+        { "a": "p", "x": "+{0} to maximum Life\n+{1} to maximum Mana", "tags": ["life", "mana"], "ml": 65, "tiers": 1, "vr": [[19, 189], [19, 189]] },
+        { "a": "p", "x": "{0}% increased Armour and Evasion\n+{1} to Spirit", "tags": ["armour", "evasion"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Armour and Energy Shield\n+{1} to Spirit", "tags": ["armour", "energyshield"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Evasion and Energy Shield\n+{1} to Spirit", "tags": ["evasion", "energyshield"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Armour\n+{1} to Spirit", "tags": ["armour"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Evasion Rating\n+{1} to Spirit", "tags": ["evasion"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Energy Shield\n+{1} to Spirit", "tags": ["energyshield"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Armour and Evasion\n+{1} to maximum Mana", "tags": ["mana", "armour", "evasion"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Armour and Energy Shield\n+{1} to maximum Mana", "tags": ["mana", "armour", "energyshield"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Evasion and Energy Shield\n+{1} to maximum Mana", "tags": ["mana", "evasion", "energyshield"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Armour\n+{1} to maximum Mana", "tags": ["mana", "armour"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Evasion Rating\n+{1} to maximum Mana", "tags": ["mana", "evasion"], "ml": 65, "tiers": 12 },
+        { "a": "p", "x": "{0}% increased Energy Shield\n+{1} to maximum Mana", "tags": ["mana", "energyshield"], "ml": 65, "tiers": 12 },
+        { "a": "s", "x": "{0}% reduced Duration of Ailments on You", "tags": ["physical", "elemental", "fire", "cold", "lightning", "chaos", "ailment"], "ml": 65, "tiers": 1, "vr": [[5, 50]] },
+        { "a": "s", "x": "Hits against you have {0}% reduced Critical Damage Bonus", "tags": ["damage", "critical"], "ml": 65, "tiers": 1, "vr": [[10, 99]] },
+        { "a": "s", "x": "+{0}% to Fire and Chaos Resistances", "tags": ["elemental", "fire", "chaos", "resistance"], "ml": 65, "tiers": 1, "vr": [[3, 31]] },
+        { "a": "s", "x": "+{0}% to Cold and Chaos Resistances", "tags": ["elemental", "cold", "chaos", "resistance"], "ml": 65, "tiers": 1, "vr": [[3, 31]] },
+        { "a": "s", "x": "+{0}% to Lightning and Chaos Resistances", "tags": ["elemental", "lightning", "chaos", "resistance"], "ml": 65, "tiers": 1, "vr": [[3, 31]] }
+      ]
+    },
+    {
+      "id": "voranas-carnage", "name": "Vorana's Carnage", "family": "Berserking",
+      "base": "Helmets", "icon": "",
+      "bonded": { "x": "Gain {0} Rage on Melee Hit", "vr": [[2, 2]] },
+      "mods": [
+        { "a": "p", "x": "+{0} to Maximum Rage", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased Damage with Warcries", "tags": ["damage"], "ml": 75, "tiers": 3 },
+        { "a": "p", "x": "{0}% increased total Power counted by Warcries", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased effect of Fully Broken Armour", "tags": ["physical"], "ml": 75, "tiers": 3 },
+        { "a": "p", "x": "{0}% increased Glory generation", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "p", "x": "{0}% increased Rage Cost Efficiency", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Inherent Rage loss starts {0} second later", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Gain {0} Rage when Hit by an Enemy", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Warcry Speed", "tags": ["speed"], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Warcry Cooldown Recovery Rate", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Warcry Skills have {0}% increased Area of Effect", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "Recover {0}% of maximum Life when you use a Warcry", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% increased Armour Break Duration", "tags": [], "ml": 75, "tiers": 2 },
+        { "a": "s", "x": "{0}% chance to build an additional Combo on Hit", "tags": [], "ml": 75, "tiers": 2 }
+      ]
+    }
+  ]
+}
