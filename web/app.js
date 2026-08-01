@@ -318,7 +318,10 @@ function eligible(it, affix, minLv = 0, maxLv = Infinity, src = MODS) {
 }
 
 const rint = (lo, hi) => lo === hi ? lo : lo + Math.floor(Math.random() * (hi - lo + 1));
-const render = (txt, v) => txt.replace(/\{(\d+)\}/g, (_, i) => v[i]);
+// tidy a rolled number for display: integers stay integers, decimals round to 2
+// places so float noise (e.g. 3.81 + 1 = 4.8100000000000005) never shows.
+const fmtNum = x => (typeof x === 'number' && !Number.isInteger(x)) ? +x.toFixed(2) : x;
+const render = (txt, v) => txt.replace(/\{(\d+)\}/g, (_, i) => fmtNum(v[i]));
 
 function instantiate(e) {
   const v = e.t[2].map(r => rint(r[0], r[1]));
@@ -869,7 +872,7 @@ const mcPoolCache = new Map();
  * window, so the emulator rolls it. The tier still decides the window and the
  * odds; the roll only decides where in it you land.
  */
-const rollVals = ranges => (ranges || []).map(r => rint(r[0], r[1]));
+const rollVals = ranges => (ranges || []).map(r => fmtNum(rint(r[0], r[1])));
 
 const isPerfectEss = e => e && (e.ti === 'perfect' || e.ti === 'special');
 const isAbyssEss = e => e && e.g === 'EssenceAbyss';
@@ -3209,8 +3212,9 @@ function drawEmu() {
     pick.querySelector('[data-cancel]').onclick = emCancelPreview;
   } else pick.innerHTML = '';
 
-  // the currency rail - locked out while a reveal/essence choice is open
-  const opts = optionsFor(em, true);
+  // the currency rail - locked out while a reveal/essence choice is open.
+  // Sorted into a stable keybind order so number shortcuts don't wander.
+  const opts = emRailOpts();
   const rail = document.getElementById('emurail');
   const locked = !!emPend;
   // An omen is bound to a currency (erasures->Chaos, exaltations->Exalt,
@@ -4753,6 +4757,31 @@ function optionsFor(st, forEmu) {
   return out;
 }
 
+/* Stable keybind ordering for the emulator rail. optionsFor lists the tiered
+   add-orbs (Transmute/Aug/Regal) before Annul/Divine, so those two jump numbers
+   as add-orbs appear and vanish with item fullness. Ranking Annul/Divine first
+   pins their keys (they're available whenever the item has mods); the volatile
+   add-orbs sort after them. The rest keeps optionsFor's order, so a finished
+   rare still reads Annul \u00b7 Divine \u00b7 Infuser \u00b7 Vaal \u00b7 Lock \u00b7 Exalt \u00b7 Chaos \u2026 */
+const RAIL_RANK = {
+  annul: 0, divine: 1,
+  transmute: 2, aug: 3, regal: 4,
+  reveal: 5, quality: 6, vaalinfuse: 7, vaal: 8, hinekora: 9,
+  exalted: 10, chaos: 11, fracture: 12, bone: 13, essence: 14, architect: 15,
+};
+const railKey = o => {
+  const k = o.kind === 'orb' ? o.cur : o.kind;
+  const tierIdx = o.tier === 'III' ? 2 : o.tier === 'II' ? 1 : 0;
+  return (RAIL_RANK[k] != null ? RAIL_RANK[k] : 50) * 10 + tierIdx;
+};
+/** The emulator rail's options in stable keybind order. */
+function emRailOpts() {
+  return optionsFor(em, true)
+    .map((o, i) => [o, i])
+    .sort((a, b) => railKey(a[0]) - railKey(b[0]) || a[1] - b[1])
+    .map(x => x[0]);
+}
+
 /** Modifiers this step could actually roll, with their share of pool weight. */
 /**
  * Chance a wanted modifier shows up among the reveal's options.
@@ -5572,7 +5601,7 @@ function emuKey(e) {
   if (meta) return;                                   // leave other browser chords alone
   const k = e.key;
   if (k >= '1' && k <= '9') {                          // apply the Nth currency (Shift = burst)
-    const opts = optionsFor(em, true), opt = opts[+k - 1];
+    const opts = emRailOpts(), opt = opts[+k - 1];
     if (opt) { e.preventDefault(); (e.shiftKey && bulkable(opt.kind)) ? emBulk(opt, Math.max(emRepeat, 10)) : emApply(opt); }
     return;
   }
