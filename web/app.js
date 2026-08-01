@@ -1984,7 +1984,39 @@ const STAT_RULES = [
     (m, s) => { s.attr.str += +m[1]; s.attr.dex += +m[1]; s.attr.int += +m[1]; }],
 ];
 
+/* Thrud's Destruction family are meta-mods: "X% increased Explicit <TYPE> Modifier
+   magnitudes" scale the VALUES of every explicit mod tagged <TYPE> (by g2). Build a
+   scaler once per item; magText() then renders a mod with its values boosted, so the
+   totals/DPS see the amplified numbers. Only explicit mods (which carry g2) scale —
+   implicits and the magnitude mods themselves are untouched. */
+function magnitudeScaler(it) {
+  const magByType = {}; const magGroups = new Set();
+  for (const a of (it.affixes || [])) {
+    const m = String(modText(a)).match(/(\d+(?:\.\d+)?)% increased Explicit (\w+) Modifier magnitudes/i);
+    if (m) { const ty = m[2].toLowerCase(); magByType[ty] = (magByType[ty] || 0) + parseFloat(m[1]); magGroups.add(a.g); }
+  }
+  const has = Object.keys(magByType).length > 0;
+  const scaleOf = a => {
+    if (!has || !a.g2 || a.g2.length === 0 || (a.g && magGroups.has(a.g))) return 1;
+    let add = 0;
+    for (const t of a.g2) if (magByType[t]) add += magByType[t];
+    return 1 + add / 100;
+  };
+  return { magByType, magGroups, scaleOf, has };
+}
+/** modText for a mod with its numbers scaled by the active magnitude meta-mods. */
+function magText(a, scaleOf) {
+  const scale = scaleOf ? scaleOf(a) : 1;
+  if (scale === 1 || !a.x || !a.v) return modText(a);
+  return render(a.x, a.v.map(v => typeof v === 'number'
+    ? (Number.isInteger(v) ? Math.round(v * scale) : +(v * scale).toFixed(2)) : v));
+}
+
+// test seam: the magnitude meta-mods are too rare to land reliably in a UI test,
+// so expose the pure calc so a headless test can verify the scaling deterministically
+if (typeof window !== 'undefined') window.__calc = { weaponDPS, spellDPS, itemStats, magnitudeScaler };
 function itemStats(it) {
+  const { scaleOf, magGroups } = magnitudeScaler(it);
   const s = {
     flat: { es: 0, ar: 0, ev: 0, life: 0, mana: 0, spirit: 0, stun: 0 },
     inc:  { es: 0, ar: 0, ev: 0, life: 0, mana: 0 },
@@ -1995,7 +2027,8 @@ function itemStats(it) {
   };
   for (const a of [...it.affixes, ...(it.imp || [])]) {   // implicits count too
     if (a.rand || a.un || a.twice) continue;         // nothing concrete to add up
-    for (const line of String(modText(a)).split('\n')) {
+    if (a.g && magGroups.has(a.g)) continue;         // a magnitude meta-mod: applied, not summed
+    for (const line of String(magText(a, scaleOf)).split('\n')) {
       const txt = line.trim();
       if (!txt) continue;
       let hit = false;
@@ -2063,9 +2096,10 @@ function weaponDPS(it, B) {
   let fp = [0, 0], chaos = [0, 0], incPhys = 0, incAS = 0, incCrit = 0,
       acc = 0, critDmg = 0, incEle = 0, incFire = 0, incCold = 0, incLight = 0;
   const q = it.quality != null ? it.quality : qCap(it);
+  const { scaleOf } = magnitudeScaler(it);       // Thrud magnitude meta-mods boost the numbers
   for (const a of [...it.affixes, ...(it.imp || [])]) {   // implicits count too
     if (a.rand || a.un || a.twice) continue;
-    for (const ln of String(modText(a)).split('\n')) {
+    for (const ln of String(magText(a, scaleOf)).split('\n')) {
       let m;
       if (m = ln.match(/Adds (\d+) to (\d+) Physical Damage/i)) { fp[0] += +m[1]; fp[1] += +m[2]; }
       else if (m = ln.match(/Adds (\d+) to (\d+) (Fire|Cold|Lightning) Damage/i)) {
@@ -2121,9 +2155,10 @@ const SPARK_CAST = 0.70, SPARK_CRIT = 9;   // base cast time (s), base crit chan
 
 function spellDPS(it) {
   let incSpell = 0, incLight = 0, incEle = 0, extra = 0, incCast = 0, incCrit = 0, critDmg = 0, levels = 0;
+  const { scaleOf } = magnitudeScaler(it);       // Thrud magnitude meta-mods boost the numbers
   for (const a of [...it.affixes, ...(it.imp || [])]) {   // implicits count too
     if (a.rand || a.un || a.twice) continue;
-    for (const ln of String(modText(a)).split('\n')) {
+    for (const ln of String(magText(a, scaleOf)).split('\n')) {
       let m;
       // increased damage buckets that apply to Spark (a Lightning spell) - all additive.
       // "increased Elemental Damage with Attacks" is attack-only and must NOT count.
