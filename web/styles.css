@@ -49,6 +49,9 @@
   --acid-sunk:   #0b0c06;   /* abyss control background                     */
   --acid-glow:   rgba(180,217,25,.28);
   --good:        #5fca92;   /* "good roll" cue green — NOT desecration      */
+  --rune:        #9b78ff;   /* socket-bound rune mods (Augment violet)      */
+  --rune-ink:    #c9a8ff;
+  --rune-edge:   #3a2f5a;
   --craft:       #a8bcff;
   --brick:       #d1414f;
   --omen:        #ff7086;
@@ -548,6 +551,18 @@
   .runesel { padding: 5px 8px; background: var(--sunk); color: var(--ink); border: 1px solid var(--line);
     border-radius: 4px; font-size: 12px; max-width: 240px; }
   .runesel.filled { border-color: var(--accent); color: var(--accent); }
+  /* a socket-bound rune, locked in place */
+  .runesel.bound { display: inline-flex; align-items: center; gap: 6px; cursor: default;
+    font: 600 12px 'Source Sans 3', sans-serif; color: var(--rune-ink);
+    background: linear-gradient(180deg, rgba(155,120,255,.12), rgba(155,120,255,.04));
+    border-color: var(--rune-edge); }
+  .runesel.bound .sblock { color: var(--rune); text-shadow: 0 0 8px rgba(155,120,255,.5); }
+  .sbbonded { width: 100%; display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+  .sbrow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 7px 10px; border: 1px solid var(--rune-edge); border-left: 2px solid var(--rune);
+    border-radius: var(--r-ctl); background: rgba(155,120,255,.05); }
+  .sbfam { font: 700 10px 'Source Sans 3', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--rune-ink); }
+  .sbbonus { font: 500 11.5px 'Source Sans 3', sans-serif; color: var(--dim2); text-align: right; }
   .excsel { margin-left: auto; padding: 3px 6px; background: var(--sunk); color: var(--dim);
     border: 1px solid var(--line); border-radius: 4px; font: 500 11px system-ui; text-transform: none; letter-spacing: 0; }
   .qualbox { display: inline-flex; align-items: center; gap: 5px; font: 500 11px system-ui;
@@ -762,6 +777,10 @@
   .m.desec .tb { color: var(--desec); }
   .m.craft { color: var(--craft); }
   .m.craft .tb { color: var(--craft); }
+  /* socket-bound rune modifiers read violet, with the rune's left bar */
+  .m.rune { color: var(--rune-ink); border-left: 2px solid var(--rune); padding-left: 8px; }
+  .m.rune .tb { color: var(--rune); border-color: color-mix(in srgb, var(--rune) 40%, var(--line)); }
+  .mline.rune { border-left-color: var(--rune); color: var(--rune-ink); }
   .m.abyssmark { color: var(--desec); }
   .m.abyssmark .tb { color: var(--desec); }
   /* quality tint on the tier tag: green good / amber mid / red low.

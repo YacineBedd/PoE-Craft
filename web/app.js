@@ -13,6 +13,37 @@ const DB = await fetch(new URL('./data/DATA.json', import.meta.url))
 const MODS = DB.mods, BASES = DB.bases, DES = DB.des, COR = DB.cor,
       ESS = DB.ess, OMENS = DB.omens, BONES = DB.bones, ICONS = DB.icons || {};
 
+/* Socket-bound Augment runes: each is permanent once socketed and unlocks a
+   modifier family on a specific base (Uhtred -> Chronomancy on Boots, etc.).
+   Loaded from a companion JSON and reshaped into MODS-form so the family mods
+   roll through the same pool machinery once the rune is in. Value ranges are
+   partial for now (poe2db shows some inline); a mod with no range rolls a
+   placeholder that renders as "#" until the range is filled in. */
+const SBDATA = await fetch(new URL('./data/sbrunes.json', import.meta.url))
+  .then(r => r.ok ? r.json() : { runes: [] }).catch(() => ({ runes: [] }));
+const SB_FITS = {
+  Boots: s => /^Boots/.test(s), Gloves: s => /^Gloves/.test(s),
+  Helmets: s => /^Helmets/.test(s), 'Body Armours': s => /^Body_Armours/.test(s),
+  Weapon: s => /^(Spears|Bows|Crossbows|Daggers|Claws|Flails|Quarterstaves|One_Hand_(Axes|Maces|Swords)|Two_Hand_(Axes|Maces|Swords))$/.test(s),
+};
+const sbName = x => String(x).replace(/\{\d+\}/g, '#').split('\n').join(', ');
+const SBRUNES = (SBDATA.runes || []).map(r => ({ ...r, fits: SB_FITS[r.base] || (() => false),
+  iconUrl: r.icon ? 'https://cdn.poe2db.tw/image/' + r.icon + '.webp' : '' }));
+const SBRUNE_BY_ID = Object.fromEntries(SBRUNES.map(r => [r.id, r]));
+const SBMODS = {};          // family -> [mod in MODS shape]
+const SBMODS_ALL = [];
+for (const r of SBRUNES) {
+  SBMODS[r.family] = r.mods.map((m, i) => {
+    const mod = { i: 'sb_' + r.id + '_' + i, g: 'sb_' + r.id + '_' + i, a: m.a,
+      n: sbName(m.x), x: m.x, c: null, g2: m.tags || [], fam: r.family, rune: r.id,
+      tbd: !m.vr, t: [[1, m.ml || 1, m.vr || null, 100, '']] };
+    SBMODS_ALL.push(mod); return mod;
+  });
+}
+/* which runes lock their socket forever once placed (all socket-bound augments,
+   incl. the two Aldur cap-runes — Serle's Triumph is the +1-suffix one) */
+const isBoundRune = id => !!SBRUNE_BY_ID[id] || id === 'aldur-suffix' || id === 'aldur-crafted';
+
 /* Abyssal bones come in three tiers that scale exactly like Normal / Greater /
    Perfect currency: a higher tier imposes a higher minimum modifier level, which
    trims the low tiers out of the normal pool a reveal can surface. Gnawed is the
@@ -314,13 +345,27 @@ function eligible(it, affix, minLv = 0, maxLv = Infinity, src = MODS) {
       out.push({ m, t, w });
     }
   }
+  // socket-bound rune families: a rune socketed on the item opens its own pool
+  // to the normal add/reroll currencies (Exalt/Chaos/Regal). Base restriction is
+  // already enforced by the rune only fitting the right base.
+  if (src === MODS && it.sockets && it.sockets.length) {
+    const fams = new Set(it.sockets.map(id => SBRUNE_BY_ID[id]).filter(Boolean).map(r => r.family));
+    for (const fam of fams) for (const m of (SBMODS[fam] || [])) {
+      if (affix && m.a !== affix) continue;
+      if (taken.has(m.g) || openSlots(it, m.a) <= 0) continue;
+      for (const t of m.t) {
+        if (t[1] > it.ilvl || t[1] < minLv || t[1] > maxLv) continue;
+        out.push({ m, t, w: t[3] });
+      }
+    }
+  }
   return out;
 }
 
 const rint = (lo, hi) => lo === hi ? lo : lo + Math.floor(Math.random() * (hi - lo + 1));
 // tidy a rolled number for display: integers stay integers, decimals round to 2
 // places so float noise (e.g. 3.81 + 1 = 4.8100000000000005) never shows.
-const fmtNum = x => (typeof x === 'number' && !Number.isInteger(x)) ? +x.toFixed(2) : x;
+const fmtNum = x => x == null ? '#' : (typeof x === 'number' && !Number.isInteger(x)) ? +x.toFixed(2) : x;
 const render = (txt, v) => txt.replace(/\{(\d+)\}/g, (_, i) => fmtNum(v[i]));
 
 function instantiate(e) {
@@ -949,7 +994,7 @@ function lowestMod(list) {
  */
 function modOf(a) {
   if (a.id) {
-    for (const src of [MODS, DES, COR]) {
+    for (const src of [MODS, DES, COR, SBMODS_ALL]) {
       const hit = src.find(x => x.i === a.id);
       if (hit) return hit;
     }
@@ -1010,7 +1055,8 @@ function mcPool(it, s, D) {
             : (s.kind === 'bone' || s.kind === 'reveal') ? DES : MODS;
   const key = state.slug + '#' + state.ilvl + '#' + (state.exceptional || '') + '#' +
               it.rarity + '#' + it.affixes.map(a => a.g + '|' + a.a).sort().join(',') +
-              '#' + min + '#' + max + '#' + (src === DES ? 'd' : 'n') + '#' + (s.omen || '');
+              '#' + min + '#' + max + '#' + (src === DES ? 'd' : 'n') + '#' + (s.omen || '') +
+              '#' + (it.sockets || []).filter(id => SBRUNE_BY_ID[id]).sort().join(',');
   let c = mcPoolCache.get(key);
   if (c) return c;
   let pool = eligible(asItem(it), null, min, max, src);
@@ -1292,7 +1338,8 @@ function mcApply(it, s, D) {
   if (!e) return 'dead';
   const placed = { id: e.m.i, g: e.m.g, a: e.m.a, tier: e.t[0], name: e.m.n,
                    ml: e.t[1], x: e.m.x, v: rollVals(e.t[2]), tname: e.t[4] || null,
-                   cat: s.kind === 'bone' ? 'desecrated' : undefined,
+                   cat: e.m.fam ? 'rune' : s.kind === 'bone' ? 'desecrated' : undefined,
+                   fam: e.m.fam || undefined, tbd: e.m.tbd || undefined,
                    un: s.kind === 'bone' || undefined, g2: e.m.g2,
                    // an Abyss omen spent on the bone also constrains the reveal,
                    // and the bone's tier sets the floor the reveal's normal pool obeys
@@ -1308,7 +1355,8 @@ function mcApply(it, s, D) {
     const e2 = mcRoll(mcPool(it, s, D));
     if (e2) it.affixes.push({ id: e2.m.i, g: e2.m.g, a: e2.m.a, tier: e2.t[0], name: e2.m.n,
                               ml: e2.t[1], x: e2.m.x, v: rollVals(e2.t[2]),
-                              tname: e2.t[4] || null, g2: e2.m.g2 });
+                              tname: e2.t[4] || null, g2: e2.m.g2,
+                              cat: e2.m.fam ? 'rune' : undefined, fam: e2.m.fam || undefined, tbd: e2.m.tbd || undefined });
   }
   return 'ok';
 }
@@ -2369,6 +2417,7 @@ function drawEmuRunes() {
   em.sockets = (em.sockets || []).slice(0, sk);
   const cat = runeCat(state.slug);
   const usable = RUNES.filter(r => r.req <= state.ilvl);
+  const sbFit = SBRUNES.filter(r => r.fits(state.slug));   // socket-bound runes for this base
   const filled = em.sockets.filter(Boolean).length;
   const opt = (r, cur) => `<option value="${esc(r.i)}"${cur === r.i ? ' selected' : ''}>${esc(r.n)}</option>`;
   const curExc = itemExc(em), qc = qCap(em), qv = (em.quality != null) ? em.quality : qc;
@@ -2382,18 +2431,42 @@ function drawEmuRunes() {
       </select>
       <label class="qualbox" title="Item quality: +1% Physical (weapons) or +1% Defence (armour) per 1%">Quality
         <input type="number" id="emqual" min="0" max="30" value="${qv}">%</label></div>` +
+    // socket-bound Augment runes that fit this base become extra rune options
     Array.from({ length: sk }, (_, i) => {
       const cur = em.sockets[i] || '';
+      if (cur && isBoundRune(cur)) {                 // permanent once placed: show it locked
+        const rn = runeById(cur) || SBRUNE_BY_ID[cur];
+        const label = rn ? (rn.n || rn.name) : cur;
+        const fam = SBRUNE_BY_ID[cur] ? ' &middot; ' + esc(SBRUNE_BY_ID[cur].family) : '';
+        return `<div class="runesel bound" title="socket-bound &mdash; permanent once placed (Reset item to clear)">
+          <span class="sblock">&#128274;</span> ${esc(label)}${fam}</div>`;
+      }
+      // exclude bound runes already placed elsewhere (each is limited to one)
+      const elsewhere = new Set(em.sockets.filter((x, j) => j !== i && x && isBoundRune(x)));
+      const sbOpts = sbFit.filter(r => !elsewhere.has(r.id))
+        .map(r => `<option value="${esc(r.id)}"${cur === r.id ? ' selected' : ''}>${esc(r.name)} &mdash; ${esc(r.family)}</option>`).join('');
       return `<select class="runesel${cur ? ' filled' : ''}" data-sock="${i}">
         <option value="">&mdash; empty socket &mdash;</option>
-        ${usable.map(r => opt(r, cur)).join('')}</select>`;
-    }).join('');
+        ${usable.filter(r => !(isBoundRune(r.i) && elsewhere.has(r.i))).map(r => opt(r, cur)).join('')}
+        ${sbFit.length ? `<optgroup label="Socket-bound (permanent)">${sbOpts}</optgroup>` : ''}
+      </select>`;
+    }).join('') +
+    // bonded bonuses + unlocked families for any socket-bound rune in the item
+    (() => {
+      const on = em.sockets.filter(id => id && SBRUNE_BY_ID[id]).map(id => SBRUNE_BY_ID[id]);
+      if (!on.length) return '';
+      return `<div class="sbbonded">${on.map(r => `<div class="sbrow">
+          <span class="sbfam">&#128274; ${esc(r.family)} modifiers unlocked</span>
+          <span class="sbbonus">bonded &middot; ${esc(render(r.bonded.x, (r.bonded.vr || []).map(v => v[0])))}</span>
+        </div>`).join('')}</div>`;
+    })();
   box.querySelectorAll('[data-sock]').forEach(sel => sel.onchange = () => {
     const i = +sel.dataset.sock, v = sel.value;
-    // stat runes stack freely (e.g. several Perfect Iron Runes for more armour/ES);
-    // only the two Aldur cap-runes (+1 suffix / +1 crafted) are limited to one each
+    // stat runes stack freely; the Aldur cap-runes and socket-bound Augment runes
+    // are limited to one each (and bound ones then lock their socket)
     const rn = runeById(v);
-    if (v && rn && rn.special) em.sockets = em.sockets.map((x, j) => x === v && j !== i ? '' : x);
+    if (v && ((rn && rn.special) || isBoundRune(v)))
+      em.sockets = em.sockets.map((x, j) => x === v && j !== i ? '' : x);
     em.sockets[i] = v;
     syncEmRunes(); drawEmu();
   });
@@ -3827,6 +3900,7 @@ function blankMod(rarity, affixes) {
 
 const asItem = st => ({ slug: state.slug, base: state.base, classTags: state.classTags,
                         ilvl: state.ilvl, rarity: st.rarity, affixes: st.affixes,
+                        sockets: st.sockets,
                         corrupted: !!st.corrupted, sanctified: !!st.sanctified });
 
 /**
@@ -4368,7 +4442,7 @@ function modLine(a, ghost) {
   const m = modOf(a);
   const name = modText(a);
   // origin tint: desecrated modifiers read green, crafted (essence/rune) blue
-  const cat = a.cat === 'desecrated' ? ' desec' : a.cat === 'crafted' ? ' craft' : '';
+  const cat = a.cat === 'desecrated' ? ' desec' : a.cat === 'crafted' ? ' craft' : a.cat === 'rune' ? ' rune' : '';
   if (a.rand) return `<div class="m rand">
     <span class="tb">&mdash;</span>
     <span>${a.a === 'p' ? 'prefix' : 'suffix'} &middot; random modifier</span></div>`;
