@@ -354,7 +354,9 @@ function eligible(it, affix, minLv = 0, maxLv = Infinity, src = MODS) {
       if (affix && m.a !== affix) continue;
       if (taken.has(m.g) || openSlots(it, m.a) <= 0) continue;
       for (const t of m.t) {
-        if (t[1] > it.ilvl || t[1] < minLv || t[1] > maxLv) continue;
+        // rune-unlocked mods only obey the item level, NOT the currency tier's
+        // level floor (a Perfect Aug still rolls them), since the rune grants them
+        if (t[1] > it.ilvl) continue;
         out.push({ m, t, w: t[3] });
       }
     }
@@ -3174,7 +3176,8 @@ function emTally() {
 }
 
 const RGROUP = (g, a) => { const m = MODS.find(x => x.g === g && x.a === a)
-  || DES.find(x => x.g === g && x.a === a) || COR.find(x => x.g === g); return m ? m.n : g; };
+  || DES.find(x => x.g === g && x.a === a) || COR.find(x => x.g === g)
+  || SBMODS_ALL.find(x => x.g === g); return m ? m.n : g; };
 function simLabel(k) {
   const i = k.indexOf(':');
   if (i > 0) { const pre = k.slice(0, i), key = k.slice(i + 1), [g, a] = key.split('|');
