@@ -838,6 +838,7 @@ function autoPreview() {
 function draw() {
   autoPreview(); drawItem(); drawTierPicker(); drawOmens(); drawCurrency();
   drawEssences(); drawBones(); drawLog(); drawOdds();
+  if (view === 'desec') drawDesec();
   drawBaseThumb();
 }
 
@@ -1675,6 +1676,88 @@ function importPrices() {
   if (msg) msg.textContent = `imported ${matched} price${matched === 1 ? '' : 's'}` +
     (missed.length ? ` \u00b7 no match: ${missed.slice(0, 8).join(', ')}${missed.length > 8 ? '\u2026' : ''}` : '');
   if (em && !document.getElementById('emu').classList.contains('hidden')) drawEmu();
+}
+
+/* ============================ Desecration view ============================
+   A focused workbench for the abyss mechanic: the rules, the bones for this base,
+   the abyss omen groups, and the desecrated pool a reveal draws from. */
+function drawDesec() {
+  const host = document.getElementById('desecview');
+  if (!host) return;
+  const slug = state.slug;
+  const bones = BONES.filter(b => (b.classes || []).includes(slug))
+    .sort((a, b) => (a.min || 0) - (b.min || 0) || a.name.localeCompare(b.name));
+  const abyss = OMENS.filter(o => /^OmenOnAbyss/.test(o.c || ''));
+  const grp = fx => abyss.filter(o => OMENFX[o.c] === fx);
+  const lichOf = m => LICHNAME[(m.g2 || []).find(x => /_mod$/.test(x)) || ''] || '';
+
+  // the desecrated pool this base could surface (rare, all slots open)
+  const probe = { ...state, rarity: 'rare', affixes: [] };
+  const rows = eligible(probe, null, 0, Infinity, DES);
+  const fam = new Map();
+  for (const e of rows) {
+    const k = e.m.g + '|' + e.m.a;
+    if (!fam.has(k)) fam.set(k, { m: e.m, lv: e.t[1] });
+  }
+  const pool = [...fam.values()].sort((a, b) =>
+    (lichOf(a.m) || 'zz').localeCompare(lichOf(b.m) || 'zz') || (a.m.n || '').localeCompare(b.m.n || ''));
+  const share = pool.length ? 100 / pool.length : 0;
+
+  const rule = (h, b) => `<div class="desrule"><div class="desruleh">${h}</div><div class="desrulep">${b}</div></div>`;
+  const omenGroup = (title, list) => list.length ? `<div class="desomgrp">
+      <div class="desomk">${title}</div>
+      <div class="desomrow">${list.map(o => omenChip(o, false, esc(o.i))).join('')}</div>
+    </div>` : '';
+
+  host.innerHTML = `<section class="panel brk desecpanel">
+    <h2>Desecration <span class="note">abyssal bones &middot; unrevealed &amp; revealed modifiers</span></h2>
+    <div class="desecbody">
+      <div class="desrules">
+        ${rule('A bone adds an unrevealed modifier',
+          'A desecration bone writes a hidden modifier from the abyss onto a Rare item. Its slot is taken, but it grants nothing until you reveal it at the Well of Souls.')}
+        ${rule('One per item, always level 65',
+          'An item holds only <b>one</b> desecrated modifier at a time. Every desecrated mod sits at modifier level 65 &mdash; a higher bone only raises the floor on the <i>ordinary</i> mods a reveal can also surface.')}
+        ${rule('It is fracture-proof',
+          'A Fracturing Orb cannot target an unrevealed mod. On a four-mod item with one unrevealed, a Fracture lands <b>1 in 3</b>, not 1 in 4.')}
+        ${rule('The reveal is one-shot',
+          'The Well of Souls resolves it once and cannot be redone &mdash; Omen of Abyssal Echoes buys a single reroll of the three candidates. To try again, Annul it off and desecrate afresh.')}
+      </div>
+
+      <div class="dessec">
+        <div class="desk">Bones for ${esc(BASES[slug] ? (BASES[slug].ic || slug) : slug)}
+          <span class="desknote">${bones.length} apply &middot; the badge is the mod-level floor</span></div>
+        ${bones.length ? `<div class="desbones">${bones.map(b => `
+          <div class="desbone" title="${esc(b.name)} — raises the ordinary pool floor to modifier level ${b.min || 0}">
+            <span class="bonefloor">${b.min || 0}</span>
+            ${ICONS[b.id] ? `<img class="desboneimg" src="${esc(ICONS[b.id])}" alt="" loading="lazy">`
+              : `<span class="desbonefb">${esc(b.name[0])}</span>`}
+            <span class="desbonen">${esc(b.name)}</span>
+          </div>`).join('')}</div>`
+          : `<div class="desempty">No desecration bones apply to this base.</div>`}
+      </div>
+
+      <div class="dessec">
+        <div class="desk">Abyss omens <span class="desknote">shape a bone or the reveal before it is spent</span></div>
+        ${omenGroup('Force the side a bone writes on', grp('force'))}
+        ${omenGroup('Confine the reveal to one lich', grp('lich'))}
+        ${omenGroup('Buy one reroll of the three', grp('reroll'))}
+      </div>
+
+      <div class="dessec">
+        <div class="desk">Desecrated pool <span class="desknote">what a reveal could surface on this base &mdash;
+          ${pool.length} modifiers &middot; uniform, poe2db publishes no abyss weight</span></div>
+        <div class="desstblwrap"><table class="desstbl">
+          <thead><tr><th>Modifier</th><th>Lich</th><th class="num">Level</th><th class="num">Chance</th></tr></thead>
+          <tbody>${pool.map(({ m, lv }) => `<tr>
+            <td><span class="aff ${m.a} des"></span>${esc(m.n || m.g)}</td>
+            <td class="deslich">${esc(lichOf(m) || '&mdash;')}</td>
+            <td class="num">${lv}</td>
+            <td class="num deschance">${share ? share.toFixed(1) + '%' : '&mdash;'}</td>
+          </tr>`).join('') || `<tr><td colspan="4" class="desempty">No desecrated modifiers for this base.</td></tr>`}</tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>`;
 }
 
 function drawPrices() {
@@ -5502,12 +5585,14 @@ function setView(v) {
   view = v;
   document.getElementById('benchview').classList.toggle('hidden', v !== 'bench');
   document.getElementById('graphview').classList.toggle('hidden', v !== 'graph');
+  document.getElementById('desecview').classList.toggle('hidden', v !== 'desec');
   const pv = document.getElementById('pricesview');
   if (pv) pv.classList.toggle('hidden', v !== 'prices');
   document.querySelectorAll('#viewpick button').forEach(b =>
     b.setAttribute('aria-pressed', String(b.dataset.v === v)));
   if (v === 'graph') { stepMenu(); drawPlan(); }
   if (v === 'bench') { drawItem(); drawOdds(); }
+  if (v === 'desec') drawDesec();
   if (v === 'prices') drawPrices();
 }
 
