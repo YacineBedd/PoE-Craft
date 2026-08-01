@@ -604,10 +604,16 @@
                color: var(--ink); background: var(--sunk); border: 1px solid var(--line);
                border-radius: 4px; padding: 0 4px; }
   .emurail { display: flex; flex-wrap: wrap; gap: 6px; }
-  .emucur { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 64px;
+  .emucur { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 64px;
             cursor: pointer; background: var(--sunk); border: 1px solid var(--line);
             border-radius: 5px; padding: 7px 4px; color: var(--dim); }
   .emucur:hover { border-color: var(--accent); background: var(--tip-bg); color: var(--accent); }
+  .emucurkey { position: absolute; top: 3px; left: 3px; min-width: 13px; height: 13px; padding: 0 2px;
+               display: flex; align-items: center; justify-content: center;
+               font: 700 9px/1 ui-monospace, Menlo, monospace; color: var(--faint);
+               background: color-mix(in srgb, var(--line) 55%, transparent);
+               border-radius: 3px; pointer-events: none; }
+  .emucur:hover .emucurkey { color: var(--accent); background: color-mix(in srgb, var(--accent) 20%, transparent); }
   .emucur .sigwrap { position: relative; line-height: 0; }
   .emucur .sig { width: 26px; height: 26px; }
   .emucur .sig.art { width: 30px; height: 30px; }

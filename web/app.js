@@ -3220,6 +3220,7 @@ function drawEmu() {
     ? opts.map((o, j) => `<button class="emucur${locked ? ' dim' : ''}${
         anyLink ? (linkOf(o) ? ' omlink' : ' omdim') : ''}" data-opt="${j}"
         data-tipname="${esc(o.label)}" data-tip="${esc(curDescOf(o))}">
+        ${j < 9 ? `<span class="emucurkey" title="press ${j + 1} to apply">${j + 1}</span>` : ''}
         <span class="sigwrap">${sigil(o.icon)}${o.tier && o.tier !== 'I'
           ? `<span class="tiermark">${ROMAN[o.tier]}</span>` : ''}</span>
         <span class="emucurn">${esc(o.label.replace(/^Orb of /, ''))}</span>
