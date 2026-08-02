@@ -2820,17 +2820,10 @@ function emCommitPreview() {
   emLock = false; emPend = null; emSim = null; emCompare = null;
   drawEmu();
 }
-function emCancelPreview() {
-  if (!emPend || emPend.kind !== 'preview') return;
-  const p = emPend;
-  // Walking away still SPENDS the Lock — the foresight was the cost. Nothing is
-  // applied to the item, but the ~1200 div Lock is tallied and the lock drops;
-  // foreseeing again needs a fresh Hinekora's Lock.
-  emLog.push({ label: "Hinekora's Lock", hinekora: 1,
-               detail: 'foresaw ' + p.label + ' — walked away, nothing applied' });
-  emLock = false; emPend = null; emSim = null; emCompare = null;
-  drawEmu();
-}
+// Walking away keeps the Lock: it is only spent when a currency is actually APPLIED
+// (committed). Under one Lock you can foresee any number of currencies, and raise
+// quality (infuser / whetstone / scrap) to re-seed the outcomes, until you commit one.
+function emCancelPreview() { if (emPend && emPend.kind === 'preview') { emPend = null; drawEmu(); } }
 
 function emApply(opt) {
   if (emPend) return;                 // a reveal or essence choice must be resolved first
@@ -3552,8 +3545,9 @@ function drawEmu() {
         <div class="hkbtns">
           <button class="hkcommit" data-commit>Commit the ${esc(short)}</button>
           <button class="hkwalk" data-cancel>Walk away</button></div>
-        <div class="hkfnote">Committing applies the ${esc(short)} and spends the Lock. Walking away
-          spends the Lock too &mdash; the foresight was the cost; foresee again with another Lock.</div>
+        <div class="hkfnote">Committing applies the ${esc(short)} &mdash; the only thing that spends the
+          Lock. Walking away keeps it: foresee another currency, or raise quality (infuser /
+          whetstone / scrap) to re-seed the outcome.</div>
       </div></div>`;
     pick.querySelector('[data-commit]').onclick = emCommitPreview;
     pick.querySelector('[data-cancel]').onclick = emCancelPreview;
