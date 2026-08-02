@@ -2014,7 +2014,8 @@ function magText(a, scaleOf) {
 
 // test seam: the magnitude meta-mods are too rare to land reliably in a UI test,
 // so expose the pure calc so a headless test can verify the scaling deterministically
-if (typeof window !== 'undefined') window.__calc = { weaponDPS, spellDPS, itemStats, magnitudeScaler };
+if (typeof window !== 'undefined') window.__calc = { weaponDPS, spellDPS, itemStats,
+  magnitudeScaler, magText, modLine: (a) => modLine(a), setDispScale: f => { dispScale = f; } };
 function itemStats(it) {
   const { scaleOf, magGroups } = magnitudeScaler(it);
   const s = {
@@ -3412,6 +3413,7 @@ function drawEmu() {
     .sort((x, y) => rank(x.a) - rank(y.a) || x.i - y.i).map(x => x.a);
   const tgt = emOmenTargets(em, emOmen);
   TIP_REG = []; EMU_RENDER = true;                  // collect hover ranges for this render
+  dispScale = magnitudeScaler(em).scaleOf;          // show magnitude-boosted values on the lines
   const mods = ordered.length
     ? ordered.map(a => {
         const key = a.g + '|' + a.a;
@@ -3425,7 +3427,7 @@ function drawEmu() {
     ? em.imp.map(im => `<div class="${implCls}"${tipAttr(im)} title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
       + '<div class="implrule"></div>'
     : '';
-  EMU_RENDER = false;
+  EMU_RENDER = false; dispScale = null;
   // the game's own instruction when an unrevealed desecrated modifier is present.
   // "Well of Souls" is a live shortcut straight into the reveal.
   const echoArmed = emOmen && omenFx(omenById(emOmen)) === 'reroll';
@@ -4325,6 +4327,8 @@ function sigil(kind) {
 // worth it. Built at render time into a small registry; the mod line only carries
 // an integer index, so nothing HTML-unsafe ever lands in an attribute.
 let TIP_REG = [], EMU_RENDER = false, emTipBound = false;
+// while set (during the emulator mod render), modLine shows magnitude-boosted values
+let dispScale = null;
 
 // A roll's position in its tier window as a good/bad cue: high = green (leave it),
 // mid = amber, low = red (a Divine is tempting). Same thresholds everywhere.
@@ -4478,7 +4482,10 @@ function modLine(a, ghost) {
   // a family splits per item class (Armour vs Energy Shield variants share a
   // group), so resolve the name against THIS base, not the first global match
   const m = modOf(a);
-  const name = modText(a);
+  // a modifier-magnitude meta-mod (Thrud) boosts this mod's numbers; show the
+  // boosted value on the line itself, like the game does
+  const magScale = dispScale ? dispScale(a) : 1;
+  const name = magScale !== 1 ? magText(a, dispScale) : modText(a);
   // origin tint: desecrated modifiers read green, crafted (essence/rune) blue
   const cat = a.cat === 'desecrated' ? ' desec' : a.cat === 'crafted' ? ' craft' : a.cat === 'rune' ? ' rune' : '';
   if (a.rand) return `<div class="m rand">
@@ -4509,7 +4516,9 @@ function modLine(a, ghost) {
     if (q) tbTitle = ` title="T${a.tier} — ${q === 'tq-hi' ? 'a top tier'
       : q === 'tq-mid' ? 'a mid tier' : 'a low tier'} for this modifier"`;
   }
-  return `<div class="m${ghost ? ' ghost' : ''}${cat}"${tipAttr(a)}>
+  const magAttr = magScale !== 1
+    ? ` title="magnified &times;${magScale.toFixed(2)} by a modifier-magnitude rune &mdash; base roll: ${esc(modText(a))}"` : '';
+  return `<div class="m${ghost ? ' ghost' : ''}${cat}${magScale !== 1 ? ' magnified' : ''}"${tipAttr(a)}${magAttr}>
     <span class="tb${q ? ' ' + q : ''}"${tbTitle}>${a.tier ? 'T' + a.tier : '?'}</span>
     <span>${esc(name)}</span></div>`;
 }

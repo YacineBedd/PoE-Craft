@@ -777,6 +777,11 @@
   .m.desec .tb { color: var(--desec); }
   .m.craft { color: var(--craft); }
   .m.craft .tb { color: var(--craft); }
+  /* a modifier magnified by a magnitude meta-mod: its value is boosted and shown
+     highlighted (brighter), like the game does */
+  .emumods .m.magnified { cursor: help; }
+  .emumods .m.magnified > span:last-child { color: color-mix(in srgb, currentColor 78%, #fff 22%);
+    text-shadow: 0 0 7px rgba(255,255,255,.14); }
   /* socket-bound rune modifiers read violet, with the rune's left bar */
   .m.rune { color: var(--rune-ink); border-left: 2px solid var(--rune); padding-left: 8px; }
   .m.rune .tb { color: var(--rune); border-color: color-mix(in srgb, var(--rune) 40%, var(--line)); }
