@@ -1,6 +1,6 @@
 # PoE2 Crafting Bench
 
-**▶ Try it live: https://poe2craft.js.org**  (also at https://yacinebedd.github.io/PoE-Craft/) — no install, runs in the browser.
+**▶ Try it live: https://yacinebedd.github.io/PoE-Craft/** — no install, runs in the browser.
 
 A single-file, self-contained web app that models Path of Exile 2's crafting
 system from **real poe2db data** — mod pools, spawn weights, tiers, currency
@@ -26,7 +26,7 @@ It has three surfaces:
 
 ## How to use it (for players)
 
-Open **https://poe2craft.js.org** and pick a view from the tabs at
+Open **https://yacinebedd.github.io/PoE-Craft/** and pick a view from the tabs at
 the top. Nothing to install, nothing to log in to — your work stays in your browser.
 
 **1. Start with the base.** Choose an item class (e.g. *Body Armours*, *Bows*) and
