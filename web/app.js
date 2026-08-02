@@ -5975,6 +5975,7 @@ document.getElementById('startgo').onclick = startEmulate;
 document.getElementById('emuclose').onclick = emCloseModal;
 document.getElementById('emureset').onclick = () => emStart(true);
 document.getElementById('emusnap').onclick = emSnapshot;
+{ const _sb = document.getElementById('emushare'); if (_sb) _sb.onclick = emShare; }
 document.getElementById('emututor').onclick = () => document.getElementById('emututorial').classList.remove('hidden');
 document.getElementById('tutclose').onclick = () => document.getElementById('emututorial').classList.add('hidden');
 document.getElementById('emututorial').addEventListener('click', e => {
@@ -6475,7 +6476,150 @@ async function loadSharedPlan(slug) {
     showShareBanner('Could not load the shared plan: ' + esc(String(e.message || e)), true);
   }
 }
-function handleRoute(route) { if (route && route.view === 'plan') loadSharedPlan(route.slug); }
+/* ===== Self-contained item sharing =========================================
+   A crafted item + the currency it cost, encoded into the URL hash so anyone
+   can open a read-only "trophy" card — no account, no backend. */
+
+// url-safe base64 of a (possibly unicode) string, and back
+function b64uEnc(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function b64uDec(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
+
+// keep only what a mod line needs to rebuild + render (name/template come from a.x)
+function packAffix(a) {
+  const o = { g: a.g, a: a.a };
+  for (const k of ['tier', 'v', 'x', 'tname', 'cat', 'fx', 'er', 'fam', 'rune', 'un', 'mark', 'rand', 'twice']) if (a[k] !== undefined) o[k] = a[k];
+  return o;
+}
+function buildSharePayload() {
+  const t = emTally();
+  const use = {};                                     // combine live spend + sunk retries into the true cost
+  for (const k in t.use) if (k !== 'base') use[k] = t.use[k];
+  for (const k in t.sunk) if (k !== 'base') use[k] = (use[k] || 0) + t.sunk[k];
+  const it = { rarity: em.rarity, corrupted: !!em.corrupted, sanctified: !!em.sanctified,
+    quality: em.quality, exc: em.exc, socketBonus: em.socketBonus || 0, sockets: (em.sockets || []).slice(),
+    imp: (em.imp || []).map(a => ({ x: a.x, v: a.v })), affixes: (em.affixes || []).map(packAffix) };
+  return { v: 1, i: it,
+    c: { slug: state.slug, baseName: state.base && state.base.n, ilvl: state.ilvl, exceptional: state.exceptional, img: baseArt() },
+    t: { use, total: t.grandTotal, div: +(t.grandDiv || 0).toFixed(3) } };
+}
+
+// Render the item exactly like the emulator tooltip, from a packed item + ctx,
+// without disturbing the live emulator's render globals.
+function trophyItemHTML(item, ctx) {
+  const _state = state, _emu = EMU_RENDER, _tip = TIP_REG, _disp = dispScale, _hk = hkWin;
+  state = { slug: ctx.slug, ilvl: ctx.ilvl, base: { n: ctx.baseName }, exceptional: ctx.exceptional };
+  EMU_RENDER = true; TIP_REG = []; dispScale = null; hkWin = false;
+  try {
+    const rc = item.sanctified ? 'var(--accent)' : item.corrupted ? 'var(--brick)'
+      : item.rarity === 'rare' ? 'var(--rare)' : item.rarity === 'magic' ? 'var(--magic)' : 'var(--ink)';
+    const sk = maxSockets(item);
+    const sockets = sk > 0 ? `<span class="emusock" title="${sk} socket${sk === 1 ? '' : 's'}">${'◈'.repeat(sk)}</span>` : '';
+    const head = `${ctx.img ? `<div class="emuartbig"><img src="${esc(ctx.img)}" alt="" loading="lazy"></div>` : ''}
+      <div class="emubanner">
+        <span class="emuiname" style="color:${rc}">${esc(ctx.baseName || (BASES[ctx.slug] && BASES[ctx.slug].ic) || ctx.slug || 'Item')}</span>
+        <span class="emurar">${item.sanctified ? 'Sanctified ' : item.corrupted ? 'Corrupted ' : ''}${RNAME[item.rarity] || ''}${ctx.ilvl ? ` &middot; ilvl ${ctx.ilvl}` : ''} ${sockets}</span>
+      </div>`;
+    const rank = a => a.a === 'p' ? 0 : a.a === 's' ? 1 : 2;
+    const ordered = (item.affixes || []).map((a, i) => ({ a, i })).sort((x, y) => rank(x.a) - rank(y.a) || x.i - y.i).map(x => x.a);
+    const impHTML = (item.imp && item.imp.length)
+      ? item.imp.map(im => `<div class="m impl">${esc(modText(im))}</div>`).join('') + '<div class="implrule"></div>' : '';
+    const mods = ordered.length ? ordered.map(a => modLine(a)).join('') : '<div class="m ghost">a bare base &mdash; no modifiers</div>';
+    return `<div class="emuitemhead">${head}</div><div class="emumods">${impHTML}${mods}</div>`;
+  } finally { state = _state; EMU_RENDER = _emu; TIP_REG = _tip; dispScale = _disp; hkWin = _hk; }
+}
+
+function shareSpendRows(use) {
+  const keys = Object.keys(use).filter(k => k !== 'base' && use[k] > 0)
+    .sort((a, b) => (use[b] * curDiv(b)) - (use[a] * curDiv(a)) || use[b] - use[a]);
+  if (!keys.length) return '<div class="scempty">a bare base &mdash; no currency spent</div>';
+  return `<div class="scspendrows">` + keys.map(k =>
+    `<div class="scrow"><span class="scrown">${use[k]}&times;</span>
+       <span class="scrowk">${esc(costLabel(k))}</span>
+       <span class="scrowd">${curDiv(k) ? fmtDiv(use[k] * curDiv(k)) + ' div' : ''}</span></div>`).join('') + `</div>`;
+}
+function shareText(item, ctx, use, total, div) {
+  const L = [], rank = a => a.a === 'p' ? 0 : a.a === 's' ? 1 : 2;
+  L.push(`${ctx.baseName || ctx.slug || 'Item'} — ${item.corrupted ? 'Corrupted ' : item.sanctified ? 'Sanctified ' : ''}${RNAME[item.rarity] || ''}${ctx.ilvl ? ` (ilvl ${ctx.ilvl})` : ''}`);
+  for (const im of (item.imp || [])) L.push('  ' + modText(im));
+  for (const a of [...(item.affixes || [])].sort((x, y) => rank(x) - rank(y))) L.push('  ' + (a.tier ? `[T${a.tier}] ` : '') + modText(a));
+  L.push('');
+  const parts = Object.keys(use).filter(k => k !== 'base' && use[k] > 0).sort((a, b) => use[b] - use[a]).map(k => `${use[k]}x ${costLabel(k)}`);
+  L.push(`Crafted with ${total} currenc${total === 1 ? 'y' : 'ies'} (~${fmtDiv(div)} div)${parts.length ? ': ' + parts.join(', ') : ''}`);
+  L.push('— made with the PoE2 Craft Planner');
+  return L.join('\n');
+}
+
+function openShareCard({ mode, item, ctx, tally, url, copied }) {
+  const box = document.getElementById('sharecard');
+  if (!box) return;
+  const sub = `${ctx.baseName || ctx.slug || 'Item'} — ${item.corrupted ? 'Corrupted ' : item.sanctified ? 'Sanctified ' : ''}${RNAME[item.rarity] || ''}`;
+  const actions = mode === 'author'
+    ? `<div class="sclink"><input id="sclinkinp" readonly value="${esc(url || '')}"></div>
+       <div class="scbtns">
+         <button class="scbtn primary" id="sccopylink">${copied ? 'Link copied ✓' : 'Copy link'}</button>
+         <button class="scbtn" id="sccopytext">Copy as text</button></div>
+       <div class="scfoot">Anyone who opens the link sees this item and its spend &mdash; no account needed.</div>`
+    : `<div class="scbtns">
+         <button class="scbtn primary" id="scopenemu">Open in the emulator</button>
+         <button class="scbtn" id="sccopytext">Copy as text</button>
+         <button class="scbtn" id="scclose2">Craft your own</button></div>
+       <div class="scfoot">A shared creation &mdash; open it to keep crafting from here.</div>`;
+  box.innerHTML = `<div class="scbox">
+    <button class="scx" id="scx" title="Close">&times;</button>
+    <div class="schead"><span class="sctitle">${mode === 'author' ? 'Share Creation' : 'Shared Creation'}</span>
+      <span class="scsub">${esc(sub)}</span></div>
+    <div class="scitem">${trophyItemHTML(item, ctx)}</div>
+    <div class="scspend">
+      <div class="scspendhead"><span>Currency used</span>
+        <b>${tally.total} item${tally.total === 1 ? '' : 's'} &middot; &asymp; ${fmtDiv(tally.div)} div</b></div>
+      ${shareSpendRows(tally.use || {})}
+    </div>
+    <div class="scactions">${actions}</div></div>`;
+  box.classList.remove('hidden');
+  const close = () => { box.classList.add('hidden'); box.innerHTML = ''; };
+  document.getElementById('scx').onclick = close;
+  box.onclick = e => { if (e.target === box) close(); };
+  const txtBtn = document.getElementById('sccopytext');
+  if (txtBtn) txtBtn.onclick = () => {
+    try { navigator.clipboard.writeText(shareText(item, ctx, tally.use || {}, tally.total, tally.div)); txtBtn.textContent = 'Text copied ✓'; }
+    catch (e) { txtBtn.textContent = 'copy failed'; } };
+  const linkBtn = document.getElementById('sccopylink');
+  if (linkBtn) linkBtn.onclick = () => {
+    try { navigator.clipboard.writeText(url); } catch (e) {}
+    linkBtn.textContent = 'Link copied ✓';
+    const inp = document.getElementById('sclinkinp'); if (inp) { inp.focus(); inp.select(); } };
+  const openBtn = document.getElementById('scopenemu');
+  if (openBtn) openBtn.onclick = () => { close(); router.clearRoute(); emStartFrom(item, 'a shared creation', ctx); showSharedSpendBanner(tally); };
+  const c2 = document.getElementById('scclose2');
+  if (c2) c2.onclick = () => { close(); router.clearRoute(); };
+}
+
+function showSharedSpendBanner(t) {
+  const parts = Object.keys(t.use || {}).filter(k => k !== 'base' && t.use[k] > 0)
+    .sort((a, b) => t.use[b] - t.use[a]).slice(0, 6).map(k => `${t.use[k]}&times; ${esc(costLabel(k))}`);
+  showShareBanner(`&#128296; <b>A shared creation.</b> The author spent <b>${t.total} currenc${t.total === 1 ? 'y' : 'ies'} &middot; &asymp; ${fmtDiv(t.div)} div</b>${parts.length ? ' &mdash; ' + parts.join(', ') : ''}. Keep crafting to track your own spend.`, true);
+}
+
+function emShare() {
+  if (typeof em === 'undefined' || !em) return;
+  const payload = buildSharePayload();
+  let enc = '', url = '', copied = false;
+  try { enc = b64uEnc(JSON.stringify(payload)); url = router.itemShareUrl(enc); } catch (e) {}
+  if (url) try { navigator.clipboard.writeText(url); copied = true; } catch (e) {}
+  openShareCard({ mode: 'author', item: payload.i, ctx: payload.c, tally: payload.t, url, copied });
+}
+
+function loadSharedItem(enc) {
+  let payload;
+  try { payload = JSON.parse(b64uDec(enc)); } catch (e) { showShareBanner('That shared item link could not be read &mdash; it may be truncated.', true); return; }
+  if (!payload || !payload.i) { showShareBanner('That shared item link is not valid.', true); return; }
+  openShareCard({ mode: 'view', item: payload.i, ctx: payload.c || {}, tally: payload.t || { use: {}, total: 0, div: 0 } });
+}
+
+function handleRoute(route) {
+  if (route && route.view === 'plan') loadSharedPlan(route.slug);
+  else if (route && route.view === 'item') loadSharedItem(route.data);
+}
 
 // --- boot the cloud layer (never blocks the app) -----------------------------
 let _hydratedUser = null;

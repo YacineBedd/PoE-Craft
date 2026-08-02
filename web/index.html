@@ -193,6 +193,7 @@
           <button class="ghost" id="emugraph">&#9776; View graph &amp; odds</button>
           <button class="ghost" id="emulock" title="Hinekora's Lock: preview the next currency's outcome before committing (very rare, ~hundreds of divines)">&#128274; Lock</button>
           <button class="ghost" id="emusnap" title="Save this exact item so you can branch or re-roll from it">&#128204; Snapshot</button>
+          <button class="ghost" id="emushare" title="Get a shareable card of this item and the currency it cost">&#128279; Share</button>
           <button class="ghost" id="emucloudsnap" title="Save this item to your account (syncs across devices)">&#9729; Save to account</button>
           <button class="ghost" id="emureset">New base</button>
           <button class="ghost" id="emuclose">&times; Close</button>
@@ -238,6 +239,9 @@
 
   <!-- The Well of Souls: the one-shot desecrated-modifier reveal takeover -->
   <div id="well" class="well hidden" role="dialog" aria-modal="true" aria-label="The Well of Souls"></div>
+
+  <!-- shareable "trophy" card: the crafted item + the currency it cost -->
+  <div id="sharecard" class="sharecard hidden" role="dialog" aria-modal="true" aria-label="Shared creation"></div>
 
   <div class="grid hidden" id="benchview">
     <div style="display:flex;flex-direction:column;gap:22px">
