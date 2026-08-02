@@ -66,6 +66,18 @@
   --r-ctl: 2px;
   --r-pan: 3px;
   --serif: "Cinzel", Georgia, serif;
+
+  /* Hinekora's Lock / foresight — magenta means "nothing committed yet". Never
+     reuse for another currency. See README §Hinekora's Lock. */
+  --hk-core:   #ffecfa;   /* leading edge of the sweep          */
+  --hk-br:     #ff8ae0;   /* sigil glow, roll windows, headings */
+  --hk-hot:    #ff4fbf;   /* bloom and ignite shadows           */
+  --hk-violet: #c43cff;   /* the sweep's trailing hue           */
+  --hk-edge:   #a3308a;   /* active borders, mod side-bar       */
+  --hk-frame:  #4a1c3e;   /* resting border on foresight panels */
+  --hk-ink:    #8d7183;   /* body text on foresight surfaces    */
+  --hk-sunk:   #120a10;   /* sunken track backgrounds           */
+  --hk-glow:   rgba(255,79,191,.22);
 }
 /* keep the data-theme hooks alive but point both at dark */
 :root[data-theme="light"], :root[data-theme="dark"] { color-scheme: dark; }
@@ -1188,6 +1200,145 @@
     background: var(--acid-br); box-shadow: 0 0 8px rgba(180,217,25,.7); }
   .wellbarnow { text-align: center; font-size: 11px; color: var(--acid-ink); margin-top: 3px; }
   .wellbarnow b { color: var(--acid-br); font-weight: 700; }
+
+  /* ============================================================
+     Hinekora's Lock — foresight: the sweep, the locked state,
+     and the Foreseen panel. Magenta everywhere = uncommitted.
+     ============================================================ */
+  @keyframes hkSweep {
+    0%   { transform: translateY(128%); opacity: 0 }
+    8%   { opacity: 1 }
+    92%  { opacity: 1 }
+    100% { transform: translateY(-128%); opacity: 0 }
+  }
+  @keyframes hkIgnite {
+    0%   { box-shadow: inset 0 0 0 rgba(255,79,191,0) }
+    22%  { box-shadow: 0 0 34px rgba(255,79,191,.55), inset 0 0 26px rgba(255,79,191,.22) }
+    100% { box-shadow: inset 0 0 0 rgba(255,79,191,0) }
+  }
+  @keyframes hkLid {
+    0%   { transform: scaleY(.04); opacity: 0; filter: brightness(2.6) }
+    40%  { opacity: 1 }
+    70%  { transform: scaleY(1.1); filter: brightness(1.5) }
+    100% { transform: scaleY(1); opacity: 1; filter: brightness(1) }
+  }
+  @keyframes hkBreathe {
+    0%,100% { opacity: .82; filter: drop-shadow(0 0 8px rgba(255,79,191,.55)) }
+    50%     { opacity: 1;   filter: drop-shadow(0 0 18px rgba(255,79,191,.85)) }
+  }
+  @keyframes hkBloom { 0%{opacity:0;transform:translate(-50%,-50%) scale(.4)} 45%{opacity:1;transform:translate(-50%,-50%) scale(1.18)} 100%{opacity:.9;transform:translate(-50%,-50%) scale(1)} }
+  @keyframes hkRise  { 0%{opacity:0;transform:translateY(7px)} 100%{opacity:1;transform:translateY(0)} }
+  @keyframes hkForecastIn { 0%{opacity:0;transform:translateY(9px)} 100%{opacity:1;transform:translateY(0)} }
+
+  /* the item cell becomes the stage for the sweep */
+  .emuitem { position: relative; }
+  .emuitem.hklock { box-shadow: inset 0 0 0 1px var(--hk-edge), 0 0 34px rgba(255,79,191,.14); }
+  .emuitem.hklock .emuitemhead { text-shadow: 0 0 18px rgba(255,79,191,.20); }
+
+  /* ignite + sweep overlay (screen-blended so it brightens mod text, not covers it) */
+  .hk-sweep { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 3; }
+  .hk-sweep.hidden { display: none; }
+  .hk-ignite { position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    animation: hkIgnite 1400ms ease-out forwards; }
+  .hk-blend { position: absolute; inset: 0; mix-blend-mode: screen; pointer-events: none; }
+  .hk-band {
+    position: absolute; left: -10%; right: -10%; top: 56%; height: 44%;
+    animation: hkSweep 1400ms cubic-bezier(.42,0,.32,1) forwards;
+    background: linear-gradient(to top,
+      rgba(122,26,92,0) 0%,
+      rgba(155,45,180,.20) 26%,
+      rgba(196,60,255,.42) 46%,
+      rgba(255,138,224,.85) 62%,
+      rgba(255,236,250,.98) 69%,
+      rgba(255,138,224,.55) 76%,
+      rgba(196,60,255,.16) 88%,
+      rgba(122,26,92,0) 100%);
+  }
+
+  /* sigil + lock text at the foot of the mod block */
+  .emuhk { display: grid; justify-items: center; gap: 0; margin-top: 4px; }
+  .emuhk:empty { display: none; }
+  .hk-sigilwrap { position: relative; display: grid; place-items: center; width: 100%;
+    padding: 6px 0 2px; }
+  .hk-bloom { position: absolute; top: 50%; left: 50%; width: 120px; height: 38px;
+    transform: translate(-50%,-50%); pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(255,79,191,.42), transparent 68%); }
+  .hk-sigil { position: relative; width: 46px; height: 46px; object-fit: contain;
+    animation: hkBreathe 3.6s ease-in-out .5s infinite; }
+  .emuitem.hksweep .hk-sigil { animation: hkLid .46s cubic-bezier(.2,.9,.25,1) both,
+    hkBreathe 3.6s ease-in-out .5s infinite; }
+  .emuitem.hksweep .hk-bloom { animation: hkBloom .5s ease-out both; }
+  .hk-locktext { font: italic 400 11.5px/1.5 'Source Sans 3', sans-serif; color: #c58fb4;
+    text-align: center; max-width: 340px; margin-top: 8px; padding: 9px 14px 4px;
+    border-top: 1px solid rgba(255,79,191,.22);
+    background: linear-gradient(180deg, rgba(255,79,191,.07), transparent 70%); }
+  .emuitem.hksweep .hk-locktext { animation: hkRise .4s ease-out .12s both; }
+
+  /* the payoff: every numeric mod grows its (min–max) window in magenta */
+  .hkval { color: inherit; }
+  .hkwin { font: 400 11.5px ui-monospace, Menlo, monospace; color: var(--hk-br);
+    text-shadow: 0 0 8px rgba(255,79,191,.45); }
+  .emuitem.hksweep .m .hkwin { animation: hkRise .34s ease-out both; display: inline-block; }
+
+  /* rail button — magenta hover/armed, so it reads as non-committal */
+  .emucur.hk:hover { border-color: var(--hk-edge); color: var(--hk-br); box-shadow: 0 0 16px rgba(255,79,191,.22); }
+  .emucur.hk.on { border-color: var(--hk-edge); color: var(--hk-br);
+    box-shadow: 0 0 18px rgba(255,79,191,.30); background: linear-gradient(180deg, rgba(255,79,191,.10), rgba(196,60,255,.05)); }
+
+  /* the Foreseen panel */
+  .hkforeseen { border: 1px solid var(--hk-frame); border-radius: var(--r-pan); margin-top: 12px;
+    overflow: hidden; animation: hkForecastIn .42s ease-out both; background: linear-gradient(180deg, #170d15, #0f080d); }
+  .hkfhead { display: flex; align-items: center; gap: 10px; padding: 9px 14px;
+    background: linear-gradient(180deg,#241428,#150c14); box-shadow: inset 0 1px 0 rgba(255,138,224,.14);
+    border-bottom: 1px solid var(--hk-frame); }
+  .hkftitle { font: 700 11px/1 var(--serif); letter-spacing: .2em; text-transform: uppercase; color: var(--hk-br); }
+  .hkfsub { font-size: 11px; color: var(--hk-ink); }
+  .hkfbody { padding: 12px 14px; display: grid; gap: 12px; }
+  .hkfcur { display: flex; align-items: center; gap: 10px; }
+  .hkfcur img { width: 34px; height: 34px; flex: none; }
+  .hkfcurtxt { display: grid; gap: 2px; min-width: 0; }
+  .hkfcurname { font: 600 13px 'Source Sans 3', sans-serif; color: var(--ink); }
+  .hkfcurdesc { font-size: 11.5px; color: var(--hk-ink); }
+  .hkfcost { margin-left: auto; flex: none; font: 700 11px ui-monospace, Menlo, monospace;
+    color: var(--accent-br); background: var(--hk-sunk); border: 1px solid var(--hk-frame);
+    border-radius: 3px; padding: 4px 8px; white-space: nowrap; }
+  .hkflabel { font: 700 8.5px 'Source Sans 3', sans-serif; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--hk-ink); margin-bottom: -4px; }
+  .hkroll { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: 3px;
+    border-left: 2px solid var(--hk-edge);
+    background: linear-gradient(90deg, rgba(255,79,191,.09), transparent 72%); }
+  .hkroll .tb { font: 700 9px/1 ui-monospace, Menlo, monospace; letter-spacing: .04em;
+    color: var(--hk-br); border: 1px solid var(--hk-edge); border-radius: 3px; padding: 3px 5px; flex: none; }
+  .hkroll .rt { font-size: 13px; color: var(--ink); }
+  .hkroll.dead .rt { color: var(--brick); }
+  .hkfnote { font-size: 11px; color: var(--hk-ink); line-height: 1.45; }
+  .hkbtns { display: flex; gap: 8px; }
+  .hkcommit { flex: 1; justify-content: center; color: var(--hk-core);
+    font: 700 11px/1 var(--serif); letter-spacing: .14em; text-transform: uppercase; padding: 11px;
+    border: 1px solid var(--hk-edge); border-radius: 3px;
+    background: linear-gradient(180deg, rgba(255,79,191,.22), rgba(196,60,255,.10));
+    box-shadow: 0 0 16px rgba(255,79,191,.20); cursor: pointer; }
+  .hkcommit:hover { background: linear-gradient(180deg, rgba(255,79,191,.34), rgba(196,60,255,.16));
+    box-shadow: 0 0 22px rgba(255,79,191,.32); }
+  .hkwalk { justify-content: center; color: var(--hk-ink); border: 1px solid var(--hk-frame);
+    border-radius: 3px; padding: 11px 16px; background: none; cursor: pointer;
+    font: 600 11px 'Source Sans 3', sans-serif; letter-spacing: .04em; }
+  .hkwalk:hover { color: var(--ink); border-color: var(--hk-edge); }
+
+  /* tier-window bar reuses the desecration component, retinted magenta */
+  .wellbar.hkbar { padding: 0; }
+  .wellbar.hkbar .wellbartrack { background: var(--hk-sunk); }
+  .wellbar.hkbar .wellbartrack i { background: linear-gradient(90deg,#5c1b4c,#ff8ae0); }
+  .wellbar.hkbar .wellbartrack b { background: #ffd9f2; box-shadow: 0 0 8px rgba(255,217,242,.85); }
+  .wellbar.hkbar .wellbark { color: var(--hk-ink); }
+  .wellbar.hkbar .wellbarnow { color: var(--hk-ink); }
+  .wellbar.hkbar .wellbarnow b { color: var(--hk-br); }
+  .wellbar.hkbar.nobar { border-top: 1px dashed var(--hk-frame); margin: 0; padding: 10px 0 4px; }
+  .wellbar.hkbar .wellfixed { color: var(--hk-ink); }
+  @media (prefers-reduced-motion: reduce) {
+    .hk-band, .hk-ignite, .hk-bloom, .hk-locktext, .hkforeseen,
+    .hk-sigil, .emuitem.hksweep .hk-sigil, .emuitem.hksweep .m .hkwin { animation: none !important; }
+  }
   .wellfoot { margin-top: auto; padding: 11px 13px; border-top: 1px solid rgba(180,217,25,.10); background: rgba(0,0,0,.25); }
   .wellconseq { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; color: var(--dim2); }
   .wellconseq b { color: var(--acid-ink); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }

@@ -2363,6 +2363,7 @@ let emSunk = {};            // currency banked from undone attempts (real retry 
 let emBaseCost = null;      // per-craft base item cost in divines (null = use the price table)
 let emSim = null;           // last "simulate this step x1000" result
 let emLock = false;         // Hinekora's Lock armed: preview the next outcome
+let emSweep = false;        // one-shot: play the foresight sweep on the NEXT draw only
 let emSnaps = [];           // saved item states you can branch an emulation from
 let mcSampleItems = [];     // real outcomes the last simulation surfaced to emulate
 let emRepeat = 1;           // bulk-apply count for the next currency click (shift+click)
@@ -2782,9 +2783,28 @@ function emPreview(opt) {
           else if (tw) detail += ' (corruption enchant)'; } }
     }
   } finally { Math.random = rnd0; }
-  emPend = { kind: 'preview', copy, cur, res, omen: s.omen, seeded: true,
+  // the exact modifier the next currency would roll (new or value-changed), so the
+  // Foreseen panel can show it on a side-bar with its tier window
+  const bkeys = new Set(before.map(a => a.g + '|' + a.a + '|' + (a.v || []).join(',')));
+  const rolled = res === 'ok'
+    ? copy.affixes.find(a => !a.impl && !bkeys.has(a.g + '|' + a.a + '|' + (a.v || []).join(','))) : null;
+  emPend = { kind: 'preview', copy, cur, res, omen: s.omen, seeded: true, rolled,
+             icon: opt.icon, curdesc: (D ? D.blurb : '') || curDescOf(opt) || '',
              label: (s.omen ? omenById(s.omen).n + ' + ' : '') + (D ? D.name : opt.label), detail };
   drawEmu();
+}
+// Tier-window bar for the Foreseen panel — the desecration reveal component, retinted.
+function hkTierBar(r) {
+  let slot = -1;
+  for (let i = 0; i < r.ranges.length; i++) if (r.ranges[i][0] !== r.ranges[i][1]) { slot = i; break; }
+  if (slot < 0) return `<div class="wellbar hkbar nobar"><div class="wellfixed">fixed value &middot; no roll range to grade</div></div>`;
+  const [lo, hi] = r.ranges[slot], cur = r.cur ? r.cur[slot] : null;
+  const pct = cur != null && hi > lo ? Math.max(0, Math.min(100, Math.round((cur - lo) / (hi - lo) * 100))) : 0;
+  const where = pct <= 15 ? 'bottom of the window' : pct >= 85 ? 'top of the window' : 'middle of the window';
+  return `<div class="wellbar hkbar">
+      <div class="wellbarlbl"><span>${lo}</span><span class="wellbark">tier window</span><span>${hi}</span></div>
+      <div class="wellbartrack"><i style="width:${pct}%"></i><b style="left:${pct}%"></b></div>
+      <div class="wellbarnow">rolled <b>${cur}</b> &middot; ${where}</div></div>`;
 }
 function emCommitPreview() {
   if (!emPend || emPend.kind !== 'preview') return;
@@ -2807,7 +2827,9 @@ function emApply(opt) {
   if (em.sanctified) return;                    // Sanctified: nothing more can be applied
   if (em.corrupted && opt.kind !== 'architect') return;
   if (opt.kind === 'hinekora') {          // Hinekora's Lock now lives in the rail: arm/disarm
-    emLock = !emLock; emPend = null; emSim = null; drawEmu(); return;
+    emLock = !emLock; emPend = null; emSim = null;
+    emSweep = emLock;                     // arming plays the foresight sweep once
+    drawEmu(); return;
   }
   // A quality change (infuser) is NOT captured by the Lock - it applies and
   // re-seeds the next foresight, so changing quality shows a different outcome.
@@ -3414,6 +3436,8 @@ function drawEmu() {
   const tgt = emOmenTargets(em, emOmen);
   TIP_REG = []; EMU_RENDER = true;                  // collect hover ranges for this render
   dispScale = magnitudeScaler(em).scaleOf;          // show magnitude-boosted values on the lines
+  const hkOn = emLock && !em.corrupted && !em.sanctified;   // Hinekora armed: foresight state
+  hkWin = hkOn;                                     // grow each numeric mod's roll window
   const mods = ordered.length
     ? ordered.map(a => {
         const key = a.g + '|' + a.a;
@@ -3427,7 +3451,7 @@ function drawEmu() {
     ? em.imp.map(im => `<div class="${implCls}"${tipAttr(im)} title="implicit modifier (from the base item)">${esc(modText(im))}</div>`).join('')
       + '<div class="implrule"></div>'
     : '';
-  EMU_RENDER = false; dispScale = null;
+  EMU_RENDER = false; dispScale = null; hkWin = false;
   // the game's own instruction when an unrevealed desecrated modifier is present.
   // "Well of Souls" is a live shortcut straight into the reveal.
   const echoArmed = emOmen && omenFx(omenById(emOmen)) === 'reroll';
@@ -3443,6 +3467,23 @@ function drawEmu() {
   document.getElementById('emumods').innerHTML = implHTML + mods + unrevHint;
   const wgo = document.querySelector('#emumods [data-wellgo]');
   if (wgo) wgo.onclick = emGoReveal;
+
+  // Hinekora foresight: magenta glow on the item, the sigil + lock text at the foot,
+  // and — only on the draw that armed it — the one-shot sweep animation.
+  const playSweep = emSweep && hkOn; emSweep = false;
+  const item = document.querySelector('.emuitem');
+  item.classList.toggle('hklock', hkOn);
+  item.classList.toggle('hksweep', playSweep);
+  const sweep = document.getElementById('emusweep');
+  sweep.classList.toggle('hidden', !playSweep);
+  sweep.innerHTML = playSweep
+    ? '<div class="hk-ignite"></div><div class="hk-blend"><div class="hk-band"></div></div>' : '';
+  document.getElementById('emuhk').innerHTML = hkOn
+    ? `<div class="hk-sigilwrap"><div class="hk-bloom"></div>`
+      + `<img class="hk-sigil" src="${ICONS.hinekora}" alt="Hinekora's Lock sigil" draggable="false"></div>`
+      + `<div class="hk-locktext"><i>Hinekora's Lock allows you to forsee the result of the next `
+      + `Currency Item used on this item. The Lock is removed when this item is modified.</i></div>`
+    : '';
   bindEmuTip();
   syncEmRunes();
   document.getElementById('emucap').innerHTML = em.corrupted || em.sanctified ? '' : capacity(em);
@@ -3473,14 +3514,37 @@ function drawEmu() {
     pick.querySelectorAll('[data-ess]').forEach(b => b.onclick = () => emTakeEssence(b.dataset.ess));
     pick.querySelector('[data-esscancel]').onclick = () => { emPend = null; drawEmu(); };
   } else if (emPend && emPend.kind === 'preview') {
-    pick.innerHTML = `<div class="emupickhead">Hinekora's Lock &mdash; foresight</div>
-      <div class="emupreview"><b>${esc(emPend.label)}</b> would give:<br>
-        <span class="emupdesc">${emPend.detail || 'no visible change'}</span></div>
-      <div class="emuphint">This outcome is fixed by the item's quality (${em.quality != null ? em.quality : 20}%).
-        Cancel and change quality (an infuser) to re-roll the foresight.</div>
-      <div class="emupbtns">
-        <button class="emuopt commit" data-commit>&#10003; Commit &mdash; consume the Lock</button>
-        <button class="emuopt cancel" data-cancel>&times; Cancel &mdash; keep the Lock</button></div>`;
+    const p = emPend, dead = p.res === 'corrupt' || p.res === 'destroyed';
+    const cost = PRICES[p.cur];
+    const costTxt = cost != null && cost > 0 ? (+cost.toFixed(3)) + ' div' : '';
+    const short = p.label.replace(/\s*Orb of\s*/i, '').replace(/\s*Orb\b/i, '').trim() || p.label;
+    const r = p.rolled ? modRanges(p.rolled) : null;
+    const rollBlock = p.rolled
+      ? `<div class="hkflabel">It would roll</div>
+         <div class="hkroll${dead ? ' dead' : ''}">
+           <span class="tb">${p.rolled.tier ? 'T' + p.rolled.tier
+              : p.rolled.a === 'p' ? 'P' : p.rolled.a === 's' ? 'S' : '&mdash;'}</span>
+           <span class="rt">${esc(modText(p.rolled))}</span></div>
+         ${r ? hkTierBar(r) : ''}`
+      : `<div class="hkflabel">Outcome</div>
+         <div class="hkfnote">${esc(p.detail || 'no visible change')}</div>`;
+    pick.innerHTML = `<div class="hkforeseen">
+      <div class="hkfhead"><span class="hkftitle">Foreseen</span>
+        <span class="hkfsub">the next currency is already decided &mdash; you may walk away</span></div>
+      <div class="hkfbody">
+        <div class="hkfcur">
+          ${p.icon && ICONS[p.icon] ? `<img src="${esc(ICONS[p.icon])}" alt="" loading="lazy">` : ''}
+          <div class="hkfcurtxt"><span class="hkfcurname">${esc(p.label)}</span>
+            ${p.curdesc ? `<span class="hkfcurdesc">${esc(p.curdesc)}</span>` : ''}</div>
+          ${costTxt ? `<span class="hkfcost">${costTxt}</span>` : ''}
+        </div>
+        ${rollBlock}
+        <div class="hkbtns">
+          <button class="hkcommit" data-commit>Commit the ${esc(short)}</button>
+          <button class="hkwalk" data-cancel>Walk away</button></div>
+        <div class="hkfnote">Committing consumes the ${esc(short)} and the Lock. Walking away keeps
+          both &mdash; the foresight persists until this item is modified.</div>
+      </div></div>`;
     pick.querySelector('[data-commit]').onclick = emCommitPreview;
     pick.querySelector('[data-cancel]').onclick = emCancelPreview;
   } else pick.innerHTML = '';
@@ -3501,7 +3565,8 @@ function drawEmu() {
     ? opts.map((o, j) => {
         // bones ride the acid ramp and badge their mod-level floor, not a tier
         const bone = o.kind === 'bone' ? BONES.find(x => x.id === o.ref) : null;
-        return `<button class="emucur${o.kind === 'bone' ? ' bone' : ''}${locked ? ' dim' : ''}${
+        return `<button class="emucur${o.kind === 'bone' ? ' bone' : ''}${
+        o.kind === 'hinekora' ? ' hk' + (emLock ? ' on' : '') : ''}${locked ? ' dim' : ''}${
         anyLink ? (linkOf(o) ? ' omlink' : ' omdim') : ''}" data-opt="${j}"
         data-tipname="${esc(o.label)}" data-tip="${esc(curDescOf(o))}">
         ${j < RAILKEYS.length ? `<span class="emucurkey" title="press ${RAILKEYS[j].toUpperCase()} to apply">${RAILKEYS[j].toUpperCase()}</span>` : ''}
@@ -4329,6 +4394,27 @@ function sigil(kind) {
 let TIP_REG = [], EMU_RENDER = false, emTipBound = false;
 // while set (during the emulator mod render), modLine shows magnitude-boosted values
 let dispScale = null;
+// while true (the locked Hinekora render), each numeric mod grows its (min–max) window
+let hkWin = false;
+// Build a mod line where each rolled number is followed by its magenta roll window,
+// e.g. 25(20–30)% increased Global Defences. Ranges come from the mod's current tier.
+function hkWindowed(a) {
+  const r = modRanges(a);
+  const tmpl = (r && r.tmpl) || a.x || '';
+  const v = a.v || [];
+  const ranges = r ? r.ranges : null;
+  let html = '', last = 0, m;
+  const re = /\{(\d+)\}/g;
+  while ((m = re.exec(tmpl))) {
+    html += esc(tmpl.slice(last, m.index));
+    const i = +m[1], rg = ranges && ranges[i];
+    html += `<span class="hkval">${esc(String(fmtNum(v[i])))}</span>`;
+    if (rg && rg[0] !== rg[1]) html += `<span class="hkwin">(${rg[0]}–${rg[1]})</span>`;
+    last = m.index + m[0].length;
+  }
+  html += esc(tmpl.slice(last));
+  return html.split('\n').join(', ');
+}
 
 // A roll's position in its tier window as a good/bad cue: high = green (leave it),
 // mid = amber, low = red (a Divine is tempting). Same thresholds everywhere.
@@ -4518,9 +4604,11 @@ function modLine(a, ghost) {
   }
   const magAttr = magScale !== 1
     ? ` title="magnified &times;${magScale.toFixed(2)} by a modifier-magnitude rune &mdash; base roll: ${esc(modText(a))}"` : '';
+  // Hinekora locked state: the value carries its (min–max) roll window (raw HTML, spans)
+  const inner = hkWin ? hkWindowed(a) : esc(name);
   return `<div class="m${ghost ? ' ghost' : ''}${cat}${magScale !== 1 ? ' magnified' : ''}"${tipAttr(a)}${magAttr}>
     <span class="tb${q ? ' ' + q : ''}"${tbTitle}>${a.tier ? 'T' + a.tier : '?'}</span>
-    <span>${esc(name)}</span></div>`;
+    <span>${inner}</span></div>`;
 }
 
 function drawPlan() {
