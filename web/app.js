@@ -2752,7 +2752,9 @@ function hashStr(str) {
 function hinekoraSeed(opt) {
   const q = em.quality != null ? em.quality : 20;
   const sig = em.affixes.map(a => a.g + ':' + a.tier + ':' + ((a.v || []).join(','))).join('|');
-  return hashStr(q + '#' + (opt.cur || opt.kind) + '#' + em.rarity + '#' + sig);
+  // the omen is part of the seed too: arming/disarming one re-foresees, since it
+  // changes what the currency does (e.g. Sanctification turns a Divine into a Sanctify)
+  return hashStr(q + '#' + (opt.cur || opt.kind) + '#' + (emOmen || '') + '#' + em.rarity + '#' + sig);
 }
 
 function emPreview(opt) {
@@ -2783,12 +2785,16 @@ function emPreview(opt) {
           else if (tw) detail += ' (corruption enchant)'; } }
     }
   } finally { Math.random = rnd0; }
-  // the exact modifier the next currency would roll (new or value-changed), so the
-  // Foreseen panel can show it on a side-bar with its tier window
-  const bkeys = new Set(before.map(a => a.g + '|' + a.a + '|' + (a.v || []).join(',')));
-  const rolled = res === 'ok'
-    ? copy.affixes.find(a => !a.impl && !bkeys.has(a.g + '|' + a.a + '|' + (a.v || []).join(','))) : null;
-  emPend = { kind: 'preview', copy, cur, res, omen: s.omen, seeded: true, rolled,
+  // Which modifiers the next currency would touch. ONE changed (Exalt/Chaos/Regal add,
+  // a single reroll) → show it on a side-bar with its tier window. MANY changed
+  // (Divine / Vaal reroll / Sanctify reroll EVERY value) → list them all, so it never
+  // looks like a reroll "targets" one line.
+  const modKey = a => a.g + '|' + a.a + '|' + (a.v || []).join(',');
+  const bkeys = new Set(before.map(modKey));
+  const changed = res === 'ok' ? copy.affixes.filter(a => !a.impl && !bkeys.has(modKey(a))) : [];
+  const rolled = changed.length === 1 ? changed[0] : null;
+  const rerolled = changed.length > 1 ? changed : null;
+  emPend = { kind: 'preview', copy, cur, res, omen: s.omen, seeded: true, rolled, rerolled,
              icon: opt.icon, curdesc: (D ? D.blurb : '') || curDescOf(opt) || '',
              label: (s.omen ? omenById(s.omen).n + ' + ' : '') + (D ? D.name : opt.label), detail };
   drawEmu();
@@ -2857,7 +2863,11 @@ function emApply(opt) {
     // ASSUMPTION: ~20% corruption chance per use - GGG hasn't published the exact rate
     let detail = `quality ${before}% \u2192 ${em.quality}%`, dead = false;
     if (Math.random() < 0.20) { em.corrupted = true; dead = true; detail += ' \u2014 the Vaal corrupted the item'; }
-    emLog.push({ label: opt.label, cur: opt.cur, detail, dead });
+    // A Vaal Infuser is a corrupting currency: it MODIFIES the item, so an armed
+    // Hinekora's Lock is spent (removed) by it \u2014 unlike a plain whetstone/scrap.
+    const spentLock = emLock;
+    if (spentLock) { emLock = false; detail += ' \u2014 the Lock was spent'; }
+    emLog.push({ label: opt.label, cur: opt.cur, detail, dead, hinekora: spentLock ? 1 : undefined });
     emSim = null; emPend = null; drawEmu();
     return;
   }
@@ -3522,15 +3532,19 @@ function drawEmu() {
     const costTxt = cost != null && cost > 0 ? (+cost.toFixed(3)) + ' div' : '';
     const short = p.label.replace(/\s*Orb of\s*/i, '').replace(/\s*Orb\b/i, '').trim() || p.label;
     const r = p.rolled ? modRanges(p.rolled) : null;
-    const rollBlock = p.rolled
-      ? `<div class="hkflabel">It would roll</div>
-         <div class="hkroll${dead ? ' dead' : ''}">
-           <span class="tb">${p.rolled.tier ? 'T' + p.rolled.tier
-              : p.rolled.a === 'p' ? 'P' : p.rolled.a === 's' ? 'S' : '&mdash;'}</span>
-           <span class="rt">${esc(modText(p.rolled))}</span></div>
-         ${r ? hkTierBar(r) : ''}`
-      : `<div class="hkflabel">Outcome</div>
+    const rollLine = a => `<div class="hkroll${dead ? ' dead' : ''}">
+        <span class="tb">${a.tier ? 'T' + a.tier : a.a === 'p' ? 'P' : a.a === 's' ? 'S' : '&mdash;'}</span>
+        <span class="rt">${esc(modText(a))}</span></div>`;
+    let rollBlock;
+    if (p.rolled) {                                   // exactly one mod added/changed
+      rollBlock = `<div class="hkflabel">It would roll</div>${rollLine(p.rolled)}${r ? hkTierBar(r) : ''}`;
+    } else if (p.rerolled) {                           // a reroll touches EVERY value — show them all
+      rollBlock = `<div class="hkflabel">It would reroll ${p.rerolled.length} value${p.rerolled.length === 1 ? '' : 's'}${p.res === 'sanctify' || p.copy.sanctified ? ' &amp; Sanctify' : ''}</div>
+         <div class="hkrerolls">${p.rerolled.map(rollLine).join('')}</div>`;
+    } else {
+      rollBlock = `<div class="hkflabel">Outcome</div>
          <div class="hkfnote">${esc(p.detail || 'no visible change')}</div>`;
+    }
     pick.innerHTML = `<div class="hkforeseen">
       <div class="hkfhead"><span class="hkftitle">Foreseen</span>
         <span class="hkfsub">the next currency is already decided &mdash; you may walk away</span></div>
@@ -3545,9 +3559,9 @@ function drawEmu() {
         <div class="hkbtns">
           <button class="hkcommit" data-commit>Commit the ${esc(short)}</button>
           <button class="hkwalk" data-cancel>Walk away</button></div>
-        <div class="hkfnote">Committing applies the ${esc(short)} &mdash; the only thing that spends the
-          Lock. Walking away keeps it: foresee another currency, or raise quality (infuser /
-          whetstone / scrap) to re-seed the outcome.</div>
+        <div class="hkfnote">Committing applies the ${esc(short)}, which spends the Lock. Walking away
+          keeps it: foresee another currency, arm an omen, or raise quality (a whetstone or scrap)
+          to re-seed the outcome. A Vaal Infuser corrupts the item, so it too spends the Lock.</div>
       </div></div>`;
     pick.querySelector('[data-commit]').onclick = emCommitPreview;
     pick.querySelector('[data-cancel]').onclick = emCancelPreview;

@@ -1311,6 +1311,10 @@
     color: var(--hk-br); border: 1px solid var(--hk-edge); border-radius: 3px; padding: 3px 5px; flex: none; }
   .hkroll .rt { font-size: 13px; color: var(--ink); }
   .hkroll.dead .rt { color: var(--brick); }
+  .hkrerolls { display: grid; gap: 0; border-left: 2px solid var(--hk-edge); padding: 4px 0 4px 9px;
+    background: linear-gradient(90deg, rgba(255,79,191,.08), transparent 72%); }
+  .hkrerolls .hkroll { border-left: 0; background: none; padding: 2px 0; gap: 8px; }
+  .hkrerolls .hkroll .rt { font-size: 12.5px; }
   .hkfnote { font-size: 11px; color: var(--hk-ink); line-height: 1.45; }
   .hkbtns { display: flex; gap: 8px; }
   .hkcommit { flex: 1; justify-content: center; color: var(--hk-core);
