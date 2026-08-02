@@ -1395,6 +1395,9 @@
   .scbtn.primary { color: var(--accent); border-color: rgba(200,170,90,.5);
     background: linear-gradient(180deg, rgba(200,170,90,.12), rgba(200,170,90,.04)); }
   .scbtn.primary:hover { box-shadow: 0 0 16px rgba(200,170,90,.22); }
+  .scbtn.shot { flex: none; width: 100%; color: var(--accent-br); border-color: rgba(200,170,90,.45);
+    background: linear-gradient(180deg, rgba(200,170,90,.10), rgba(200,170,90,.03)); }
+  .scbtn.shot:hover { box-shadow: 0 0 16px rgba(200,170,90,.20); }
   .scfoot { font-size: 11px; color: var(--faint); text-align: center; }
   .wellfoot { margin-top: auto; padding: 11px 13px; border-top: 1px solid rgba(180,217,25,.10); background: rgba(0,0,0,.25); }
   .wellconseq { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; color: var(--dim2); }

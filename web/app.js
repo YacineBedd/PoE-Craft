@@ -457,7 +457,8 @@ const CURR = [
                  if(corruptRerollVals(a)){ const m=by.get(a.id); if(m) a.text=render(m.x,a.v); } }
                it.sanctified=true;
                return 'Sanctified — each modifier shifted 78-122%; the item is now locked'; }
-             for(const a of it.affixes){ const m=by.get(a.id); const t=m.t.find(t=>t[0]===a.tier);
+             for(const a of it.affixes){ if(a.fx) continue;   // fractured mods are immune to reroll
+               const m=by.get(a.id); if(!m) continue; const t=m.t.find(t=>t[0]===a.tier);
                if(t){ a.v=t[2].map(r=>rint(r[0],r[1])); a.text=render(m.x,a.v); } }
              return 'rerolled numeric values'; } },
   { k:'vaal', n:'Vaal', warn:true, ok: it => !it.corrupted,
@@ -469,7 +470,8 @@ const CURR = [
                const a=addRandom(it,'c',0,Infinity,COR);
                return a ? `corrupted — gained ${a.text}` : 'corrupted — no change'; }
              // fourth outcome rerolls the numeric values, staying inside each tier
-             for(const a of it.affixes){ const m=MODS.find(x=>x.i===a.id);
+             for(const a of it.affixes){ if(a.fx) continue;   // fractured mods are immune to reroll
+               const m=MODS.find(x=>x.i===a.id);
                if(!m) continue; const t=m.t.find(x=>x[0]===a.tier);
                if(t){ a.v=t[2].map(r2=>rint(r2[0],r2[1])); a.text=render(m.x,a.v); } }
              return 'corrupted — rerolled values'; } },
@@ -6567,13 +6569,16 @@ function openShareCard({ mode, item, ctx, tally, url, copied }) {
   const box = document.getElementById('sharecard');
   if (!box) return;
   const sub = `${ctx.baseName || ctx.slug || 'Item'} — ${item.corrupted ? 'Corrupted ' : item.sanctified ? 'Sanctified ' : ''}${RNAME[item.rarity] || ''}`;
+  const shotBtn = `<button class="scbtn shot" id="scshot">&#128247; Take a screenshot</button>`;
   const actions = mode === 'author'
-    ? `<div class="sclink"><input id="sclinkinp" readonly value="${esc(url || '')}"></div>
+    ? `${shotBtn}
+       <div class="sclink"><input id="sclinkinp" readonly value="${esc(url || '')}"></div>
        <div class="scbtns">
          <button class="scbtn primary" id="sccopylink">${copied ? 'Link copied ✓' : 'Copy link'}</button>
          <button class="scbtn" id="sccopytext">Copy as text</button></div>
        <div class="scfoot">Anyone who opens the link sees this item and its spend &mdash; no account needed.</div>`
-    : `<div class="scbtns">
+    : `${shotBtn}
+       <div class="scbtns">
          <button class="scbtn primary" id="scopenemu">Open in the emulator</button>
          <button class="scbtn" id="sccopytext">Copy as text</button>
          <button class="scbtn" id="scclose2">Craft your own</button></div>
@@ -6606,6 +6611,121 @@ function openShareCard({ mode, item, ctx, tally, url, copied }) {
   if (openBtn) openBtn.onclick = () => { close(); router.clearRoute(); emStartFrom(item, 'a shared creation', ctx); showSharedSpendBanner(tally); };
   const c2 = document.getElementById('scclose2');
   if (c2) c2.onclick = () => { close(); router.clearRoute(); };
+  const shot = document.getElementById('scshot');
+  if (shot) shot.onclick = () => { const l = shot.textContent; shot.textContent = 'Rendering…';
+    shareCardToPng(sub).then(() => { shot.textContent = 'Saved ✓'; setTimeout(() => shot.textContent = l, 1600); })
+      .catch(() => { shot.textContent = 'Screenshot failed'; setTimeout(() => shot.textContent = l, 1600); }); };
+}
+
+// Paint the open share card (item + spend) onto a canvas and download it as a PNG.
+// Reads the already-rendered card DOM so the image matches it exactly; item art is
+// same-origin so the canvas is not tainted.
+function _roundRect(c, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2);
+  c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function _loadImg(src) { return new Promise(res => { if (!src) return res(null);
+  const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => res(im); im.onerror = () => res(null); im.src = src; }); }
+
+async function shareCardToPng(fileHint) {
+  const box = document.getElementById('sharecard'); if (!box) throw new Error('no card');
+  const q = s => box.querySelector(s);
+  const cssv = n => (getComputedStyle(document.documentElement).getPropertyValue(n) || '').trim();
+  const colorOf = el => el ? getComputedStyle(el).color : '#e8e2d2';
+  const clean = s => (s || '').replace(/\s+/g, ' ').trim();
+
+  const title = clean(q('.sctitle')?.textContent) || 'Shared Creation';
+  const sub = clean(q('.scsub')?.textContent);
+  const artEl = q('.scitem .emuartbig img');
+  const nameEl = q('.emuiname');
+  const name = clean(nameEl?.textContent) || 'Item';
+  const nameColor = colorOf(nameEl);
+  const rar = clean(q('.emurar')?.textContent).replace(/[◈]/g, '').replace(/·\s*$/, '').trim();
+  const imps = [...box.querySelectorAll('.scitem .emumods .m.impl')].map(m => clean(m.textContent));
+  const mods = [...box.querySelectorAll('.scitem .emumods .m:not(.impl):not(.ghost)')].map(m => {
+    const tb = m.querySelector('.tb'), tx = m.querySelector('span:last-child');
+    return { tag: clean(tb?.textContent), tagColor: colorOf(tb), text: clean(tx?.textContent), textColor: colorOf(tx) };
+  });
+  const spendLabel = clean(q('.scspendhead span')?.textContent) || 'Currency used';
+  const spendTotal = clean(q('.scspendhead b')?.textContent);
+  const rows = [...box.querySelectorAll('.scrow')].map(r => ({
+    n: clean(r.querySelector('.scrown')?.textContent), k: clean(r.querySelector('.scrowk')?.textContent),
+    d: clean(r.querySelector('.scrowd')?.textContent) }));
+  const emptyMsg = q('.scempty') ? clean(q('.scempty').textContent) : '';
+
+  await (document.fonts ? document.fonts.ready : Promise.resolve());
+  const art = await _loadImg(artEl ? artEl.src : null);
+
+  const C = { bg1: cssv('--panel') || '#181410', bg2: cssv('--panel-b') || '#0f0c08', edge: cssv('--edge') || '#3a3020',
+    gold: cssv('--gold-edge') || cssv('--accent') || '#c8aa5a', line: cssv('--line') || '#2a2418', sunk: cssv('--sunk') || '#0c0a06',
+    faint: cssv('--faint') || '#8a7f66', ink: cssv('--ink') || '#e8e2d2', accent: cssv('--accent') || '#c8aa5a', accentBr: cssv('--accent-br') || '#e6c877' };
+  const CIN = "Cinzel, Georgia, serif", SS = "'Source Sans 3', system-ui, sans-serif", MONO = "ui-monospace, Menlo, monospace";
+  const DPR = 2, W = 600, P = 24, CW = W - 2 * P;
+  const meas = document.createElement('canvas').getContext('2d');
+  const wrap = (text, font, maxw) => { meas.font = font; const words = String(text).split(' '); const out = []; let cur = '';
+    for (const w of words) { const t = cur ? cur + ' ' + w : w; if (meas.measureText(t).width > maxw && cur) { out.push(cur); cur = w; } else cur = t; }
+    if (cur) out.push(cur); return out.length ? out : ['']; };
+
+  // ---- layout pass: build ops, track height ----
+  const ops = []; let y = P;
+  ops.push({ t: 'txt', x: P, y: y + 12, s: title.toUpperCase(), font: `700 13px ${CIN}`, color: C.accent, sp: 3 });
+  if (sub) ops.push({ t: 'txt', x: W - P, y: y + 12, s: sub, font: `400 12px ${SS}`, color: C.faint, align: 'right' });
+  y += 24; ops.push({ t: 'rule', y, color: C.edge }); y += 16;
+  if (art) { const AW = 116; ops.push({ t: 'img', img: art, x: (W - AW) / 2, y, w: AW, h: AW }); y += AW + 12; }
+  ops.push({ t: 'txt', x: W / 2, y: y + 20, s: name, font: `700 23px ${CIN}`, color: nameColor, align: 'center' }); y += 30;
+  if (rar) { ops.push({ t: 'txt', x: W / 2, y: y + 12, s: rar, font: `400 12px ${CIN}`, color: C.faint, align: 'center' }); y += 22; }
+  y += 6; ops.push({ t: 'rule', y, color: C.edge }); y += 15;
+  for (const im of imps) for (const ln of wrap(im, `400 13px ${SS}`, CW)) { ops.push({ t: 'txt', x: P, y: y + 13, s: ln, font: `400 13px ${SS}`, color: C.faint }); y += 19; }
+  if (imps.length) { y += 4; ops.push({ t: 'rule', y, color: C.line }); y += 12; }
+  const TAGW = 32, GAP = 11;
+  for (const m of mods) { const lines = wrap(m.text, `500 14px ${SS}`, CW - TAGW - GAP);
+    ops.push({ t: 'tag', x: P, y: y + 1, s: m.tag, color: m.tagColor });
+    lines.forEach((ln, i) => ops.push({ t: 'txt', x: P + TAGW + GAP, y: y + 14 + i * 19, s: ln, font: `500 14px ${SS}`, color: m.textColor }));
+    y += Math.max(21, lines.length * 19 + 2); }
+  y += 12;
+  const spTop = y; y += 30;                 // spend header row
+  if (rows.length) { for (const r of rows) { ops.push({ t: 'row', y, n: r.n, k: r.k, d: r.d }); y += 22; } }
+  else if (emptyMsg) { ops.push({ t: 'txt', x: P + 12, y: y + 12, s: emptyMsg, font: `italic 400 12px ${SS}`, color: C.faint }); y += 22; }
+  y += 8; const spBot = y;
+  ops.push({ t: 'head', y: spTop, label: spendLabel, total: spendTotal });
+  y += 14;
+  ops.push({ t: 'txt', x: W / 2, y: y + 11, s: 'made with the PoE2 Craft Planner  ·  yacinebedd.github.io/PoE-Craft', font: `400 11px ${SS}`, color: C.faint, align: 'center' });
+  y += 18 + P;
+  const H = y;
+
+  // ---- draw pass ----
+  const cv = document.createElement('canvas'); cv.width = W * DPR; cv.height = H * DPR;
+  const c = cv.getContext('2d'); c.scale(DPR, DPR); c.textBaseline = 'alphabetic';
+  const bg = c.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, C.bg1); bg.addColorStop(1, C.bg2);
+  c.fillStyle = bg; c.fillRect(0, 0, W, H);
+  c.strokeStyle = C.edge; c.lineWidth = 1; c.strokeRect(.5, .5, W - 1, H - 1);
+  c.strokeStyle = C.gold; c.beginPath(); c.moveTo(0, .5); c.lineTo(W, .5); c.stroke();     // gold top rule
+  c.beginPath(); [[0, 0, 16, 0], [0, 0, 0, 16], [W, 0, -16, 0], [W, 0, 0, 16]].forEach(([x0, y0, dx, dy]) => { c.moveTo(x0, y0); c.lineTo(x0 + dx, y0 + dy); }); c.stroke();  // corner brackets
+  c.fillStyle = C.sunk; _roundRect(c, P, spTop - 8, CW, spBot - spTop + 8, 4); c.fill(); c.strokeStyle = C.line; c.stroke();  // spend panel
+
+  const spaced = (s, x, yy, font, color, sp, align) => { c.font = font; c.fillStyle = color;
+    const w = s.split('').reduce((a, ch) => a + c.measureText(ch).width + sp, 0) - sp;
+    let cx = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+    for (const ch of s) { c.textAlign = 'left'; c.fillText(ch, cx, yy); cx += c.measureText(ch).width + sp; } };
+  for (const o of ops) {
+    if (o.t === 'txt') { if (o.sp) { spaced(o.s, o.x, o.y, o.font, o.color, o.sp, o.align); continue; }
+      c.font = o.font; c.fillStyle = o.color; c.textAlign = o.align || 'left'; c.fillText(o.s, o.x, o.y); c.textAlign = 'left'; }
+    else if (o.t === 'rule') { c.strokeStyle = o.color; c.lineWidth = 1; c.beginPath(); c.moveTo(P, o.y + .5); c.lineTo(W - P, o.y + .5); c.stroke(); }
+    else if (o.t === 'img') { c.drawImage(o.img, o.x, o.y, o.w, o.h); }
+    else if (o.t === 'tag') { c.strokeStyle = o.color; c.fillStyle = o.color; c.lineWidth = 1;
+      _roundRect(c, o.x, o.y, 28, 17, 3); c.stroke();
+      c.font = `700 9px ${MONO}`; c.textAlign = 'center'; c.fillText(o.s, o.x + 14, o.y + 12); c.textAlign = 'left'; }
+    else if (o.t === 'head') { c.font = `700 10px ${SS}`; c.fillStyle = C.faint; c.textAlign = 'left'; c.fillText(o.label.toUpperCase(), P + 12, o.y + 15);
+      c.font = `700 12px ${MONO}`; c.fillStyle = C.accentBr; c.textAlign = 'right'; c.fillText(o.total, W - P - 12, o.y + 15); c.textAlign = 'left'; }
+    else if (o.t === 'row') { c.font = `700 12px ${MONO}`; c.fillStyle = C.accentBr; c.textAlign = 'left'; c.fillText(o.n, P + 12, o.y + 13);
+      c.font = `400 13px ${SS}`; c.fillStyle = C.ink; c.fillText(o.k, P + 48, o.y + 13);
+      c.font = `600 11px ${MONO}`; c.fillStyle = C.faint; c.textAlign = 'right'; c.fillText(o.d, W - P - 12, o.y + 13); c.textAlign = 'left'; }
+  }
+
+  const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+  if (!blob) throw new Error('toBlob failed');
+  const dlurl = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = dlurl; a.download = 'poe2-craft-' + (String(fileHint || name).replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'item') + '.png';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(dlurl), 3000);
 }
 
 function showSharedSpendBanner(t) {
