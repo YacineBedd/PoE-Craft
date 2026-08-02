@@ -971,8 +971,14 @@
   .onboard { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center;
     justify-content: center; background: rgba(0,0,0,.66); padding: 24px; }
   .onboard.hidden { display: none; }
-  .obbox { position: relative; background: var(--panel); border: 1px solid var(--line);
-    border-radius: 14px; max-width: 640px; width: 100%; box-shadow: 0 30px 80px rgba(0,0,0,.6); overflow: hidden; }
+  .obbox { position: relative; background: linear-gradient(180deg, var(--panel), var(--panel-b));
+    border: 1px solid var(--edge); border-radius: var(--r-pan); max-width: 640px; width: 100%;
+    box-shadow: var(--sh-modal); }
+  /* corner brackets — the app's signature ornament (matches .panel.brk) */
+  .obbox::before, .obbox::after { content:""; position:absolute; top:-1px; width:15px; height:15px;
+    border-top:1px solid var(--gold-edge); pointer-events:none; z-index:2; }
+  .obbox::before { left:-1px;  border-left:1px solid var(--gold-edge); }
+  .obbox::after  { right:-1px; border-right:1px solid var(--gold-edge); }
   .obx { position: absolute; top: 8px; right: 12px; background: none; border: 0; color: var(--faint);
     font-size: 22px; line-height: 1; cursor: pointer; padding: 4px; }
   .obx:hover { color: var(--ink); }
@@ -981,7 +987,8 @@
   .obicon { font-size: 46px; line-height: 1; margin-bottom: 14px; }
   .obkick { font: 700 10.5px system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase;
     color: var(--accent); margin-bottom: 9px; }
-  .obtitle { font: 700 25px 'Cormorant Garamond', Georgia, serif; color: var(--ink); margin-bottom: 13px; }
+  .obtitle { font: 700 22px/1.15 var(--serif); letter-spacing: .11em; text-transform: uppercase;
+    color: var(--accent-br); text-shadow: 0 1px 0 #000; text-wrap: balance; margin-bottom: 14px; }
   .obbody { font-size: 14px; line-height: 1.65; color: var(--dim); max-width: 428px; }
   .obbody b { color: var(--ink); font-weight: 600; }
   .obbody i { color: var(--accent); font-style: italic; }
@@ -991,11 +998,14 @@
   .obcname { font: 700 12px system-ui, sans-serif; color: var(--ink); margin-bottom: 5px; }
   .obcdesc { font-size: 11px; line-height: 1.45; color: var(--faint); }
   .obnav { display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 13px 20px; border-top: 1px solid var(--line); }
+    padding: 13px 20px; border-top: 1px solid var(--edge-hi); box-shadow: var(--bevel);
+    background: linear-gradient(180deg, var(--panelhead), var(--panelhead-b));
+    border-radius: 0 0 var(--r-pan) var(--r-pan); }
   .obdots { display: flex; gap: 7px; }
   .obdot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); cursor: pointer;
     transition: background .15s, transform .15s; }
   .obdot.on { background: var(--accent); transform: scale(1.15); }
+  .obprev, .obnext { font: 700 11px 'Source Sans 3', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
   .obnext { color: var(--accent); border-color: rgba(200,170,90,.5); }
   .obprev.gone { visibility: hidden; }
   @media (max-width: 560px) { .obcards { grid-template-columns: 1fr; } .obstage { padding: 34px 22px 18px; } }

@@ -5848,7 +5848,7 @@ const OB = [
         '<span class="obcost exp">&#9878; ~380 div</span>' +
         '<span class="obcost unluck">&#128128; ~1200 div</span>' +
       '</div></div>',
-    body: `<b>Design</b> it on the graph, then <b>emulate</b> it to see the luckiest, expected and unluckiest cost in <b>divines</b>. That gap <i>is</i> the thrill of crafting &mdash; and now you can see it before spending a single orb.<br><br>Reopen this guide anytime with <b>? Guide</b> up top.` }
+    body: `<b>Design</b> it on the graph, then <b>emulate</b> it to see the luckiest, expected and unluckiest cost in <b>divines</b>. That gap <i>is</i> the thrill of crafting &mdash; and now you can see it before spending a single orb.<br><br>Reopen this guide anytime with <b>Guide</b> up top.` }
 ];
 function obRender() {
   const st = document.getElementById('obstage'); if (!st) return;
