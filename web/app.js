@@ -6553,15 +6553,66 @@ function shareSpendRows(use) {
        <span class="scrowk">${esc(costLabel(k))}</span>
        <span class="scrowd">${curDiv(k) ? fmtDiv(use[k] * curDiv(k)) + ' div' : ''}</span></div>`).join('') + `</div>`;
 }
-function shareText(item, ctx, use, total, div) {
-  const L = [], rank = a => a.a === 'p' ? 0 : a.a === 's' ? 1 : 2;
-  L.push(`${ctx.baseName || ctx.slug || 'Item'} — ${item.corrupted ? 'Corrupted ' : item.sanctified ? 'Sanctified ' : ''}${RNAME[item.rarity] || ''}${ctx.ilvl ? ` (ilvl ${ctx.ilvl})` : ''}`);
-  for (const im of (item.imp || [])) L.push('  ' + modText(im));
-  for (const a of [...(item.affixes || [])].sort((x, y) => rank(x) - rank(y))) L.push('  ' + (a.tier ? `[T${a.tier}] ` : '') + modText(a));
-  L.push('');
-  const parts = Object.keys(use).filter(k => k !== 'base' && use[k] > 0).sort((a, b) => use[b] - use[a]).map(k => `${use[k]}x ${costLabel(k)}`);
-  L.push(`Crafted with ${total} currenc${total === 1 ? 'y' : 'ies'} (~${fmtDiv(div)} div)${parts.length ? ': ' + parts.join(', ') : ''}`);
-  L.push('— made with the PoE2 Craft Planner');
+// The exact PoE2 in-game clipboard text — pastes straight into PoB2 / pob.cool and
+// other item tools. Built against the shared item's own base (temp state so
+// weaponDPS/itemStats resolve correctly for a recipient on a different base).
+function poeItemText(item, ctx) {
+  const slug = ctx.slug, baseName = ctx.baseName || slug;
+  const B = BASES[slug];
+  const baseObj = ((B && B.b) || []).find(x => x.n === baseName) || {};
+  const ct = (B && B.ct) || [];
+  const _state = state;
+  state = { slug, base: baseObj, classTags: ct, exceptional: ctx.exceptional, ilvl: ctx.ilvl };
+  const L = [], SEP = () => L.push('--------');
+  const dmg = (r) => Math.round(r[0]) + '-' + Math.round(r[1]);
+  try {
+    L.push('Item Class: ' + ((B && B.ic) || slug || 'Unknown'));
+    L.push('Rarity: ' + (RNAME[item.rarity] || 'Rare'));         // Sanctified maps to its base rarity
+    L.push(baseName);                                            // name line
+    if (item.rarity !== 'normal') L.push(baseName);              // rare/magic: a second line is the base type
+    // properties
+    const props = [], q = item.quality != null ? item.quality : 0;
+    if (ct.includes('weapon') && baseObj.p) {
+      const w = weaponDPS(item);
+      if (q) props.push('Quality: +' + q + '%');
+      if (w.pMax > 0) props.push('Physical Damage: ' + dmg([w.pMin, w.pMax]));
+      const ele = ['Fire', 'Cold', 'Lightning'].filter(k => w.ele[k][1] > 0).map(k => dmg(w.ele[k]));
+      if (ele.length) props.push('Elemental Damage: ' + ele.join(', '));
+      if (w.chaos && w.chaos[1] > 0) props.push('Chaos Damage: ' + dmg(w.chaos));
+      if (w.crit) props.push('Critical Hit Chance: ' + w.crit.toFixed(2) + '%');
+      if (w.aps) props.push('Attacks per Second: ' + w.aps.toFixed(2));
+    } else if (ct.includes('armour')) {
+      const st = itemStats(item);
+      if (q) props.push('Quality: +' + q + '%');
+      if (st.total.ar) props.push('Armour: ' + st.total.ar);
+      if (st.total.ev) props.push('Evasion Rating: ' + st.total.ev);
+      if (st.total.es) props.push('Energy Shield: ' + st.total.es);
+      const blk = baseObj.p && baseObj.p['Block chance'];
+      if (blk) props.push('Block chance: ' + blk + '%');
+    }   // jewellery (amulet/ring/belt) has no quality or defence block
+    if (props.length) { SEP(); props.forEach(x => L.push(x)); }
+    // requirements
+    const r = baseObj.r || {}, req = [];
+    if (r.level) req.push('Level ' + r.level);
+    if (r.str) req.push(r.str + ' Str'); if (r.dex) req.push(r.dex + ' Dex'); if (r.int) req.push(r.int + ' Int');
+    if (req.length) { SEP(); L.push('Requires: ' + req.join(', ')); }
+    if (ctx.ilvl) { SEP(); L.push('Item Level: ' + ctx.ilvl); }
+    const sk = maxSockets(item);
+    if (sk > 0) { SEP(); L.push('Sockets: ' + Array(sk).fill('S').join(' ')); }
+    // implicits
+    const imp = [];
+    for (const im of (item.imp || [])) for (const ln of String(modText(im)).split('\n')) { const t = ln.trim(); if (t) imp.push(t + ' (implicit)'); }
+    if (imp.length) { SEP(); imp.forEach(x => L.push(x)); }
+    // explicits (prefixes then suffixes), fractured tagged
+    const rank = a => a.a === 'p' ? 0 : a.a === 's' ? 1 : 2;
+    const ex = [];
+    for (const a of [...(item.affixes || [])].sort((x, y) => rank(x) - rank(y))) {
+      if (a.un || a.mark || a.rand || a.twice) continue;
+      for (const ln of String(modText(a)).split('\n')) { let t = ln.trim(); if (!t) continue; if (a.fx) t += ' (fractured)'; ex.push(t); }
+    }
+    if (ex.length) { SEP(); ex.forEach(x => L.push(x)); }
+    if (item.corrupted) { SEP(); L.push('Corrupted'); }
+  } finally { state = _state; }
   return L.join('\n');
 }
 
@@ -6575,12 +6626,12 @@ function openShareCard({ mode, item, ctx, tally, url, copied }) {
        <div class="sclink"><input id="sclinkinp" readonly value="${esc(url || '')}"></div>
        <div class="scbtns">
          <button class="scbtn primary" id="sccopylink">${copied ? 'Link copied ✓' : 'Copy link'}</button>
-         <button class="scbtn" id="sccopytext">Copy as text</button></div>
+         <button class="scbtn" id="sccopytext" title="Paste into Path of Building / pob.cool">Copy item text</button></div>
        <div class="scfoot">Anyone who opens the link sees this item and its spend &mdash; no account needed.</div>`
     : `${shotBtn}
        <div class="scbtns">
          <button class="scbtn primary" id="scopenemu">Open in the emulator</button>
-         <button class="scbtn" id="sccopytext">Copy as text</button>
+         <button class="scbtn" id="sccopytext" title="Paste into Path of Building / pob.cool">Copy item text</button>
          <button class="scbtn" id="scclose2">Craft your own</button></div>
        <div class="scfoot">A shared creation &mdash; open it to keep crafting from here.</div>`;
   box.innerHTML = `<div class="scbox">
@@ -6600,7 +6651,7 @@ function openShareCard({ mode, item, ctx, tally, url, copied }) {
   box.onclick = e => { if (e.target === box) close(); };
   const txtBtn = document.getElementById('sccopytext');
   if (txtBtn) txtBtn.onclick = () => {
-    try { navigator.clipboard.writeText(shareText(item, ctx, tally.use || {}, tally.total, tally.div)); txtBtn.textContent = 'Text copied ✓'; }
+    try { navigator.clipboard.writeText(poeItemText(item, ctx)); txtBtn.textContent = 'Text copied ✓'; }
     catch (e) { txtBtn.textContent = 'copy failed'; } };
   const linkBtn = document.getElementById('sccopylink');
   if (linkBtn) linkBtn.onclick = () => {
