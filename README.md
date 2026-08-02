@@ -1,8 +1,14 @@
 # PoE2 Crafting Bench
 
+**▶ Try it live: https://yacinebedd.github.io/PoE-Craft/** — no install, runs in the browser.
+
 A single-file, self-contained web app that models Path of Exile 2's crafting
 system from **real poe2db data** — mod pools, spawn weights, tiers, currency
 mechanics, omens, essences, abyssal bones, corruption and the Aldur runes.
+
+Test a craft *before* you spend the currency: see the exact odds, simulate a
+thousand attempts to price a plan, or actually roll one item by hand with real
+RNG — all with the game's real numbers. It's free and open source.
 
 It has three surfaces:
 
@@ -15,6 +21,46 @@ It has three surfaces:
   currency rail, interactive reveal/essence pickers, undo, a running currency
   tally vs. the simulation, and a bridge that seeds an emulation from a
   simulated outcome or a saved snapshot.
+
+---
+
+## How to use it (for players)
+
+Open **https://yacinebedd.github.io/PoE-Craft/** and pick a view from the tabs at
+the top. Nothing to install, nothing to log in to — your work stays in your browser.
+
+**1. Start with the base.** Choose an item class (e.g. *Body Armours*, *Bows*) and
+a specific base, then set the item level. Everything below reacts to this — the
+mod pool, tiers, and odds are exactly what that base can roll in game.
+
+**2. Bench — "what can this roll, and what are my odds?"**
+Pick a currency and the Bench shows the live mod pool and the **exact chance** of
+each next affix, straight from the real spawn weights. Use it to answer "if I
+Exalt this right now, how likely am I to hit the mod I want?" before you touch a
+single orb.
+
+**3. Craft graph — "which plan is cheapest?"**
+Sketch a crafting plan as a flow: each node is an item state, each arrow is a
+currency step (Transmute → Regal → Exalt, essences, omens, desecration, whatever).
+Hit **Simulate** and it runs a **Monte Carlo of 1,000 attempts** to estimate how
+much currency the plan really costs, and you can line up two plans side by side and
+see which one wins on the median. Great for "is it cheaper to slam Exalts or go
+essence + omen?" decisions.
+
+**4. Craft emulator — "let me actually try it."**
+This is the fun one: craft **one real item, roll by roll**, with real RNG. Click
+currencies on the rail, watch mods land, use reveals/essences/omens, and undo if
+you brick it. It keeps a running tally of what you've spent versus the simulation's
+estimate — so you get the full dopamine of hitting a god-roll (or the pain of
+bricking) without spending anything real. Hover any mod to see its full roll range,
+and the good/bad-roll colour cue tells you at a glance how well each mod rolled.
+
+Everything models the *real* mechanics — tiered Greater/Perfect orbs, omens that
+force a side or homogenise, abyssal desecration and the Well of Souls reveal,
+Vaal/Architect corruption, fracturing, socket-bound runes, the lot. If you can do
+it in game, you can rehearse it here first.
+
+---
 
 There are now **two layouts** of the same app:
 
